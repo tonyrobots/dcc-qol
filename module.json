@@ -1,0 +1,57 @@
+{
+    "id": "dcc-qol",
+    "title": "DCC Quality of Life Improvements",
+    "description": "",
+    "version": "0.0.1",
+    "library": "false",
+    "manifestPlusVersion": "1.2.0",
+    "compatibility": {
+      "minimum": 11,
+      "verified": 11,
+      "maximum": 11
+    },
+    "authors": [
+      {
+        "name": "sasquach45932",
+        "url": "https://github.com/sasquach45932/dcc-qol",
+        "discord": "sasquach45932"
+      }
+    ],
+    "relationships": {
+      "systems": [
+        {
+          "id": "dcc",
+          "type": "system",
+          "compatibility":
+          {
+            "minimum": "0.36.0"
+          }
+        }
+      ],  
+      "requires": [
+        {
+          "id": "lib-wrapper",
+          "type": "module"
+        }
+      ] 
+    },
+    "esmodules": [
+      "scripts/dcc-qol.js"
+    ],
+    "styles": [
+      "styles/dcc-qol.css"
+    ],
+    "languages": [
+      {
+        "lang": "en",
+        "name": "English",
+        "path": "language/en.json"
+      }
+    ],
+    "url": "https://github.com/sasquach45932/dcc-qol",
+    "manifest": "https://github.com/sasquach45932/dcc-qol/releases/latest/download/module.json",
+    "download": "#{DOWNLOAD}#",
+    "license": "LICENSE",
+    "readme": "README.md"
+  }
+  
