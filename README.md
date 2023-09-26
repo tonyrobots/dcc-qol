@@ -1,6 +1,7 @@
 # DCC Quality of Life Improvements
 
 Requires libWrapper ( https://foundryvtt.com/packages/lib-wrapper )
+
 Requires Dungeon Crawl Classics ( https://foundryvtt.com/packages/dcc )
 
 * Separated attack/damage/crit and fumble roles for weapon attacks
