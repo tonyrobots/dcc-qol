@@ -1,8 +1,9 @@
 # DCC Quality of Life Improvements
 
-Requires libWrapper ( https://foundryvtt.com/packages/lib-wrapper )
+This module extends the functionality of the Dungeon Crawl Classics module
 
-Requires Dungeon Crawl Classics ( https://foundryvtt.com/packages/dcc )
+- Requires [libWrapper](https://foundryvtt.com/packages/lib-wrapper)
+- Requires [Dungeon Crawl Classics](https://foundryvtt.com/packages/dcc)
 
 * Separated attack/damage/crit and fumble roles for weapon attacks
 * On the bottom of the attack chat card information displayed about the weapon (type, equipped, range, (un)trained, two-handed)
