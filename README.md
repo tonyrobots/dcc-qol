@@ -40,7 +40,7 @@ This module extends the functionality of the Dungeon Crawl Classics module. Any 
 - Requires [libWrapper](https://foundryvtt.com/packages/lib-wrapper)
 - Requires [Dungeon Crawl Classics](https://foundryvtt.com/packages/dcc)
 
-Use Foundry's module installation dialog or paste the following link in the Install Module interface of your Foundry VTT instance:
+Paste the following link in the Install Module interface of your Foundry VTT instance:
 
 `https://github.com/sasquach45932/dcc-qol/releases/latest/download/module.json`
 
