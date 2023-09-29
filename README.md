@@ -21,6 +21,8 @@ Auto roll deed die:
 
 Luck score appoling on monsters' crit roll
 
+![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/2b8601cd-c823-4f22-b9ab-e7ecdbfb2af6)
+
 ![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/e1475ec2-f5d3-467d-a02a-dcac9e565d70)
 
 
