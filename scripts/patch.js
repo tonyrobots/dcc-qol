@@ -16,6 +16,9 @@ class DCCQOL extends Actor {
    * @param {Object} options     Options which configure how attacks are rolled E.g. Backstab
    */
   async rollCritical (options = {}, targettoken) {
+    /* Collecting modifiers to console logging */
+    let debuginfo
+
     // Construct the terms
     const terms = [
       {
@@ -35,6 +38,8 @@ class DCCQOL extends Actor {
         const targetactor = game.actors.get(targettoken.actorId)
         const luckModifier = targetactor.system.abilities.lck.mod
         terms[index].formula = luckModifier * -1
+        let debuginfo = 'Crit roll: ' + this.name + ` [TargetLuckModifier:${luckModifier}]`
+        if (game.settings.get('dcc-qol', 'log') && game.user.isGM) console.warn('DCC-QOL |', debuginfo)
       } else {
         terms.splice(index, 1)
       }
@@ -311,7 +316,7 @@ class DCCQOL extends Actor {
     let die = weapon.system.actionDie || DCCActor.getActionDice()[0].formula
 
     /* Collecting modifiers to console logging */
-    let debuginfo = 'Attack roll: ' + this.name + '/' + weapon.name
+    let debuginfo = 'Attack roll: ' + this.name + '/' + weapon.name + ' '
 
     /* Determine using untrained weapon */
     const automateUntrainedAttack = game.settings.get('dcc', 'automateUntrainedAttack')
@@ -451,7 +456,7 @@ class DCCQOL extends Actor {
     const crit = (d20RollResult > 1 && (d20RollResult >= critRange || options.backstab))
     const fumble = (d20RollResult === 1)
 
-    console.warn('DCC-QOL |', debuginfo)
+    if (game.settings.get('dcc-qol', 'log') && game.user.isGM) console.warn('DCC-QOL |', debuginfo)
 
     return {
       rolled: true,

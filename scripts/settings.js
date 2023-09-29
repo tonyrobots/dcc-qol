@@ -62,4 +62,16 @@ export const registerSystemSettings = async function () {
     default: false,
     config: true
   })
+
+  /**
+   * Logging to console.log
+   */
+  game.settings.register('dcc-qol', 'log', {
+    name: 'DCC-QOL.SettingLog',
+    hint: 'DCC-QOL.SettingLogHint',
+    scope: 'world',
+    type: Boolean,
+    default: false,
+    config: true
+  })  
 }

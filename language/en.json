@@ -16,6 +16,8 @@
     "DCC-QOL.SettingAutomateFriendlyFireHint": "If allies found and missile attach misses request and additional d100 roll",
     "DCC-QOL.SettingAutomateMonsterCritLuck": "Automate PC's Luck modifier aginst monster's critical hit.",
     "DCC-QOL.SettingAutomateMonsterCritLuckHint": "PC's Luck modifier always alters a monster's critical hit.",
+    "DCC-QOL.SettingLog": "Enable Logging",
+    "DCC-QOL.SettingLogHint": "Log information written into GM's console.log only",
     "DCC-QOL.SettingWeaponBackstab": "Check if weapon can be used for backstabbing",
     "DCC-QOL.SettingWeaponBackstabHint": "Check weapon can be used for backstabbing if not UI warning diplay appears and prevent rolls",
     "DCC-QOL.SettingWeaponRangeCheck": "Check weapon range",
