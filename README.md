@@ -5,7 +5,7 @@ This module extends the functionality of the Dungeon Crawl Classics module. Any 
 * Separated attack/damage/crit and fumble rolls for weapon attacks
 * On the bottom of the attack chat card show information about the weapon/actor (type, equipped, range, (un)trained, two-handed)
 * Displays weapon description (`weapon.system.description.value`)
-* Automated deed die roll for warriors/dwarves
+* Automated deed die roll for warriors/dwarves (in manual roll mode)
 * Substracting PC's Luck score during monsters' crit roll
 * Checks the weapon range (requires token targeting)
   * Checks hits and misses (damage button not displayed on misses)
