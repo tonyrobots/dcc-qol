@@ -48,8 +48,8 @@
         "path": "language/en.json"
       }
     ],
-    "url": "https://github.com/sasquach45932/dcc-qol",
-    "manifest": "https://github.com/sasquach45932/dcc-qol/releases/latest/download/module.json",
+    "url": "#{URL}#",
+    "manifest": "#{MANIFEST}#",
     "download": "#{DOWNLOAD}#",
     "license": "LICENSE",
     "readme": "README.md"
