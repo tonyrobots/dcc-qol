@@ -226,10 +226,14 @@ class DCCQOL extends Actor {
 
     if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll')) {
       const deedDiceFace = Number(this.system.details.attackBonus.replace('+d', ''))
-      const lastRoll = attackRollResult.roll.terms.find(element => element.faces === deedDiceFace).results[0].result
-      await this.update({
-        'data.details.lastRolledAttackBonus': lastRoll
-      })
+      if (weapon.system.toHit.includes('+ab')) {
+          const lastRoll = attackRollResult.roll.terms.find(element => element.faces === deedDiceFace).results[0].result
+          await this.update({
+              'data.details.lastRolledAttackBonus': lastRoll
+          })
+      } else {
+          console.warn('DCC-QOL | Missing “+“ sign before @ab in toHit. Dice so nice cannot display deed die roll. ')
+      }
     }
 
     const diceHTML = await attackRollResult.roll.render()
