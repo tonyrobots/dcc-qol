@@ -11,7 +11,7 @@
     "DCC-QOL.FriendlyFireFail": "{weapon} is heading to your allies.",
     "DCC-QOL.FriendlyFireSuccess": "Your allies are safe.",
     "DCC-QOL.SettingAutomateDeedDieRoll": "Automate Deed Die Roll",
-    "DCC-QOL.SettingAutomateDeedDieRollHint": "Automate Deed Die Roll for warrior/dwarf attacks",
+    "DCC-QOL.SettingAutomateDeedDieRollHint": "Automate Deed Die Roll for warrior/dwarf attacks (manual roll)",
     "DCC-QOL.SettingAutomateFriendlyFire": "Automate “Friedly Fire”",
     "DCC-QOL.SettingAutomateFriendlyFireHint": "If allies found and missile attach misses request and additional d100 roll",
     "DCC-QOL.SettingAutomateMonsterCritLuck": "Automate PC's Luck modifier aginst monster's critical hit.",

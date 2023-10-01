@@ -224,9 +224,9 @@ class DCCQOL extends Actor {
 
     const attackRollResult = await this.rollToHit(weapon, options, tokenD)
 
-    if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll')) {
+    if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll') && DCCActor.system.config.attackBonusMode === 'manual') {
       const deedDiceFace = Number(this.system.details.attackBonus.replace('+d', ''))
-      if (weapon.system.toHit.includes('+ab')) {
+      if (weapon.system.toHit.includes('+@ab')) {
           const lastRoll = attackRollResult.roll.terms.find(element => element.faces === deedDiceFace).results[0].result
           await this.update({
               'data.details.lastRolledAttackBonus': lastRoll
