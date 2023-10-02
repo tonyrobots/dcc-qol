@@ -73,5 +73,5 @@ export const registerSystemSettings = async function () {
     type: Boolean,
     default: false,
     config: true
-  })  
+  })
 }

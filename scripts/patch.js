@@ -38,7 +38,7 @@ class DCCQOL extends Actor {
         const targetactor = game.actors.get(targettoken.actorId)
         const luckModifier = targetactor.system.abilities.lck.mod
         terms[index].formula = luckModifier * -1
-        let debuginfo = 'Crit roll: ' + this.name + ` [TargetLuckModifier:${luckModifier}]`
+        const debuginfo = 'Crit roll: ' + this.name + ` [TargetLuckModifier:${luckModifier}]`
         if (game.settings.get('dcc-qol', 'log') && game.user.isGM) console.warn('DCC-QOL |', debuginfo)
       } else {
         terms.splice(index, 1)
@@ -224,15 +224,15 @@ class DCCQOL extends Actor {
 
     const attackRollResult = await this.rollToHit(weapon, options, tokenD)
 
-    if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll') && DCCActor.system.config.attackBonusMode === 'manual') {
+    if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll')) {
       const deedDiceFace = Number(this.system.details.attackBonus.replace('+d', ''))
       if (weapon.system.toHit.includes('+@ab')) {
-          const lastRoll = attackRollResult.roll.terms.find(element => element.faces === deedDiceFace).results[0].result
-          await this.update({
-              'data.details.lastRolledAttackBonus': lastRoll
-          })
+        const lastRoll = attackRollResult.roll.terms.find(element => element.faces === deedDiceFace).results[0].result
+        await this.update({
+          'data.details.lastRolledAttackBonus': lastRoll
+        })
       } else {
-          console.warn('DCC-QOL | Missing “+“ sign before @ab in toHit. Dice so nice cannot display deed die roll. ')
+        console.warn('DCC-QOL | Missing “+“ sign before @ab in toHit. Dice so nice cannot display deed die roll. ')
       }
     }
 
@@ -314,7 +314,7 @@ class DCCQOL extends Actor {
     const DCCActor = new game.dcc.DCCActor(this)
 
     /* Grab the To Hit modifier */
-    const toHit = weapon.system.toHit
+    const toHit = weapon.system.toHit ? weapon.system.toHit : '0'
 
     /* Determine crit range */
     let die = weapon.system.actionDie || DCCActor.getActionDice()[0].formula
@@ -347,21 +347,25 @@ class DCCQOL extends Actor {
       presets: DCCActor.getActionDice({
         includeUntrained: !automateUntrainedAttack
       })
-    },
-    {
-      type: 'Compound',
-      dieLabel: game.i18n.localize('DCC.DeedDie'),
-      modifierLabel: game.i18n.localize('DCC.ToHit'),
-      formula: toHit
     }
     ]
 
-    if (Number(toHit) !== 0) debuginfo = debuginfo + `[ToHit:${toHit}]`
+    if (Number(toHit) !== 0) {
+      debuginfo = debuginfo + `[ToHit:${toHit}]`
+      terms.push({
+        type: 'Compound',
+        dieLabel: game.i18n.localize('DCC.DeedDie'),
+        modifierLabel: game.i18n.localize('DCC.ToHit'),
+        formula: toHit
+      })
+    }
 
     if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll')) {
       const index = terms.findIndex(element => element.type === 'Compound')
-      const deedDice = this.system.details.attackBonus.replace('+', '1')
-      terms[index].formula = terms[index].formula.replace('+@ab', deedDice)
+      if (index !== -1) {
+        const deedDice = this.system.details.attackBonus.replace('+', '1')
+        terms[index].formula = terms[index].formula.replace('+@ab', deedDice)
+      }
     }
 
     // Add backstab bonus if required

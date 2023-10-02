@@ -4,12 +4,12 @@ import {
 } from './settings.js'
 import DCCQOL from './patch.js'
 import * as chat from './chat.js'
-export async function preloadTemplates() {
+export async function preloadTemplates () {
   const templatePaths = ['modules/dcc-qol/templates/attackroll-card.html']
   return loadTemplates(templatePaths)
 }
 
-function tokenForActorId(actorId) {
+function tokenForActorId (actorId) {
   const actor = game.actors.get(actorId)
   const allTokens = actor.getActiveTokens()
   if (allTokens.length === 1) return allTokens[0].document
@@ -23,7 +23,7 @@ function tokenForActorId(actorId) {
   }
 }
 
-function rollPatchedWeaponAttack(wrapped, ...args) {
+function rollPatchedWeaponAttack (wrapped, ...args) {
   const actor = new DCCQOL(game.actors.get(this._id))
   const tokenD = tokenForActorId(actor._id)
   if (tokenD) {
@@ -33,13 +33,13 @@ function rollPatchedWeaponAttack(wrapped, ...args) {
   }
 }
 
-function initPatching() {
+function initPatching () {
   libWrapper.register('dcc-qol', 'game.dcc.DCCActor.prototype.rollWeaponAttack', rollPatchedWeaponAttack, 'MIXED')
 }
 
-Hooks.once('init', async function() {
+Hooks.once('init', async function () {
   console.log('DCC-QOL | Initializing DCC-QOL.')
-  if (!game.modules.get("lib-wrapper")?.active) {
+  if (!game.modules.get('lib-wrapper')?.active) {
     console.warn('DCC-QOL | libWrapper is NOT active exiting!')
     return ui.notifications.warn(game.i18n.localize('DCC-QOL.libwrapperWarning'))
   }
@@ -49,8 +49,8 @@ Hooks.once('init', async function() {
   Hooks.on('renderChatLog', (app, html, data) => chat.addChatListeners(html))
 })
 
-Hooks.once('ready', async function() {
-  if (!game.modules.get("lib-wrapper")?.active && game.user.isGM) {
+Hooks.once('ready', async function () {
+  if (!game.modules.get('lib-wrapper')?.active && game.user.isGM) {
     console.warn('DCC-QOL | libWrapper is NOT active exiting!')
     ui.notifications.warn(game.i18n.localize('DCC-QOL.libwrapperWarning'))
   }
