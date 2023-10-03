@@ -1,6 +1,17 @@
 /* global game */
 export const registerSystemSettings = async function () {
   /**
+   * Automate damage apply
+   */
+  game.settings.register('dcc-qol', 'automateDamageApply', {
+    name: 'DCC-QOL.SettingAutomateDamageApply',
+    hint: 'DCC-QOL.SettingAutomateDamageApplyHint',
+    scope: 'world',
+    type: Boolean,
+    default: false,
+    config: true
+  })
+  /**
    * Automate Deed Die Roll for warrior/dwarf attacks
    */
   game.settings.register('dcc-qol', 'automateDeedDieRoll', {

@@ -41,22 +41,45 @@ async function ChatCardAction (event) {
 
   switch (action) {
     case 'damage':
-      if (targettoken) game.user.updateTokenTargets([targettoken._id])
+
       const damageRollResult = await act.rollDamage(weapon, options)
 
-      damageRollResult.roll.toMessage({
-        user: game.user.id,
-        speaker: {
-          alias: actor.name
-        },
-        flavor: game.i18n.format('DCC-QOL.DamageRoll', {
-          weapon: weapon.name
-        }),
-        flags: {
-          'dcc.RollType': 'Damage',
-          'dcc.ItemId': options.weaponId
+      if (damageRollResult.damage < 1) {
+        damageRollResult.damage = 1
+        damageRollResult.roll._total = 1
+      }
+
+      let diceHTML = await damageRollResult.roll.render()
+
+      if (targettoken) {
+        game.user.updateTokenTargets([targettoken._id])
+
+        const targetActor = targettoken.actor
+        diceHTML = diceHTML + '<br/>' + game.i18n.format('DCC-QOL.TakeDamage', { actor: targetActor.name, damage: damageRollResult.damage })
+
+        const msg = await damageRollResult.roll.toMessage({
+          user: game.user.id,
+          speaker: {
+            alias: actor.name
+          },
+          content: diceHTML,
+          flavor: game.i18n.format('DCC-QOL.DamageRoll', {
+            weapon: weapon.name
+          }),
+          flags: {
+            'dcc.RollType': 'Damage',
+            'dcc.ItemId': options.weaponId
+          }
+        })
+
+        if (game.settings.get('dcc-qol', 'automateDamageApply')) {
+          const DCCQOLTargetActor = new DCCQOL(targetActor)
+          // Wait for Dice so Nice roll
+          if (game.modules.get('dice-so-nice')?.active) game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() => DCCQOLTargetActor.applyDamage(damageRollResult.damage, 1))
+          else { DCCQOLTargetActor.applyDamage(damageRollResult.damage, 1) }
         }
-      })
+      }
+
       break
     case 'fumble':
       await act.rollFumble(options)

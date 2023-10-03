@@ -38,7 +38,7 @@ class DCCQOL extends Actor {
         const targetactor = game.actors.get(targettoken.actorId)
         const luckModifier = targetactor.system.abilities.lck.mod
         terms[index].formula = luckModifier * -1
-        const debuginfo = 'Crit roll: ' + this.name + ` [TargetLuckModifier:${luckModifier}]`
+        debuginfo = 'Crit roll: ' + this.name + ` [TargetLuckModifier:${luckModifier}]`
         if (game.settings.get('dcc-qol', 'log') && game.user.isGM) console.warn('DCC-QOL |', debuginfo)
       } else {
         terms.splice(index, 1)
@@ -204,10 +204,9 @@ class DCCQOL extends Actor {
       options.weaponId = weapon.id
     }
 
-    let attackBonusRollResult = 0
     if (DCCActor.rollAttackBonusWithAttack) {
       options.rollWeaponAttack = true
-      attackBonusRollResult = await DCCActor.rollAttackBonus(Object.assign({
+      await DCCActor.rollAttackBonus(Object.assign({
         rollWeaponAttack: true
       },
       options
@@ -351,7 +350,8 @@ class DCCQOL extends Actor {
     ]
 
     if (Number(toHit) !== 0) {
-      debuginfo = debuginfo + `[ToHit:${toHit}]`
+      const newToHit = toHit.replace('+@ab', '')
+      debuginfo = debuginfo + `[ToHit:${newToHit}]`
       terms.push({
         type: 'Compound',
         dieLabel: game.i18n.localize('DCC.DeedDie'),
@@ -429,7 +429,7 @@ class DCCQOL extends Actor {
       }
     }
     if (DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') {
-      if (weapon.name.toLowerCase().includes(DCCActor.system.class.luckyWeapon.toLowerCase()) && game.settings.get('dcc', 'automateLuckyWeaponAttack')) {
+      if (weapon.name.toLowerCase().includes(DCCActor.system.class.luckyWeapon.toLowerCase()) && game.settings.get('dcc', 'automateLuckyWeaponAttack') && DCCActor.system.class.luckyWeapon !== '') {
         terms.push({
           type: 'Modifier',
           label: game.i18n.localize('DCC.AbilityLck') + ' ' + game.i18n.localize('DCC.Modifier'),
@@ -475,6 +475,36 @@ class DCCQOL extends Actor {
       crit,
       fumble
     }
+  }
+
+  /**
+   * Apply damage to this actor
+   * @param {Number} damageAmount   Damage amount to apply
+   * @param {Number} multiplier     Damage multiplier
+   */
+  async applyDamage (damageAmount, multiplier) {
+    // Calculate damage amount and current hit points
+    const amount = damageAmount * multiplier
+    const hp = this.system.attributes.hp.value
+
+    let newHp = hp
+    if (amount > 0) {
+      // Taking damage - just subtract and allow damage to go below zero
+      newHp = newHp - amount
+    } else {
+      // Healing - don't allow HP to be brought above MaxHP, but if it's already there assume it's intentional
+      const maxHp = this.system.attributes.hp.max
+      if (hp >= maxHp) {
+        newHp = hp
+      } else {
+        newHp = Math.min(newHp - amount, maxHp)
+      }
+    }
+
+    // Apply new HP
+    return this.update({
+      'data.attributes.hp.value': newHp
+    })
   }
 }
 
