@@ -43,6 +43,7 @@ async function ChatCardAction (event) {
     case 'damage':
 
       const damageRollResult = await act.rollDamage(weapon, options)
+      let targetActor
 
       if (damageRollResult.damage < 1) {
         damageRollResult.damage = 1
@@ -51,10 +52,14 @@ async function ChatCardAction (event) {
 
       let diceHTML = await damageRollResult.roll.render()
 
-      if (targettoken) {
-        game.user.updateTokenTargets([targettoken._id])
+      if ((targettoken) || (Array.from(game.user.targets).length === 1)) {
+        if (targettoken) {
+          game.user.updateTokenTargets([targettoken._id])
+          targetActor = targettoken.actor
+        } else {
+          targetActor = game.user.targets.first().actor
+        }
 
-        const targetActor = targettoken.actor
         diceHTML = diceHTML + '<br/>' + game.i18n.format('DCC-QOL.TakeDamage', { actor: targetActor.name, damage: damageRollResult.damage })
 
         const msg = await damageRollResult.roll.toMessage({
@@ -78,6 +83,21 @@ async function ChatCardAction (event) {
           if (game.modules.get('dice-so-nice')?.active) game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() => DCCQOLTargetActor.applyDamage(damageRollResult.damage, 1))
           else { DCCQOLTargetActor.applyDamage(damageRollResult.damage, 1) }
         }
+      } else {
+        await damageRollResult.roll.toMessage({
+          user: game.user.id,
+          speaker: {
+            alias: actor.name
+          },
+          content: diceHTML,
+          flavor: game.i18n.format('DCC-QOL.DamageRoll', {
+            weapon: weapon.name
+          }),
+          flags: {
+            'dcc.RollType': 'Damage',
+            'dcc.ItemId': options.weaponId
+          }
+        })
       }
 
       break
