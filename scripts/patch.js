@@ -220,18 +220,34 @@ class DCCQOL extends Actor {
 
     let hitsTarget = false
     let friendlyFire = false
+    let lastDeedRoll = 0
+    let deedDieHTML
 
     const attackRollResult = await this.rollToHit(weapon, options, tokenD)
 
     if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll')) {
-      const deedDiceFace = Number(this.system.details.attackBonus.replace('+d', ''))
+      const deedDieFace = Number(this.system.details.attackBonus.replace('+d', ''))
       if (weapon.system.toHit.includes('+@ab')) {
-        const lastRoll = attackRollResult.roll.terms.find(element => element.faces === deedDiceFace).results[0].result
+        lastDeedRoll = attackRollResult.roll.terms.find(element => element.faces === deedDieFace).results[0].result
+        const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize('DCC.DeedRollValue')}</div> </div>`
+        if (lastDeedRoll >= 3) {
+          deedDieHTML = preDeedDieHTML + `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:green">${lastDeedRoll}</span> </h4> </div> </div>`
+        } else {
+          deedDieHTML = preDeedDieHTML + `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:black">${lastDeedRoll}</span> </h4> </div> </div>`
+        }
         await this.update({
-          'data.details.lastRolledAttackBonus': lastRoll
+          'data.details.lastRolledAttackBonus': lastDeedRoll
         })
       } else {
         console.warn('DCC-QOL | Missing “+“ sign before @ab in toHit. Dice so nice cannot display deed die roll. ')
+      }
+    } else {
+      lastDeedRoll = this.system.details.lastRolledAttackBonus
+      const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize('DCC.DeedRollValue')}</div> </div>`
+      if (lastDeedRoll >= 3) {
+        deedDieHTML = preDeedDieHTML + `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:green">${lastDeedRoll}</span> </h4> </div> </div>`
+      } else {
+        deedDieHTML = preDeedDieHTML + `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:black">${lastDeedRoll}</span> </h4> </div> </div>`
       }
     }
 
@@ -287,6 +303,8 @@ class DCCQOL extends Actor {
       isBackStab: options.backstab,
       isFumble: attackRollResult.fumble,
       isCrit: attackRollResult.crit,
+      deedDieHTML: deedDieHTML,
+      isDisplayHitMiss: game.settings.get('dcc-qol', 'DisplayHitMiss'),
       hitsAc: game.i18n.format('DCC-QOL.AttackRollHitsAC', {
         AC: attackRollResult.hitsAc
       }),
@@ -363,8 +381,8 @@ class DCCQOL extends Actor {
     if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll')) {
       const index = terms.findIndex(element => element.type === 'Compound')
       if (index !== -1) {
-        const deedDice = this.system.details.attackBonus.replace('+', '1')
-        terms[index].formula = terms[index].formula.replace('+@ab', deedDice)
+        const deedDie = this.system.details.attackBonus.replace('+', '1')
+        terms[index].formula = terms[index].formula.replace('+@ab', deedDie)
       }
     }
 

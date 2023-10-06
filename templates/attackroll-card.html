@@ -9,6 +9,9 @@
     </div>
 
     {{{diceHTML}}}
+
+    {{{deedDieHTML}}}
+
     {{#if isFumble}}
     <div class="chat-details">
         <div class="roll-result">{{localize "DCC.Fumble"}}</div>
@@ -17,16 +20,20 @@
         <button data-action="fumble">{{ localize "DCC.Fumble" }}</button>
     </div>
     {{else}} {{#if hitsTarget}}
+    {{#if isDisplayHitMiss}}
     <div class="chat-details">
-   <!--  <div class="roll-resultx">{{ localize "DCC-QOL.AttackRollHits"}} {{target}}</div> -->
+     <div class="roll-resultx"><span style="color:green">{{ localize "DCC-QOL.AttackRollHits"}} {{target}}</span></div>
     </div>
+    {{/if}}    
     <div class="card-buttons">
         <button data-action="damage">{{ localize "DCC.Damage" }}</button>
     </div>
     {{else}} {{#if target}}
+    {{#if isDisplayHitMiss}}    
     <div class="chat-details">
-    <!--  <div class="roll-resultx">{{ localize "DCC-QOL.AttackRollMisses"}} {{target}}</div> -->
+    <div class="roll-resultx">{{ localize "DCC-QOL.AttackRollMisses"}} {{target}}</div>
     </div>
+    {{/if}}
     {{else}}
     <div class="chat-details">
         <div class="roll-result">{{{hitsAc}}}</div>
@@ -44,7 +51,7 @@
     <div class="card-buttons">
         <button data-action="friendlyFire">{{ localize "DCC-QOL.FriendlyFireCheck" }}</button>
     </div>
-    {{/if}}    
+    {{/if}}
 
     <footer class="card-footer">
         {{#each properties}}

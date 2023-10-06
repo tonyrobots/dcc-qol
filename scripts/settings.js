@@ -49,6 +49,15 @@ export const registerSystemSettings = async function () {
     config: true
   })
 
+  game.settings.register('dcc-qol', 'DisplayHitMiss', {
+    name: 'DCC-QOL.SettingDisplayHitMiss',
+    hint: 'DCC-QOL.SettingDisplayHitMissHint',
+    scope: 'world',
+    type: Boolean,
+    default: true,
+    config: true
+  })
+
   /**
    * Check weapon's range and if target is beyond UI warning diplay appears and prevent rolls
    * Applies penalty for ranged weapons based on range

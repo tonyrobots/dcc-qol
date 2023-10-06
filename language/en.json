@@ -1,7 +1,7 @@
 {
     "DCC-QOL.AttackRollHitsAC": "Hits AC {AC}",
-    "DCC-QOL.AttackRollHits": "hits",
-    "DCC-QOL.AttackRollMisses": "misses",
+    "DCC-QOL.AttackRollHits": "and hits",
+    "DCC-QOL.AttackRollMisses": "and misses",
     "DCC-QOL.AttacksWith": "Attacks with {weapon}",
     "DCC-QOL.BackstabsWith": "Backstabs with {weapon}",
     "DCC-QOL.ControlAToken": "You must controll a token before rolling the attack!",
@@ -18,6 +18,8 @@
     "DCC-QOL.SettingAutomateFriendlyFireHint": "If allies found and missile attach misses request and additional d100 roll",
     "DCC-QOL.SettingAutomateMonsterCritLuck": "Automate PC's Luck modifier aginst monster's critical hit.",
     "DCC-QOL.SettingAutomateMonsterCritLuckHint": "PC's Luck modifier always alters a monster's critical hit.",
+    "DCC-QOL.SettingDisplayHitMiss": "Display hit/miss on attack chatcard",
+    "DCC-QOL.SettingDisplayHitMissHint": "Display hit/miss and target on attack chatcard",
     "DCC-QOL.SettingLog": "Enable Logging",
     "DCC-QOL.SettingLogHint": "Log information written into GM's console.log only",
     "DCC-QOL.SettingWeaponBackstab": "Check if weapon can be used for backstabbing",
