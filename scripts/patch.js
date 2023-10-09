@@ -15,7 +15,7 @@ class DCCQOL extends Actor {
    * Roll a Critical Hit
    * @param {Object} options     Options which configure how attacks are rolled E.g. Backstab
    */
-  async rollCritical (options = {}, targettoken) {
+  async rollCriticalQOL (options = {}, targettoken) {
     /* Collecting modifiers to console logging */
     let debuginfo
 
@@ -168,11 +168,11 @@ class DCCQOL extends Actor {
     return firingIntoMelee
   }
 
-  async rollWeaponAttack (weaponId, options = {}, tokenD = {}) {
+  async rollWeaponAttackQOL (weaponId, options = {}, tokenD = {}) {
     const DCCActor = new game.dcc.DCCActor(this)
 
     // First try and find the item by name or id
-    let weapon = DCCActor.items.find(i => i.name === weaponId || i.id === weaponId)
+    let weapon = this.items.find(i => i.name === weaponId || i.id === weaponId)
 
     // If not found try finding it by slot
     if (!weapon) {
@@ -184,8 +184,8 @@ class DCCQOL extends Actor {
         }
         const isMelee = weaponId[0] === 'm' // 'm' or 'r'
         const weaponIndex = parseInt(weaponId.slice(1)) - 1 // 1 based indexing
-        let weapons = DCCActor.itemTypes.weapon
-        if (DCCActor.system.config.sortInventory) {
+        let weapons = this.itemTypes.weapon
+        if (this.system.config.sortInventory) {
           // ToDo: Move inventory classification and sorting into the actor so this isn't duplicating code in the sheet
           weapons = [...weapons].sort((a, b) => a.name.localeCompare(b.name))
         }
@@ -223,7 +223,7 @@ class DCCQOL extends Actor {
     let lastDeedRoll = 0
     let deedDieHTML
 
-    const attackRollResult = await this.rollToHit(weapon, options, tokenD)
+    const attackRollResult = await this.rollToHitQOL(weapon, options, tokenD)
 
     if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll')) {
       const deedDieFace = Number(this.system.details.attackBonus.replace('+d', ''))
@@ -241,7 +241,10 @@ class DCCQOL extends Actor {
       } else {
         console.warn('DCC-QOL | Missing “+“ sign before @ab in toHit. Dice so nice cannot display deed die roll. ')
       }
-    } else {
+    } 
+    
+    if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && !game.settings.get('dcc-qol', 'automateDeedDieRoll')) 
+    {
       lastDeedRoll = this.system.details.lastRolledAttackBonus
       const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize('DCC.DeedRollValue')}</div> </div>`
       if (lastDeedRoll >= 3) {
@@ -327,7 +330,7 @@ class DCCQOL extends Actor {
     })
   }
 
-  async rollToHit (weapon, options = {}, tokenD) {
+  async rollToHitQOL (weapon, options = {}, tokenD) {
     const DCCActor = new game.dcc.DCCActor(this)
 
     /* Grab the To Hit modifier */
@@ -500,7 +503,7 @@ class DCCQOL extends Actor {
    * @param {Number} damageAmount   Damage amount to apply
    * @param {Number} multiplier     Damage multiplier
    */
-  async applyDamage (damageAmount, multiplier) {
+  async applyDamageQOL (damageAmount, multiplier) {
     // Calculate damage amount and current hit points
     const amount = damageAmount * multiplier
     const hp = this.system.attributes.hp.value

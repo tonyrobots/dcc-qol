@@ -81,7 +81,7 @@ async function ChatCardAction (event) {
           const DCCQOLTargetActor = new DCCQOL(targetActor)
           // Wait for Dice so Nice roll
           if (game.modules.get('dice-so-nice')?.active) game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() => DCCQOLTargetActor.applyDamage(damageRollResult.damage, 1))
-          else { DCCQOLTargetActor.applyDamage(damageRollResult.damage, 1) }
+          else { DCCQOLTargetActor.applyDamageQOL(damageRollResult.damage, 1) }
         }
       } else {
         await damageRollResult.roll.toMessage({
@@ -105,7 +105,7 @@ async function ChatCardAction (event) {
       await act.rollFumble(options)
       break
     case 'crit':
-      await DCCQOLactor.rollCritical(options, targettoken)
+      await DCCQOLactor.rollCriticalQOL(options, targettoken)
       break
     case 'friendlyFire':
 

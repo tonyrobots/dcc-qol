@@ -24,10 +24,10 @@ function tokenForActorId (actorId) {
 }
 
 function rollPatchedWeaponAttack (wrapped, ...args) {
-  const actor = new DCCQOL(game.actors.get(this._id))
-  const tokenD = tokenForActorId(actor._id)
+  const actor = new DCCQOL(this)
+  const tokenD = tokenForActorId(this._id)
   if (tokenD) {
-    actor.rollWeaponAttack(args[0], args[1], tokenD)
+    actor.rollWeaponAttackQOL(args[0], args[1], tokenD)
   } else {
     return ui.notifications.warn(game.i18n.localize('DCC-QOL.ControlAToken'))
   }

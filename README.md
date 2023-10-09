@@ -11,6 +11,7 @@ This module extends the functionality of the Dungeon Crawl Classics module. Any 
   * Checks hits and misses (damage button not displayed on misses)
   * Checks Firing into melee ("Friendly Fire" button displays when ally is near)
  * Calculates range penalty during attack rolls
+* Auto apply damage (targeting can be done befor attack roll or before damageroll)
 
 ![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/de00db42-eab4-491f-afca-244f742be62a)
 ![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/786a457a-31a2-4733-b3e7-ba2d75e1c2f9)
@@ -51,6 +52,7 @@ Paste the following link in the Install Module interface of your Foundry VTT ins
 
 This module extension of the following dcc system functions:
 
+* `applyDamage`
 * `rollCritical`
 * `rollWeaponAttack`
 * `rollToHit`
