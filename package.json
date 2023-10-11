@@ -2,8 +2,8 @@
   "devDependencies": {
     "sass": "^1.32.8",
     "standard": "^16.0.4",
-    "stylelint": "^13.13.1",
-    "stylelint-config-sass-guidelines": "^8.0.0"
+    "stylelint": "^15.10.3",
+    "stylelint-config-sass-guidelines": "^10.0.0"
   },
   "license": "MIT",
   "main": "scripts/dcc-qol.js",
