@@ -80,7 +80,7 @@ async function ChatCardAction (event) {
         if (game.settings.get('dcc-qol', 'automateDamageApply')) {
           const DCCQOLTargetActor = new DCCQOL(targetActor)
           // Wait for Dice so Nice roll
-          if (game.modules.get('dice-so-nice')?.active) game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() => DCCQOLTargetActor.applyDamage(damageRollResult.damage, 1))
+          if (game.modules.get('dice-so-nice')?.active) game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() => DCCQOLTargetActor.applyDamageQOL(damageRollResult.damage, 1))
           else { DCCQOLTargetActor.applyDamageQOL(damageRollResult.damage, 1) }
         }
       } else {
