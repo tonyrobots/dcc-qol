@@ -23,7 +23,8 @@ async function ChatCardAction (event) {
   const message = game.messages.get(messageId)
   const action = button.dataset.action
   button.disabled = false
-  const actor = game.actors.get(card.dataset.actorId) || null
+  // const actor = game.actors.get(card.dataset.actorId) || null
+  const actor = fromUuidSync(card.dataset.tokenId).actor || null
   const messagecreator = message._source.user
 
   if (game.user._id !== messagecreator && !game.user.isGM) return
@@ -79,7 +80,7 @@ async function ChatCardAction (event) {
 
         if (game.settings.get('dcc-qol', 'automateDamageApply')) {
           const DCCQOLTargetActor = new DCCQOL(targetActor)
-          // Wait for Dice so Nice roll
+          /* Update HP only after Dice So Nice animation finished */
           if (game.modules.get('dice-so-nice')?.active) game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() => DCCQOLTargetActor.applyDamageQOL(damageRollResult.damage, 1))
           else { DCCQOLTargetActor.applyDamageQOL(damageRollResult.damage, 1) }
         }
