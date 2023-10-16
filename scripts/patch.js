@@ -507,36 +507,6 @@ class DCCQOL extends Actor {
       firingIntoMelee
     }
   }
-
-  /**
-   * Apply damage to this actor
-   * @param {Number} damageAmount   Damage amount to apply
-   * @param {Number} multiplier     Damage multiplier
-   */
-  async applyDamageQOL (damageAmount, multiplier) {
-    // Calculate damage amount and current hit points
-    const amount = damageAmount * multiplier
-    const hp = this.system.attributes.hp.value
-
-    let newHp = hp
-    if (amount > 0) {
-      // Taking damage - just subtract and allow damage to go below zero
-      newHp = newHp - amount
-    } else {
-      // Healing - don't allow HP to be brought above MaxHP, but if it's already there assume it's intentional
-      const maxHp = this.system.attributes.hp.max
-      if (hp >= maxHp) {
-        newHp = hp
-      } else {
-        newHp = Math.min(newHp - amount, maxHp)
-      }
-    }
-
-    // Apply new HP
-    return this.update({
-      'data.attributes.hp.value': newHp
-    })
-  }
 }
 
 export default DCCQOL
