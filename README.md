@@ -1,17 +1,19 @@
 # DCC Quality of Life Improvements
 
-This module extends the functionality of the Dungeon Crawl Classics module. Any update on DCC might break this module!
+This module extends the functionality of the Dungeon Crawl Classics module.
+
+Any update on DCC might break this module!
 
 * Separated attack/damage/crit and fumble rolls for weapon attacks
-* On the bottom of the attack chat card show information about the weapon/actor (type, equipped, range, (un)trained, two-handed)
-* Displays weapon description (`weapon.system.description.value`)
-* Automated deed die roll for warriors/dwarves (in manual roll mode)
-* Substracting PC's Luck score during monsters' crit roll
+* Displays on attack chat-card information about the weapon/actor (type, equipped, range, (un)trained, two-handed)
+* Displays weapon description (weapon.system.description.value)
+* Automates deed die roll for warriors/dwarves (in manual roll mode)
+* Substracts PC's Luck score from monsters' crit roll
 * Checks the weapon range (requires token targeting)
-  * Checks hits and misses (damage button not displayed on misses)
+  * Checks hits and misses
   * Checks Firing into melee ("Friendly Fire" button displays when ally is near)
- * Calculates range penalty during attack rolls
-* Auto apply damage (targeting can be done before attack roll or before damage roll)
+* Calculates range penalty during attack rolls
+Auto applies damage (targeting can be done before attack roll or before damage roll)
 
 ![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/de00db42-eab4-491f-afca-244f742be62a)
 ![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/786a457a-31a2-4733-b3e7-ba2d75e1c2f9)
