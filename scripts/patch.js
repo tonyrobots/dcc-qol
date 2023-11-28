@@ -79,21 +79,23 @@ class DCCQOL extends Actor {
     // Create the roll emote
     const rollData = escape(JSON.stringify(roll))
     const rollTotal = roll.total
-    const rollHTML = `<a class="inline-roll inline-result" data-roll="${rollData}" data-damage="${rollTotal}" title="${game.dcc.DCCRoll.cleanFormula(roll.terms)}"><i class="fas fa-dice-d20"></i> ${rollTotal}</a>`
+
+    // Generate flags for the roll
+    const flags = {
+      'dcc.RollType': 'CriticalHit',
+      'dcc.ItemId': options.weaponId
+    }
+    if (options.naturalCrit) {
+      game.dcc.FleetingLuck.updateFlagsForCrit(flags)
+    }
 
     // Display crit result or just a notification of the crit
-    if (critResult) {
-      // Generate flags for the roll
-      const flags = {
-        'dcc.RollType': 'CriticalHit',
-        'dcc.ItemId': options.weaponId
-      }
-      if (options.naturalCrit) {
-        game.dcc.FleetingLuck.updateFlagsForCrit(flags)
-      }
-      return ` <br/><br/><span style='color:#ff0000; font-weight: bolder'>${game.i18n.localize('DCC.CriticalHit')}!</span> ${rollHTML}<br/>${critResult.results[0].getChatText()}`
-    } else {
-      return ` <br/><br/><span style='color:#ff0000; font-weight: bolder'>${game.i18n.localize('DCC.CriticalHit')}!</span> ${rollHTML}`
+    if (!critResult) {
+      await roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor: this }),
+        flavor: `${game.i18n.localize('DCC.CriticalHit')}!`,
+        flags
+      })
     }
   }
 
