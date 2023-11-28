@@ -76,32 +76,24 @@ class DCCQOL extends Actor {
       roll = critResult.roll
     }
 
-    if (!options.displayStandardCards) {
-      // Create the roll emote
-      const rollData = escape(JSON.stringify(roll))
-      const rollTotal = roll.total
-      const rollHTML = `<a class="inline-roll inline-result" data-roll="${rollData}" data-damage="${rollTotal}" title="${game.dcc.DCCRoll.cleanFormula(roll.terms)}"><i class="fas fa-dice-d20"></i> ${rollTotal}</a>`
+    // Create the roll emote
+    const rollData = escape(JSON.stringify(roll))
+    const rollTotal = roll.total
+    const rollHTML = `<a class="inline-roll inline-result" data-roll="${rollData}" data-damage="${rollTotal}" title="${game.dcc.DCCRoll.cleanFormula(roll.terms)}"><i class="fas fa-dice-d20"></i> ${rollTotal}</a>`
 
-      // Display crit result or just a notification of the crit
-      if (critResult) {
-        return ` <br/><br/><span style='color:#ff0000; font-weight: bolder'>${game.i18n.localize('DCC.CriticalHit')}!</span> ${rollHTML}<br/>${critResult.results[0].getChatText()}`
-      } else {
-        return ` <br/><br/><span style='color:#ff0000; font-weight: bolder'>${game.i18n.localize('DCC.CriticalHit')}!</span> ${rollHTML}`
-      }
-    } else if (!critResult) {
+    // Display crit result or just a notification of the crit
+    if (critResult) {
       // Generate flags for the roll
       const flags = {
         'dcc.RollType': 'CriticalHit',
         'dcc.ItemId': options.weaponId
       }
-      game.dcc.FleetingLuck.updateFlagsForCrit(flags)
-
-      // Display the raw crit roll
-      await roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor: this }),
-        flavor: `${game.i18n.localize('DCC.CriticalHit')}!`,
-        flags
-      })
+      if (options.naturalCrit) {
+        game.dcc.FleetingLuck.updateFlagsForCrit(flags)
+      }
+      return ` <br/><br/><span style='color:#ff0000; font-weight: bolder'>${game.i18n.localize('DCC.CriticalHit')}!</span> ${rollHTML}<br/>${critResult.results[0].getChatText()}`
+    } else {
+      return ` <br/><br/><span style='color:#ff0000; font-weight: bolder'>${game.i18n.localize('DCC.CriticalHit')}!</span> ${rollHTML}`
     }
   }
 
@@ -224,6 +216,9 @@ class DCCQOL extends Actor {
     let deedDieHTML
 
     const attackRollResult = await this.rollToHitQOL(weapon, options, tokenD)
+    if (attackRollResult.naturalCrit) {
+      options.naturalCrit = true
+    }
 
     if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll')) {
       const deedDieFace = Number(this.system.details.attackBonus.replace('+d', ''))
@@ -491,8 +486,9 @@ class DCCQOL extends Actor {
     }
 
     /* Check for crit or fumble */
-    const crit = (d20RollResult > 1 && (d20RollResult >= critRange || options.backstab))
     const fumble = (d20RollResult === 1)
+    const naturalCrit = d20RollResult >= critRange
+    const crit = !fumble && (naturalCrit || options.backstab)
 
     if (game.settings.get('dcc-qol', 'log') && game.user.isGM) console.warn('DCC-QOL |', debuginfo)
 
@@ -503,6 +499,7 @@ class DCCQOL extends Actor {
       hitsAc: attackRoll.total,
       d20Roll: d20RollResult,
       crit,
+      naturalCrit,
       fumble,
       firingIntoMelee
     }

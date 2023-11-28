@@ -13,7 +13,7 @@
     "url": "git+https://github.com/foundryvtt-dcc/dcc.git"
   },
   "scripts": {
-    "format": "standard --fix; npx stylelint '**/*.css'",
+    "format": "standard --fix && stylelint \"**/*.scss\"",
     "scss": "sass styles/dcc-qol.css"
   },
   "version": "0.0.1"
