@@ -24,15 +24,15 @@ class DCCQOL extends Actor {
       {
         type: 'Die',
         formula: this.system.attributes.critical.die
-      },
-      {
-        type: 'Modifier',
-        label: game.i18n.localize('DCC.AbilityLck'),
-        formula: parseInt(this.system.abilities.lck.mod || '0')
       }
     ]
 
     if ((this.type === 'NPC') && game.settings.get('dcc-qol', 'automateMonsterCritLuck')) {
+      terms.push({
+        type: 'Modifier',
+        label: game.i18n.localize('DCC.AbilityLck'),
+        formula: parseInt(this.system.abilities.lck.mod || '0')
+      })
       const index = terms.findIndex(element => element.type === 'Modifier')
       if (targettoken) {
         const targetactor = game.actors.get(targettoken.actorId)
@@ -63,7 +63,7 @@ class DCCQOL extends Actor {
           const entry = pack.index.find((entity) => entity.name.startsWith(critTableFilter))
           if (entry) {
             const table = await pack.getDocument(entry._id)
-            critResult = await table.draw({ roll, displayChat: options.displayStandardCards })
+            critResult = await table.draw({ roll, displayChat: true })
           }
         }
       }

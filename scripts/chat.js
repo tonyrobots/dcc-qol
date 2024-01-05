@@ -1,4 +1,4 @@
-/* global game, fromUuidSync, Roll */
+/* global canvas, game, fromUuidSync, Roll */
 
 import DCCQOL from './patch.js'
 
@@ -112,7 +112,16 @@ async function ChatCardAction (event) {
       await act.rollFumble(options)
       break
     case 'crit':
+      const controlledTokens = canvas.tokens.controlled
+      let cToken
+      cToken = canvas.tokens.get(fromUuidSync(card.dataset.tokenId)._id)
+      cToken.control({ releaseOthers: true })
       await DCCQOLactor.rollCriticalQOL(options, targettoken)
+      canvas.tokens.selectObjects()
+      for (const token of controlledTokens) {
+        cToken = canvas.tokens.get(token.id)
+        cToken.control({ releaseOthers: false })
+      }
       break
     case 'friendlyFire':
 
