@@ -1,6 +1,26 @@
-/* global canvas, game, fromUuidSync, Roll */
+/* global canvas, game, fromUuidSync, Roll, socketlib */
 
 import DCCQOL from './patch.js'
+
+export let socketlibSocket
+
+async function applyDamageQOL (targettoken, damage) {
+  let targetActor
+  if (targettoken) {
+    game.user.updateTokenTargets([targettoken._id])
+    targetActor = game.canvas.tokens.get(targettoken._id).actor
+  } else {
+    targetActor = game.user.targets.first().actor
+  }
+  await targetActor.update({
+    'data.attributes.hp.value': targetActor.system.attributes.hp.value - damage
+  })
+}
+
+export const setupSocket = () => {
+  socketlibSocket = socketlib.registerModule('dcc-qol')
+  socketlibSocket.register('applyDamageQOL', applyDamageQOL)
+}
 
 export function addChatListeners (html) {
   html.on('click', '.card-buttons button', ChatCardAction)
@@ -39,6 +59,9 @@ async function ChatCardAction (event) {
 
   const targettokenId = card.dataset.targettokenId
   const targettoken = fromUuidSync(targettokenId)
+
+  const controlledTokens = canvas.tokens.controlled
+  let cToken
 
   switch (action) {
     case 'damage':
@@ -81,13 +104,9 @@ async function ChatCardAction (event) {
         if (game.settings.get('dcc-qol', 'automateDamageApply')) {
           /* Update HP only after Dice So Nice animation finished */
           if (game.modules.get('dice-so-nice')?.active) {
-            game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() => targetActor.update({
-              'data.attributes.hp.value': targetActor.system.attributes.hp.value - damageRollResult.damage
-            }))
+            game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() => socketlibSocket.executeAsGM('applyDamageQOL', targettoken, damageRollResult.damage))
           } else {
-            await targetActor.update({
-              'data.attributes.hp.value': targetActor.system.attributes.hp.value - damageRollResult.damage
-            })
+            await socketlibSocket.executeAsGM('applyDamageQOL', targettoken, damageRollResult.damage)
           }
         }
       } else {
@@ -109,11 +128,16 @@ async function ChatCardAction (event) {
 
       break
     case 'fumble':
+      cToken = canvas.tokens.get(fromUuidSync(card.dataset.tokenId)._id)
+      cToken.control({ releaseOthers: true })      
       await act.rollFumble(options)
+      canvas.tokens.selectObjects()      
+      for (const token of controlledTokens) {
+        cToken = canvas.tokens.get(token.id)
+        cToken.control({ releaseOthers: false })
+      }      
       break
     case 'crit':
-      const controlledTokens = canvas.tokens.controlled
-      let cToken
       cToken = canvas.tokens.get(fromUuidSync(card.dataset.tokenId)._id)
       cToken.control({ releaseOthers: true })
       await DCCQOLactor.rollCriticalQOL(options, targettoken)

@@ -26,6 +26,7 @@
     "DCC-QOL.SettingWeaponBackstabHint": "Check weapon can be used for backstabbing if not UI warning diplay appears and prevent rolls",
     "DCC-QOL.SettingWeaponRangeCheck": "Check weapon range",
     "DCC-QOL.SettingWeaponRangeCheckHint": "Applies penalty for ranged weapons based on range",
+    "DCC-QOL.socketlibWarning": "Module DCC-QOL requires the 'socketlib' module. Please install and activate it.",    
     "DCC-QOL.TakeDamage": "{actor} takes {damage} HP of damage.",
     "DCC-QOL.TargetAToken": "You must target a token before rolling the attack!",
     "DCC-QOL.TargetOneToken": "You must target only one token before rolling the attack!",

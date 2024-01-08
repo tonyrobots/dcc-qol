@@ -77,8 +77,8 @@ class DCCQOL extends Actor {
     }
 
     // Create the roll emote
-    const rollData = escape(JSON.stringify(roll))
-    const rollTotal = roll.total
+    // const rollData = escape(JSON.stringify(roll))
+    // const rollTotal = roll.total
 
     // Generate flags for the roll
     const flags = {

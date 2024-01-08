@@ -41,7 +41,10 @@ Hooks.once('init', async function () {
   console.log('DCC-QOL | Initializing DCC-QOL.')
   if (!game.modules.get('lib-wrapper')?.active) {
     console.warn('DCC-QOL | libWrapper is NOT active exiting!')
-    return ui.notifications.warn(game.i18n.localize('DCC-QOL.libwrapperWarning'))
+  }
+  if (!game.modules.get('socketlib')?.active) {
+    console.warn('DCC-QOL | socketlib is NOT active exiting!')
+    return
   }
   await registerSystemSettings()
   preloadTemplates()
@@ -49,9 +52,19 @@ Hooks.once('init', async function () {
   Hooks.on('renderChatLog', (app, html, data) => chat.addChatListeners(html))
 })
 
+Hooks.once('setup', async function () {
+  // Do anything after initialization but before ready
+  chat.setupSocket()
+}
+)
+
 Hooks.once('ready', async function () {
   if (!game.modules.get('lib-wrapper')?.active && game.user.isGM) {
     console.warn('DCC-QOL | libWrapper is NOT active exiting!')
     ui.notifications.warn(game.i18n.localize('DCC-QOL.libwrapperWarning'))
+  }
+  if (!game.modules.get('socketlib')?.active && game.user.isGM) {
+    console.warn('DCC-QOL | socketlib is NOT active exiting!')
+    ui.notifications.warn(game.i18n.localize('DCC-QOL.socketlibWarning'))
   }
 })
