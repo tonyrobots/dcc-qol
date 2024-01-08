@@ -46,7 +46,9 @@ Friendly fire check results:
 # Manual installation
 
 - Requires [libWrapper](https://foundryvtt.com/packages/lib-wrapper)
+- Requires [socketlib](https://foundryvtt.com/packages/socketlib)
 - Requires [Dungeon Crawl Classics](https://foundryvtt.com/packages/dcc)
+
 
 Paste the following link in the Install Module interface of your Foundry VTT instance:
 
