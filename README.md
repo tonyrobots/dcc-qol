@@ -13,7 +13,7 @@ Any update on DCC might break this module!
   * Checks hits and misses
   * Checks Firing into melee ("Friendly Fire" button displays when ally is near)
 * Calculates range penalty during attack rolls
-Auto applies damage (targeting can be done before attack roll or before damage roll)
+* Auto applies damage (targeting can be done before attack roll or before damage roll) - auto apply runs on Gamemaster's client 
 
 ![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/de00db42-eab4-491f-afca-244f742be62a)
 ![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/786a457a-31a2-4733-b3e7-ba2d75e1c2f9)
