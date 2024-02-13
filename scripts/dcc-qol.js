@@ -7,7 +7,7 @@ export async function preloadTemplates() {
   return loadTemplates(templatePaths)
 }
 
-function tokenForActorId(actorId) {
+function tokenForActorId (actorId) {
   const actor = game.actors.get(actorId)
   const allTokens = actor.getActiveTokens()
   if (allTokens.length === 1) return allTokens[0].document
@@ -23,7 +23,7 @@ function tokenForActorId(actorId) {
   }
 }
 
-function rollPatchedWeaponAttack(wrapped, ...args) {
+function rollPatchedWeaponAttack (wrapped, ...args) {
   const actor = new DCCQOL(this)
   const tokenD = tokenForActorId(this._id)
   // if settings are set to checkWeaponRange, or automateFriendlyFire, require a token to be in scene; otherwise, proceed without one
@@ -38,7 +38,7 @@ function rollPatchedWeaponAttack(wrapped, ...args) {
   actor.rollWeaponAttackQOL(args[0], args[1], tokenD)
 }
 
-function initPatching() {
+function initPatching () {
   libWrapper.register(
     'dcc-qol',
     'game.dcc.DCCActor.prototype.rollWeaponAttack',

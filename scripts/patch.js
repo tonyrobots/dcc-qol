@@ -2,12 +2,12 @@
 
 class DCCQOL extends Actor {
   /** @override */
-  prepareBaseData() {
+  prepareBaseData () {
     super.prepareBaseData()
   }
 
   /** @override */
-  prepareDerivedData() {
+  prepareDerivedData () {
     super.prepareDerivedData()
   }
 
@@ -15,7 +15,7 @@ class DCCQOL extends Actor {
    * Roll a Critical Hit
    * @param {Object} options     Options which configure how attacks are rolled E.g. Backstab
    */
-  async rollCriticalQOL(options = {}, targettoken) {
+  async rollCriticalQOL (options = {}, targettoken) {
     /* Collecting modifiers to console logging */
     let debuginfo
 
@@ -109,7 +109,7 @@ class DCCQOL extends Actor {
     }
   }
 
-  async getWeaponProperties(weapon, options) {
+  async getWeaponProperties (weapon, options) {
     const properties = []
 
     if (weapon.system.melee) {
@@ -142,7 +142,7 @@ class DCCQOL extends Actor {
    * @param {Object} token1    The token "from"
    * @param {Object} token2    The token "to"
    */
-  async measureTokenDistance(token1, token2) {
+  async measureTokenDistance (token1, token2) {
     const gs = game.canvas.dimensions.size
     const ray = new Ray(token1, token2)
 
@@ -159,7 +159,7 @@ class DCCQOL extends Actor {
     return distanceOnGrid
   }
 
-  async checkFiringIntoMelee(targetTokenDocument) {
+  async checkFiringIntoMelee (targetTokenDocument) {
     let firingIntoMelee = false
 
     for (const token of game.canvas.tokens.placeables) {
@@ -174,7 +174,7 @@ class DCCQOL extends Actor {
     return firingIntoMelee
   }
 
-  async rollWeaponAttackQOL(weaponId, options = {}, tokenD = {}) {
+  async rollWeaponAttackQOL (weaponId, options = {}, tokenD = {}) {
     const DCCActor = new game.dcc.DCCActor(this)
 
     // First try and find the item by name or id
@@ -438,7 +438,7 @@ class DCCQOL extends Actor {
     }
   }
 
-  async rollToHitQOL(weapon, options = {}, tokenD) {
+  async rollToHitQOL (weapon, options = {}, tokenD) {
     const DCCActor = new game.dcc.DCCActor(this)
 
     /* Grab the To Hit modifier */

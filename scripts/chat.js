@@ -4,7 +4,7 @@ import DCCQOL from './patch.js'
 
 export let socketlibSocket
 
-async function applyDamageQOL(targettoken, damage) {
+async function applyDamageQOL (targettoken, damage) {
   let targetActor
   if (targettoken) {
     game.user.updateTokenTargets([targettoken._id])
@@ -22,12 +22,12 @@ export const setupSocket = () => {
   socketlibSocket.register('applyDamageQOL', applyDamageQOL)
 }
 
-export function addChatListeners(html) {
+export function addChatListeners (html) {
   html.on('click', '.card-buttons button', ChatCardAction)
   html.on('click', '.card-header', ChatCardToggleContent)
 }
 
-async function ChatCardToggleContent(event) {
+async function ChatCardToggleContent (event) {
   event.preventDefault()
   const header = event.currentTarget
   const card = header.closest('.chat-card')
@@ -35,7 +35,7 @@ async function ChatCardToggleContent(event) {
   content.style.display = content.style.display === 'none' ? 'block' : 'none'
 }
 
-async function ChatCardAction(event) {
+async function ChatCardAction (event) {
   const button = event.currentTarget
   button.disabled = true
   const card = button.closest('.chat-card')
