@@ -50,10 +50,10 @@ function initPatching() {
 Hooks.once('init', async function () {
   console.log('DCC-QOL | Initializing DCC-QOL.')
   if (!game.modules.get('lib-wrapper')?.active) {
-    console.warn('DCC-QOL | libWrapper is NOT active exiting!')
+    console.warn('DCC-QOL | libWrapper is NOT active; exiting!')
   }
   if (!game.modules.get('socketlib')?.active) {
-    console.warn('DCC-QOL | socketlib is NOT active exiting!')
+    console.warn('DCC-QOL | socketlib is NOT active; exiting!')
     return
   }
   await registerSystemSettings()

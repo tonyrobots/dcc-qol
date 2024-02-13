@@ -13,7 +13,7 @@ async function applyDamageQOL(targettoken, damage) {
     targetActor = game.user.targets.first().actor
   }
   await targetActor.update({
-    'data.attributes.hp.value': targetActor.system.attributes.hp.value - damage,
+    'data.attributes.hp.value': targetActor.system.attributes.hp.value - damage
   })
 }
 
@@ -90,7 +90,7 @@ async function ChatCardAction(event) {
             '<br/>' +
             game.i18n.format('DCC-QOL.TakeDamage', {
               actor: targetActor.name,
-              damage: damageRollResult.damage,
+              damage: damageRollResult.damage
             })
         } else {
           diceHTML =
@@ -98,23 +98,23 @@ async function ChatCardAction(event) {
             '<br/>' +
             game.i18n.format('DCC-QOL.TakeDamageManual', {
               actor: targetActor.name,
-              damage: damageRollResult.damage,
+              damage: damageRollResult.damage
             })
         }
 
         const msg = await damageRollResult.roll.toMessage({
           user: game.user.id,
           speaker: {
-            alias: actor.name,
+            alias: actor.name
           },
           content: diceHTML,
           flavor: game.i18n.format('DCC-QOL.DamageRoll', {
-            weapon: weapon.name,
+            weapon: weapon.name
           }),
           flags: {
             'dcc.RollType': 'Damage',
-            'dcc.ItemId': options.weaponId,
-          },
+            'dcc.ItemId': options.weaponId
+          }
         })
 
         if (game.settings.get('dcc-qol', 'automateDamageApply')) {
@@ -141,16 +141,16 @@ async function ChatCardAction(event) {
         await damageRollResult.roll.toMessage({
           user: game.user.id,
           speaker: {
-            alias: actor.name,
+            alias: actor.name
           },
           content: diceHTML,
           flavor: game.i18n.format('DCC-QOL.DamageRoll', {
-            weapon: weapon.name,
+            weapon: weapon.name
           }),
           flags: {
             'dcc.RollType': 'Damage',
-            'dcc.ItemId': options.weaponId,
-          },
+            'dcc.ItemId': options.weaponId
+          }
         })
       }
 
@@ -178,7 +178,7 @@ async function ChatCardAction(event) {
     case 'friendlyFire':
       const roll = new Roll('d100')
       await roll.evaluate({
-        async: true,
+        async: true
       })
 
       const friendlyFire = await roll.render()
@@ -186,14 +186,14 @@ async function ChatCardAction(event) {
 
       if (roll._total >= 51) {
         const chatText = game.i18n.format('DCC-QOL.FriendlyFireSuccess', {
-          weapon: weapon.name,
+          weapon: weapon.name
         })
         friendlyFireHTML =
           friendlyFire.replace('dice-total', 'dice-total success') +
           `<div class="dccqol chat-card"><div class="chat-details"><div class="ff-result">${chatText}</div></div></div>`
       } else {
         const chatText = game.i18n.format('DCC-QOL.FriendlyFireFail', {
-          weapon: weapon.name,
+          weapon: weapon.name
         })
         friendlyFireHTML =
           friendlyFire.replace('dice-total', 'dice-total fail') +
@@ -203,11 +203,11 @@ async function ChatCardAction(event) {
       roll.toMessage({
         user: game.user.id,
         speaker: {
-          alias: actor.name,
+          alias: actor.name
         },
         flavor: game.i18n.localize('DCC-QOL.FriendlyFireCheck'),
         content: friendlyFireHTML,
-        rollMode: game.settings.get('core', 'rollMode'),
+        rollMode: game.settings.get('core', 'rollMode')
       })
       break
   }

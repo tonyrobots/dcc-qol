@@ -23,8 +23,8 @@ class DCCQOL extends Actor {
     const terms = [
       {
         type: 'Die',
-        formula: this.system.attributes.critical.die,
-      },
+        formula: this.system.attributes.critical.die
+      }
     ]
 
     if (
@@ -34,7 +34,7 @@ class DCCQOL extends Actor {
       terms.push({
         type: 'Modifier',
         label: game.i18n.localize('DCC.AbilityLck'),
-        formula: parseInt(this.system.abilities.lck.mod || '0'),
+        formula: parseInt(this.system.abilities.lck.mod || '0')
       })
       const index = terms.findIndex((element) => element.type === 'Modifier')
       if (targettoken) {
@@ -72,7 +72,7 @@ class DCCQOL extends Actor {
             const table = await pack.getDocument(entry._id)
             critResult = await table.draw({
               roll,
-              displayChat: true,
+              displayChat: true
             })
           }
         }
@@ -93,7 +93,7 @@ class DCCQOL extends Actor {
     // Generate flags for the roll
     const flags = {
       'dcc.RollType': 'CriticalHit',
-      'dcc.ItemId': options.weaponId,
+      'dcc.ItemId': options.weaponId
     }
     if (options.naturalCrit) {
       game.dcc.FleetingLuck.updateFlagsForCrit(flags)
@@ -104,7 +104,7 @@ class DCCQOL extends Actor {
       await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this }),
         flavor: `${game.i18n.localize('DCC.CriticalHit')}!`,
-        flags,
+        flags
       })
     }
   }
@@ -207,7 +207,7 @@ class DCCQOL extends Actor {
     if (!weapon) {
       return ui.notifications.warn(
         game.i18n.format('DCC.WeaponNotFound', {
-          id: weaponId,
+          id: weaponId
         })
       )
     }
@@ -221,7 +221,7 @@ class DCCQOL extends Actor {
       await DCCActor.rollAttackBonus(
         Object.assign(
           {
-            rollWeaponAttack: true,
+            rollWeaponAttack: true
           },
           options
         )
@@ -365,11 +365,11 @@ class DCCQOL extends Actor {
 
     if (options.backstab) {
       headerText = game.i18n.format('DCC-QOL.BackstabsWith', {
-        weapon: weapon.name,
+        weapon: weapon.name
       })
     } else {
       headerText = game.i18n.format('DCC-QOL.AttacksWith', {
-        weapon: weapon.name,
+        weapon: weapon.name
       })
     }
 
@@ -395,10 +395,10 @@ class DCCQOL extends Actor {
       deedDieHTML: deedDieHTML,
       isDisplayHitMiss: game.settings.get('dcc-qol', 'DisplayHitMiss'),
       hitsAc: game.i18n.format('DCC-QOL.AttackRollHitsAC', {
-        AC: attackRollResult.hitsAc,
+        AC: attackRollResult.hitsAc
       }),
       hitsTarget,
-      friendlyFire,
+      friendlyFire
     }
     const html = await renderTemplate(
       'modules/dcc-qol/templates/attackroll-card.html',
@@ -408,14 +408,14 @@ class DCCQOL extends Actor {
     // ChatMessage.create(chatData)
     const msg = await attackRollResult.roll.toMessage({
       speaker: {
-        alias: DCCActor.name,
+        alias: DCCActor.name
       },
       content: html,
       rollMode: game.settings.get('core', 'rollMode'),
       flags: {
         'dcc.RollType': 'ToHit',
-        'dcc.ItemId': options.weaponId,
-      },
+        'dcc.ItemId': options.weaponId
+      }
     })
 
     /* Update AttackBonus only after Dice So Nice animation finished */
@@ -427,12 +427,12 @@ class DCCQOL extends Actor {
       if (game.modules.get('dice-so-nice')?.active)
         game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() =>
           this.update({
-            'data.details.lastRolledAttackBonus': lastDeedRoll,
+            'data.details.lastRolledAttackBonus': lastDeedRoll
           })
         )
       else {
         this.update({
-          'data.details.lastRolledAttackBonus': lastDeedRoll,
+          'data.details.lastRolledAttackBonus': lastDeedRoll
         })
       }
     }
@@ -470,7 +470,7 @@ class DCCQOL extends Actor {
     if (!(await Roll.validate(toHit))) {
       return {
         rolled: false,
-        formula: weapon.system.toHit,
+        formula: weapon.system.toHit
       }
     }
 
@@ -481,9 +481,9 @@ class DCCQOL extends Actor {
         label: game.i18n.localize('DCC.ActionDie'),
         formula: die,
         presets: DCCActor.getActionDice({
-          includeUntrained: !automateUntrainedAttack,
-        }),
-      },
+          includeUntrained: !automateUntrainedAttack
+        })
+      }
     ]
 
     /* Remove empty toHit value from RollFormula */
@@ -494,7 +494,7 @@ class DCCQOL extends Actor {
         type: 'Compound',
         dieLabel: game.i18n.localize('DCC.DeedDie'),
         modifierLabel: game.i18n.localize('DCC.ToHit'),
-        formula: toHit,
+        formula: toHit
       })
     }
 
@@ -516,7 +516,7 @@ class DCCQOL extends Actor {
       terms.push({
         type: 'Modifier',
         label: game.i18n.localize('DCC.Backstab'),
-        formula: parseInt(DCCActor.system.class.backstab),
+        formula: parseInt(DCCActor.system.class.backstab)
       })
       debuginfo = debuginfo + '[Backstab]'
     }
@@ -545,7 +545,7 @@ class DCCQOL extends Actor {
           terms.push({
             type: 'Modifier',
             label: game.i18n.localize('DCC-QOL.WeaponRangePenalty'),
-            formula: '-2',
+            formula: '-2'
           })
           debuginfo = debuginfo + '[MediumRange:-2]'
         }
@@ -574,7 +574,7 @@ class DCCQOL extends Actor {
           game.i18n.localize(modifierLabel) +
           ' ' +
           game.i18n.localize('DCC.Modifier'),
-        formula: modifier,
+        formula: modifier
       })
       debuginfo = debuginfo + `[AbilityMod:${modifier}]`
     }
@@ -592,7 +592,7 @@ class DCCQOL extends Actor {
         terms.push({
           type: 'Modifier',
           label: game.i18n.localize('DCC-QOL.WeaponMissileToMelee'),
-          formula: '-1',
+          formula: '-1'
         })
         debuginfo = debuginfo + '[MissileToMelee:-1]'
       }
@@ -615,7 +615,7 @@ class DCCQOL extends Actor {
             game.i18n.localize('DCC.AbilityLck') +
             ' ' +
             game.i18n.localize('DCC.Modifier'),
-          formula: DCCActor.system.abilities.lck.mod,
+          formula: DCCActor.system.abilities.lck.mod
         })
         debuginfo = debuginfo + `[Luck:${DCCActor.system.abilities.lck.mod}]`
       }
@@ -624,7 +624,7 @@ class DCCQOL extends Actor {
     /* Roll the Attack */
     const rollOptions = Object.assign(
       {
-        title: game.i18n.localize('DCC.ToHit'),
+        title: game.i18n.localize('DCC.ToHit')
       },
       options
     )
@@ -632,14 +632,14 @@ class DCCQOL extends Actor {
       terms,
       Object.assign(
         {
-          critical: critRange,
+          critical: critRange
         },
         DCCActor.getRollData()
       ),
       rollOptions
     )
     await attackRoll.evaluate({
-      async: true,
+      async: true
     })
 
     // Adjust crit range if the die size was adjusted
@@ -649,7 +649,7 @@ class DCCQOL extends Actor {
 
     const d20RollResult = attackRoll.dice[0].total
     attackRoll.dice[0].options.dcc = {
-      upperThreshold: critRange,
+      upperThreshold: critRange
     }
 
     /* Check for crit or fumble */
@@ -669,7 +669,7 @@ class DCCQOL extends Actor {
       crit,
       naturalCrit,
       fumble,
-      firingIntoMelee,
+      firingIntoMelee
     }
   }
 }
