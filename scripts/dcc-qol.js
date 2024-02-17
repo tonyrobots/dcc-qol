@@ -2,7 +2,7 @@
 import { registerSystemSettings } from './settings.js'
 import DCCQOL from './patch.js'
 import * as chat from './chat.js'
-export async function preloadTemplates() {
+export async function preloadTemplates () {
   const templatePaths = ['modules/dcc-qol/templates/attackroll-card.html']
   return loadTemplates(templatePaths)
 }

@@ -43,8 +43,7 @@ class DCCQOL extends Actor {
         terms[index].formula = luckModifier * -1
         debuginfo =
           'Crit roll: ' + this.name + ` [TargetLuckModifier:${luckModifier}]`
-        if (game.settings.get('dcc-qol', 'log') && game.user.isGM)
-          console.warn('DCC-QOL |', debuginfo)
+        if (game.settings.get('dcc-qol', 'log') && game.user.isGM) { console.warn('DCC-QOL |', debuginfo) }
       } else {
         terms.splice(index, 1)
       }
@@ -231,18 +230,20 @@ class DCCQOL extends Actor {
     if (
       !weapon.system.equipped &&
       game.settings.get('dcc', 'checkWeaponEquipment')
-    )
+    ) {
       return ui.notifications.warn(
         game.i18n.localize('DCC.WeaponWarningUnequipped')
       )
+    }
     if (
       !weapon.system.backstab &&
       game.settings.get('dcc-qol', 'checkWeaponBackstab') &&
       options.backstab
-    )
+    ) {
       return ui.notifications.warn(
         game.i18n.localize('DCC-QOL.WeaponWarningNonBackstabBonus')
       )
+    }
 
     const targets = Array.from(game.user.targets)
 
@@ -309,8 +310,7 @@ class DCCQOL extends Actor {
 
     const diceHTML = await attackRollResult.roll.render()
 
-    if (targets.length > 1)
-      return ui.notifications.warn(game.i18n.localize('DCC-QOL.TargetOneToken'))
+    if (targets.length > 1) { return ui.notifications.warn(game.i18n.localize('DCC-QOL.TargetOneToken')) }
 
     // Check if the target is within range, if there is a token defined
     if (tokenD !== undefined) {
@@ -324,18 +324,20 @@ class DCCQOL extends Actor {
         if (
           weapon.system.melee &&
           tokenDistance / game.canvas.scene.grid.distance > 1
-        )
+        ) {
           return ui.notifications.warn(
             game.i18n.localize('DCC-QOL.WeaponMeleeWarn')
           )
+        }
 
         const range = weapon.system.range
         const rangeArray = range.split('/')
         // warn if ranged attack target is too far for weapon
-        if (tokenDistance > rangeArray[2])
+        if (tokenDistance > rangeArray[2]) {
           return ui.notifications.warn(
             game.i18n.localize('DCC-QOL.WeaponRangedWarn')
           )
+        }
 
         // check for friendly fire
         hitsTarget =
@@ -352,11 +354,9 @@ class DCCQOL extends Actor {
             if (
               token.document.disposition === 1 &&
               !(token.document === tokenD)
-            )
-              Allies++
+            ) { Allies++ }
           }
-          if (Allies >= 1 && attackRollResult.firingIntoMelee)
-            friendlyFire = true
+          if (Allies >= 1 && attackRollResult.firingIntoMelee) { friendlyFire = true }
         }
       }
     }
@@ -424,13 +424,13 @@ class DCCQOL extends Actor {
         DCCActor.system.details.sheetClass === 'Dwarf') &&
       game.settings.get('dcc-qol', 'automateDeedDieRoll')
     ) {
-      if (game.modules.get('dice-so-nice')?.active)
+      if (game.modules.get('dice-so-nice')?.active) {
         game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() =>
           this.update({
             'data.details.lastRolledAttackBonus': lastDeedRoll
           })
         )
-      else {
+      } else {
         this.update({
           'data.details.lastRolledAttackBonus': lastDeedRoll
         })
@@ -657,8 +657,7 @@ class DCCQOL extends Actor {
     const naturalCrit = d20RollResult >= critRange
     const crit = !fumble && (naturalCrit || options.backstab)
 
-    if (game.settings.get('dcc-qol', 'log') && game.user.isGM)
-      console.warn('DCC-QOL |', debuginfo)
+    if (game.settings.get('dcc-qol', 'log') && game.user.isGM) { console.warn('DCC-QOL |', debuginfo) }
 
     return {
       rolled: true,

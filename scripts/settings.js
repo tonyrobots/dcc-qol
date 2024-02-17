@@ -12,6 +12,17 @@ export const registerSystemSettings = async function () {
     config: true
   })
   /**
+   * Manual damage apply hint
+   */
+  game.settings.register('dcc-qol', 'manualDamageApplyHint', {
+    name: 'DCC-QOL.SettingTakeDamageManual',
+    hint: 'DCC-QOL.SettingTakeDamageManualHint',
+    scope: 'world',
+    type: Boolean,
+    default: true,
+    config: true
+  })
+  /**
    * Automate Deed Die Roll for warrior/dwarf attacks
    */
   game.settings.register('dcc-qol', 'automateDeedDieRoll', {
