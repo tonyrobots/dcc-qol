@@ -27,19 +27,24 @@ class DCCQOL extends Actor {
       }
     ]
 
-    if ((this.type === 'NPC') && game.settings.get('dcc-qol', 'automateMonsterCritLuck')) {
+    if (
+      this.type === 'NPC' &&
+      game.settings.get('dcc-qol', 'automateMonsterCritLuck')
+    ) {
       terms.push({
         type: 'Modifier',
         label: game.i18n.localize('DCC.AbilityLck'),
         formula: parseInt(this.system.abilities.lck.mod || '0')
       })
-      const index = terms.findIndex(element => element.type === 'Modifier')
+      const index = terms.findIndex((element) => element.type === 'Modifier')
       if (targettoken) {
         const targetactor = game.actors.get(targettoken.actorId)
         const luckModifier = targetactor.system.abilities.lck.mod
         terms[index].formula = luckModifier * -1
-        debuginfo = 'Crit roll: ' + this.name + ` [TargetLuckModifier:${luckModifier}]`
-        if (game.settings.get('dcc-qol', 'log') && game.user.isGM) console.warn('DCC-QOL |', debuginfo)
+        debuginfo =
+          'Crit roll: ' + this.name + ` [TargetLuckModifier:${luckModifier}]`
+        if (game.settings.get('dcc-qol', 'log') && game.user.isGM)
+          console.warn('DCC-QOL |', debuginfo)
       } else {
         terms.splice(index, 1)
       }
@@ -60,10 +65,15 @@ class DCCQOL extends Actor {
         if (pack) {
           await pack.getIndex() // Load the compendium index
           const critTableFilter = `Crit Table ${this.system.attributes.critical.table}`
-          const entry = pack.index.find((entity) => entity.name.startsWith(critTableFilter))
+          const entry = pack.index.find((entity) =>
+            entity.name.startsWith(critTableFilter)
+          )
           if (entry) {
             const table = await pack.getDocument(entry._id)
-            critResult = await table.draw({ roll, displayChat: true })
+            critResult = await table.draw({
+              roll,
+              displayChat: true
+            })
           }
         }
       }
@@ -154,7 +164,9 @@ class DCCQOL extends Actor {
 
     for (const token of game.canvas.tokens.placeables) {
       if (!(token.document === targetTokenDocument)) {
-        if (await this.measureTokenDistance(targetTokenDocument, token) <= 5) {
+        if (
+          (await this.measureTokenDistance(targetTokenDocument, token)) <= 5
+        ) {
           firingIntoMelee = true
         }
       }
@@ -166,7 +178,9 @@ class DCCQOL extends Actor {
     const DCCActor = new game.dcc.DCCActor(this)
 
     // First try and find the item by name or id
-    let weapon = this.items.find(i => i.name === weaponId || i.id === weaponId)
+    let weapon = this.items.find(
+      (i) => i.name === weaponId || i.id === weaponId
+    )
 
     // If not found try finding it by slot
     if (!weapon) {
@@ -183,15 +197,19 @@ class DCCQOL extends Actor {
           // ToDo: Move inventory classification and sorting into the actor so this isn't duplicating code in the sheet
           weapons = [...weapons].sort((a, b) => a.name.localeCompare(b.name))
         }
-        weapon = weapons.filter(i => !!i.system.melee === isMelee)[weaponIndex]
+        weapon = weapons.filter((i) => !!i.system.melee === isMelee)[
+          weaponIndex
+        ]
       } catch (err) {}
     }
 
     // If all lookups fail, give up and show a warning
     if (!weapon) {
-      return ui.notifications.warn(game.i18n.format('DCC.WeaponNotFound', {
-        id: weaponId
-      }))
+      return ui.notifications.warn(
+        game.i18n.format('DCC.WeaponNotFound', {
+          id: weaponId
+        })
+      )
     }
 
     if (options.weaponId === undefined) {
@@ -200,15 +218,31 @@ class DCCQOL extends Actor {
 
     if (DCCActor.rollAttackBonusWithAttack) {
       options.rollWeaponAttack = true
-      await DCCActor.rollAttackBonus(Object.assign({
-        rollWeaponAttack: true
-      },
-      options
-      ))
+      await DCCActor.rollAttackBonus(
+        Object.assign(
+          {
+            rollWeaponAttack: true
+          },
+          options
+        )
+      )
     }
 
-    if (!weapon.system.equipped && game.settings.get('dcc', 'checkWeaponEquipment')) return ui.notifications.warn(game.i18n.localize('DCC.WeaponWarningUnequipped'))
-    if (!weapon.system.backstab && game.settings.get('dcc-qol', 'checkWeaponBackstab') && options.backstab) return ui.notifications.warn(game.i18n.localize('DCC-QOL.WeaponWarningNonBackstabBonus'))
+    if (
+      !weapon.system.equipped &&
+      game.settings.get('dcc', 'checkWeaponEquipment')
+    )
+      return ui.notifications.warn(
+        game.i18n.localize('DCC.WeaponWarningUnequipped')
+      )
+    if (
+      !weapon.system.backstab &&
+      game.settings.get('dcc-qol', 'checkWeaponBackstab') &&
+      options.backstab
+    )
+      return ui.notifications.warn(
+        game.i18n.localize('DCC-QOL.WeaponWarningNonBackstabBonus')
+      )
 
     const targets = Array.from(game.user.targets)
 
@@ -222,53 +256,108 @@ class DCCQOL extends Actor {
       options.naturalCrit = true
     }
 
-    if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll')) {
-      const deedDieFace = Number(this.system.details.attackBonus.replace('+d', ''))
+    if (
+      (DCCActor.system.details.sheetClass === 'Warrior' ||
+        DCCActor.system.details.sheetClass === 'Dwarf') &&
+      game.settings.get('dcc-qol', 'automateDeedDieRoll')
+    ) {
+      const deedDieFace = Number(
+        this.system.details.attackBonus.replace('+d', '')
+      )
       if (weapon.system.toHit.includes('+@ab')) {
-        lastDeedRoll = attackRollResult.roll.terms.find(element => element.faces === deedDieFace).results[0].result
-        const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize('DCC.DeedRollValue')}</div> </div>`
+        lastDeedRoll = attackRollResult.roll.terms.find(
+          (element) => element.faces === deedDieFace
+        ).results[0].result
+        const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize(
+          'DCC.DeedRollValue'
+        )}</div> </div>`
         if (lastDeedRoll >= 3) {
-          deedDieHTML = preDeedDieHTML + `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:green">${lastDeedRoll}</span> </h4> </div> </div>`
+          deedDieHTML =
+            preDeedDieHTML +
+            `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:green">${lastDeedRoll}</span> </h4> </div> </div>`
         } else {
-          deedDieHTML = preDeedDieHTML + `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:black">${lastDeedRoll}</span> </h4> </div> </div>`
+          deedDieHTML =
+            preDeedDieHTML +
+            `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:black">${lastDeedRoll}</span> </h4> </div> </div>`
         }
       } else {
-        console.warn('DCC-QOL | Missing “+“ sign before @ab in toHit. Dice So Nice cannot display deed die roll. ')
+        console.warn(
+          'DCC-QOL | Missing “+“ sign before @ab in toHit. Dice So Nice cannot display deed die roll. '
+        )
       }
     }
 
-    if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && !game.settings.get('dcc-qol', 'automateDeedDieRoll')) {
+    if (
+      (DCCActor.system.details.sheetClass === 'Warrior' ||
+        DCCActor.system.details.sheetClass === 'Dwarf') &&
+      !game.settings.get('dcc-qol', 'automateDeedDieRoll')
+    ) {
       lastDeedRoll = this.system.details.lastRolledAttackBonus
-      const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize('DCC.DeedRollValue')}</div> </div>`
+      const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize(
+        'DCC.DeedRollValue'
+      )}</div> </div>`
       if (lastDeedRoll >= 3) {
-        deedDieHTML = preDeedDieHTML + `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:green">${lastDeedRoll}</span> </h4> </div> </div>`
+        deedDieHTML =
+          preDeedDieHTML +
+          `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:green">${lastDeedRoll}</span> </h4> </div> </div>`
       } else {
-        deedDieHTML = preDeedDieHTML + `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:black">${lastDeedRoll}</span> </h4> </div> </div>`
+        deedDieHTML =
+          preDeedDieHTML +
+          `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:black">${lastDeedRoll}</span> </h4> </div> </div>`
       }
     }
 
     const diceHTML = await attackRollResult.roll.render()
 
-    if (targets.length > 1) return ui.notifications.warn(game.i18n.localize('DCC-QOL.TargetOneToken'))
+    if (targets.length > 1)
+      return ui.notifications.warn(game.i18n.localize('DCC-QOL.TargetOneToken'))
 
-    if (targets.length !== 0) {
-      const tokenDistance = await this.measureTokenDistance(tokenD, game.user.targets.first())
+    // Check if the target is within range, if there is a token defined
+    if (tokenD !== undefined) {
+      // determine token distance
+      if (targets.length !== 0) {
+        const tokenDistance = await this.measureTokenDistance(
+          tokenD,
+          game.user.targets.first()
+        )
+        // warn if melee attack and target is out of melee range
+        if (
+          weapon.system.melee &&
+          tokenDistance / game.canvas.scene.grid.distance > 1
+        )
+          return ui.notifications.warn(
+            game.i18n.localize('DCC-QOL.WeaponMeleeWarn')
+          )
 
-      if (weapon.system.melee && ((tokenDistance / game.canvas.scene.grid.distance) > 1)) return ui.notifications.warn(game.i18n.localize('DCC-QOL.WeaponMeleeWarn'))
+        const range = weapon.system.range
+        const rangeArray = range.split('/')
+        // warn if ranged attack target is too far for weapon
+        if (tokenDistance > rangeArray[2])
+          return ui.notifications.warn(
+            game.i18n.localize('DCC-QOL.WeaponRangedWarn')
+          )
 
-      const range = weapon.system.range
-      const rangeArray = range.split('/')
+        // check for friendly fire
+        hitsTarget =
+          game.user.targets.first().actor.system.attributes.ac.value <=
+            attackRollResult.hitsAc || attackRollResult.crit
 
-      if (tokenDistance > rangeArray[2]) return ui.notifications.warn(game.i18n.localize('DCC-QOL.WeaponRangedWarn'))
-
-      hitsTarget = ((game.user.targets.first().actor.system.attributes.ac.value <= attackRollResult.hitsAc) || (attackRollResult.crit))
-
-      if ((!hitsTarget) && (game.settings.get('dcc-qol', 'automateFriendlyFire')) && (!weapon.system.melee)) {
-        let Allies = 0
-        for (const token of game.canvas.tokens.placeables) {
-          if ((token.document.disposition === 1) && !(token.document === tokenD)) Allies++
+        if (
+          !hitsTarget &&
+          game.settings.get('dcc-qol', 'automateFriendlyFire') &&
+          !weapon.system.melee
+        ) {
+          let Allies = 0
+          for (const token of game.canvas.tokens.placeables) {
+            if (
+              token.document.disposition === 1 &&
+              !(token.document === tokenD)
+            )
+              Allies++
+          }
+          if (Allies >= 1 && attackRollResult.firingIntoMelee)
+            friendlyFire = true
         }
-        if ((Allies >= 1) && attackRollResult.firingIntoMelee) friendlyFire = true
       }
     }
 
@@ -287,11 +376,15 @@ class DCCQOL extends Actor {
     // Render the chat card template
     const templateData = {
       canDelete: game.user.isGM,
-      actor: tokenD.actor,
+      actor: DCCActor,
       properties: await this.getWeaponProperties(weapon, options),
       tokenId: tokenD?.uuid || null,
-      target: game.user.targets.first() ? game.user.targets.first().actor.name : null,
-      targettokenId: game.user.targets.first() ? game.user.targets.first().document.uuid : null,
+      target: game.user.targets.first()
+        ? game.user.targets.first().actor.name
+        : null,
+      targettokenId: game.user.targets.first()
+        ? game.user.targets.first().document.uuid
+        : null,
       weapon,
       options: JSON.stringify(options),
       diceHTML,
@@ -307,12 +400,15 @@ class DCCQOL extends Actor {
       hitsTarget,
       friendlyFire
     }
-    const html = await renderTemplate('modules/dcc-qol/templates/attackroll-card.html', templateData)
+    const html = await renderTemplate(
+      'modules/dcc-qol/templates/attackroll-card.html',
+      templateData
+    )
 
     // ChatMessage.create(chatData)
     const msg = await attackRollResult.roll.toMessage({
       speaker: {
-        alias: tokenD.actor.name
+        alias: DCCActor.name
       },
       content: html,
       rollMode: game.settings.get('core', 'rollMode'),
@@ -323,9 +419,22 @@ class DCCQOL extends Actor {
     })
 
     /* Update AttackBonus only after Dice So Nice animation finished */
-    if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll')) {
-      if (game.modules.get('dice-so-nice')?.active) game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() => this.update({ 'data.details.lastRolledAttackBonus': lastDeedRoll }))
-      else { this.update({ 'data.details.lastRolledAttackBonus': lastDeedRoll }) }
+    if (
+      (DCCActor.system.details.sheetClass === 'Warrior' ||
+        DCCActor.system.details.sheetClass === 'Dwarf') &&
+      game.settings.get('dcc-qol', 'automateDeedDieRoll')
+    ) {
+      if (game.modules.get('dice-so-nice')?.active)
+        game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() =>
+          this.update({
+            'data.details.lastRolledAttackBonus': lastDeedRoll
+          })
+        )
+      else {
+        this.update({
+          'data.details.lastRolledAttackBonus': lastDeedRoll
+        })
+      }
     }
   }
 
@@ -344,16 +453,21 @@ class DCCQOL extends Actor {
     let firingIntoMelee
 
     /* Determine using untrained weapon */
-    const automateUntrainedAttack = game.settings.get('dcc', 'automateUntrainedAttack')
+    const automateUntrainedAttack = game.settings.get(
+      'dcc',
+      'automateUntrainedAttack'
+    )
     if (!weapon.system.trained && automateUntrainedAttack) {
       die = game.dcc.DiceChain.bumpDie(die, '-1')
       debuginfo = debuginfo + '[Untrained:-1D]'
     }
 
-    let critRange = parseInt(weapon.system.critRange || DCCActor.system.details.critRange || 20)
+    let critRange = parseInt(
+      weapon.system.critRange || DCCActor.system.details.critRange || 20
+    )
 
     /* If we don't have a valid formula, bail out here */
-    if (!await Roll.validate(toHit)) {
+    if (!(await Roll.validate(toHit))) {
       return {
         rolled: false,
         formula: weapon.system.toHit
@@ -361,18 +475,19 @@ class DCCQOL extends Actor {
     }
 
     // Collate terms for the roll
-    const terms = [{
-      type: 'Die',
-      label: game.i18n.localize('DCC.ActionDie'),
-      formula: die,
-      presets: DCCActor.getActionDice({
-        includeUntrained: !automateUntrainedAttack
-      })
-    }
+    const terms = [
+      {
+        type: 'Die',
+        label: game.i18n.localize('DCC.ActionDie'),
+        formula: die,
+        presets: DCCActor.getActionDice({
+          includeUntrained: !automateUntrainedAttack
+        })
+      }
     ]
 
     /* Remove empty toHit value from RollFormula */
-    if ((Number(toHit) !== 0) || options.showModifierDialog) {
+    if (Number(toHit) !== 0 || options.showModifierDialog) {
       const newToHit = toHit.replace('+@ab', '')
       if (newToHit.length !== 0) debuginfo = debuginfo + `[ToHit:${newToHit}]`
       terms.push({
@@ -384,8 +499,12 @@ class DCCQOL extends Actor {
     }
 
     /* Replace Deed roll value with Deed die */
-    if ((DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') && game.settings.get('dcc-qol', 'automateDeedDieRoll')) {
-      const index = terms.findIndex(element => element.type === 'Compound')
+    if (
+      (DCCActor.system.details.sheetClass === 'Warrior' ||
+        DCCActor.system.details.sheetClass === 'Dwarf') &&
+      game.settings.get('dcc-qol', 'automateDeedDieRoll')
+    ) {
+      const index = terms.findIndex((element) => element.type === 'Compound')
       if (index !== -1) {
         const deedDie = this.system.details.attackBonus.replace('+', '1')
         terms[index].formula = terms[index].formula.replace('+@ab', deedDie)
@@ -403,29 +522,44 @@ class DCCQOL extends Actor {
     }
 
     /* Check weapon range and apply penalty */
-    if (game.settings.get('dcc-qol', 'checkWeaponRange') && game.user.targets.first()) {
-      const tokenDistance = await this.measureTokenDistance(tokenD, game.user.targets.first())
-      const range = weapon.system.range
-      const rangeArray = range.split('/')
-      if (tokenDistance > rangeArray[1] && tokenDistance <= rangeArray[2]) {
-        terms[0].formula = game.dcc.DiceChain.bumpDie(die, '-1')
-        debuginfo = debuginfo + '[LongRange:-1D]'
-      }
+    if (
+      game.settings.get('dcc-qol', 'checkWeaponRange') &&
+      game.user.targets.first()
+    ) {
+      // if tokenD is not defined, warn the user to control a token and continue
+      if (tokenD === undefined) {
+        ui.notifications.warn(game.i18n.localize('DCC-QOL.ControlAToken'))
+      } else {
+        const tokenDistance = await this.measureTokenDistance(
+          tokenD,
+          game.user.targets.first()
+        )
+        const range = weapon.system.range
+        const rangeArray = range.split('/')
+        if (tokenDistance > rangeArray[1] && tokenDistance <= rangeArray[2]) {
+          terms[0].formula = game.dcc.DiceChain.bumpDie(die, '-1')
+          debuginfo = debuginfo + '[LongRange:-1D]'
+        }
 
-      if (tokenDistance > rangeArray[0] && tokenDistance <= rangeArray[1]) {
-        terms.push({
-          type: 'Modifier',
-          label: game.i18n.localize('DCC-QOL.WeaponRangePenalty'),
-          formula: '-2'
-        })
-        debuginfo = debuginfo + '[MediumRange:-2]'
+        if (tokenDistance > rangeArray[0] && tokenDistance <= rangeArray[1]) {
+          terms.push({
+            type: 'Modifier',
+            label: game.i18n.localize('DCC-QOL.WeaponRangePenalty'),
+            formula: '-2'
+          })
+          debuginfo = debuginfo + '[MediumRange:-2]'
+        }
       }
     }
 
     // Add Strength or Agility modifier to attack rolls
     let modifier
     let modifierLabel
-    if ((game.settings.get('dcc', 'automateCombatModifier')) && ((DCCActor.system.abilities.agl.mod !== 0) || (DCCActor.system.abilities.str.mod !== 0))) {
+    if (
+      game.settings.get('dcc', 'automateCombatModifier') &&
+      (DCCActor.system.abilities.agl.mod !== 0 ||
+        DCCActor.system.abilities.str.mod !== 0)
+    ) {
       if (weapon.system.melee) {
         modifier = DCCActor.system.abilities.str.mod
         modifierLabel = 'DCC.AbilityStr'
@@ -436,15 +570,24 @@ class DCCQOL extends Actor {
 
       terms.push({
         type: 'Modifier',
-        label: game.i18n.localize(modifierLabel) + ' ' + game.i18n.localize('DCC.Modifier'),
+        label:
+          game.i18n.localize(modifierLabel) +
+          ' ' +
+          game.i18n.localize('DCC.Modifier'),
         formula: modifier
       })
       debuginfo = debuginfo + `[AbilityMod:${modifier}]`
     }
 
     /* Check firing into melee and apply penalty */
-    if (game.settings.get('dcc-qol', 'automateFriendlyFire') && game.user.targets.first() && !weapon.system.melee) {
-      firingIntoMelee = await this.checkFiringIntoMelee(game.user.targets.first().document)
+    if (
+      game.settings.get('dcc-qol', 'automateFriendlyFire') &&
+      game.user.targets.first() &&
+      !weapon.system.melee
+    ) {
+      firingIntoMelee = await this.checkFiringIntoMelee(
+        game.user.targets.first().document
+      )
       if (firingIntoMelee) {
         terms.push({
           type: 'Modifier',
@@ -455,11 +598,23 @@ class DCCQOL extends Actor {
       }
     }
 
-    if (DCCActor.system.details.sheetClass === 'Warrior' || DCCActor.system.details.sheetClass === 'Dwarf') {
-      if (weapon.name.toLowerCase().includes(DCCActor.system.class.luckyWeapon.toLowerCase()) && game.settings.get('dcc', 'automateLuckyWeaponAttack') && DCCActor.system.class.luckyWeapon !== '') {
+    if (
+      DCCActor.system.details.sheetClass === 'Warrior' ||
+      DCCActor.system.details.sheetClass === 'Dwarf'
+    ) {
+      if (
+        weapon.name
+          .toLowerCase()
+          .includes(DCCActor.system.class.luckyWeapon.toLowerCase()) &&
+        game.settings.get('dcc', 'automateLuckyWeaponAttack') &&
+        DCCActor.system.class.luckyWeapon !== ''
+      ) {
         terms.push({
           type: 'Modifier',
-          label: game.i18n.localize('DCC.AbilityLck') + ' ' + game.i18n.localize('DCC.Modifier'),
+          label:
+            game.i18n.localize('DCC.AbilityLck') +
+            ' ' +
+            game.i18n.localize('DCC.Modifier'),
           formula: DCCActor.system.abilities.lck.mod
         })
         debuginfo = debuginfo + `[Luck:${DCCActor.system.abilities.lck.mod}]`
@@ -467,20 +622,30 @@ class DCCQOL extends Actor {
     }
 
     /* Roll the Attack */
-    const rollOptions = Object.assign({
-      title: game.i18n.localize('DCC.ToHit')
-    },
-    options
+    const rollOptions = Object.assign(
+      {
+        title: game.i18n.localize('DCC.ToHit')
+      },
+      options
     )
-    const attackRoll = await game.dcc.DCCRoll.createRoll(terms, Object.assign({
-      critical: critRange
-    }, DCCActor.getRollData()), rollOptions)
+    const attackRoll = await game.dcc.DCCRoll.createRoll(
+      terms,
+      Object.assign(
+        {
+          critical: critRange
+        },
+        DCCActor.getRollData()
+      ),
+      rollOptions
+    )
     await attackRoll.evaluate({
       async: true
     })
 
     // Adjust crit range if the die size was adjusted
-    critRange += parseInt(game.dcc.DiceChain.calculateCritAdjustment(die, attackRoll.formula))
+    critRange += parseInt(
+      game.dcc.DiceChain.calculateCritAdjustment(die, attackRoll.formula)
+    )
 
     const d20RollResult = attackRoll.dice[0].total
     attackRoll.dice[0].options.dcc = {
@@ -488,11 +653,12 @@ class DCCQOL extends Actor {
     }
 
     /* Check for crit or fumble */
-    const fumble = (d20RollResult === 1)
+    const fumble = d20RollResult === 1
     const naturalCrit = d20RollResult >= critRange
     const crit = !fumble && (naturalCrit || options.backstab)
 
-    if (game.settings.get('dcc-qol', 'log') && game.user.isGM) console.warn('DCC-QOL |', debuginfo)
+    if (game.settings.get('dcc-qol', 'log') && game.user.isGM)
+      console.warn('DCC-QOL |', debuginfo)
 
     return {
       rolled: true,

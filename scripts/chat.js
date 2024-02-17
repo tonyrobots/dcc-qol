@@ -43,8 +43,8 @@ async function ChatCardAction (event) {
   const message = game.messages.get(messageId)
   const action = button.dataset.action
   button.disabled = false
-  // const actor = game.actors.get(card.dataset.actorId) || null
-  const actor = fromUuidSync(card.dataset.tokenId).actor || null
+  const actor = game.actors.get(card.dataset.actorId) || null
+
   const messagecreator = message._source.user
 
   if (game.user._id !== messagecreator && !game.user.isGM) return
@@ -65,7 +65,6 @@ async function ChatCardAction (event) {
 
   switch (action) {
     case 'damage':
-
       const damageRollResult = await act.rollDamage(weapon, options)
       let targetActor
 
@@ -76,7 +75,7 @@ async function ChatCardAction (event) {
 
       let diceHTML = await damageRollResult.roll.render()
 
-      if ((targettoken) || (Array.from(game.user.targets).length === 1)) {
+      if (targettoken || Array.from(game.user.targets).length === 1) {
         if (targettoken) {
           game.user.updateTokenTargets([targettoken._id])
           targetActor = targettoken.actor
@@ -84,7 +83,24 @@ async function ChatCardAction (event) {
           targetActor = game.user.targets.first().actor
         }
 
-        diceHTML = diceHTML + '<br/>' + game.i18n.format('DCC-QOL.TakeDamage', { actor: targetActor.name, damage: damageRollResult.damage })
+        // show different messages depending on automateDamageApply setting
+        if (game.settings.get('dcc-qol', 'automateDamageApply')) {
+          diceHTML =
+            diceHTML +
+            '<br/>' +
+            game.i18n.format('DCC-QOL.TakeDamage', {
+              actor: targetActor.name,
+              damage: damageRollResult.damage
+            })
+        } else {
+          diceHTML =
+            diceHTML +
+            '<br/>' +
+            game.i18n.format('DCC-QOL.TakeDamageManual', {
+              actor: targetActor.name,
+              damage: damageRollResult.damage
+            })
+        }
 
         const msg = await damageRollResult.roll.toMessage({
           user: game.user.id,
@@ -104,9 +120,21 @@ async function ChatCardAction (event) {
         if (game.settings.get('dcc-qol', 'automateDamageApply')) {
           /* Update HP only after Dice So Nice animation finished */
           if (game.modules.get('dice-so-nice')?.active) {
-            game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() => socketlibSocket.executeAsGM('applyDamageQOL', targettoken, damageRollResult.damage))
+            game.dice3d
+              .waitFor3DAnimationByMessageID(msg.id)
+              .then(() =>
+                socketlibSocket.executeAsGM(
+                  'applyDamageQOL',
+                  targettoken,
+                  damageRollResult.damage
+                )
+              )
           } else {
-            await socketlibSocket.executeAsGM('applyDamageQOL', targettoken, damageRollResult.damage)
+            await socketlibSocket.executeAsGM(
+              'applyDamageQOL',
+              targettoken,
+              damageRollResult.damage
+            )
           }
         }
       } else {
@@ -129,13 +157,13 @@ async function ChatCardAction (event) {
       break
     case 'fumble':
       cToken = canvas.tokens.get(fromUuidSync(card.dataset.tokenId)._id)
-      cToken.control({ releaseOthers: true })      
+      cToken.control({ releaseOthers: true })
       await act.rollFumble(options)
-      canvas.tokens.selectObjects()      
+      canvas.tokens.selectObjects()
       for (const token of controlledTokens) {
         cToken = canvas.tokens.get(token.id)
         cToken.control({ releaseOthers: false })
-      }      
+      }
       break
     case 'crit':
       cToken = canvas.tokens.get(fromUuidSync(card.dataset.tokenId)._id)
@@ -148,7 +176,6 @@ async function ChatCardAction (event) {
       }
       break
     case 'friendlyFire':
-
       const roll = new Roll('d100')
       await roll.evaluate({
         async: true
@@ -161,12 +188,16 @@ async function ChatCardAction (event) {
         const chatText = game.i18n.format('DCC-QOL.FriendlyFireSuccess', {
           weapon: weapon.name
         })
-        friendlyFireHTML = friendlyFire.replace('dice-total', 'dice-total success') + `<div class="dccqol chat-card"><div class="chat-details"><div class="ff-result">${chatText}</div></div></div>`
+        friendlyFireHTML =
+          friendlyFire.replace('dice-total', 'dice-total success') +
+          `<div class="dccqol chat-card"><div class="chat-details"><div class="ff-result">${chatText}</div></div></div>`
       } else {
         const chatText = game.i18n.format('DCC-QOL.FriendlyFireFail', {
           weapon: weapon.name
         })
-        friendlyFireHTML = friendlyFire.replace('dice-total', 'dice-total fail') + `<div class="dccqol chat-card"><div class="chat-details"><div class="ff-result">${chatText}</div></div></div>`
+        friendlyFireHTML =
+          friendlyFire.replace('dice-total', 'dice-total fail') +
+          `<div class="dccqol chat-card"><div class="chat-details"><div class="ff-result">${chatText}</div></div></div>`
       }
 
       roll.toMessage({
