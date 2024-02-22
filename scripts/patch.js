@@ -373,6 +373,11 @@ class DCCQOL extends Actor {
       })
     }
 
+    // if backstab hits, add crit flag
+    if (options.backstab && hitsTarget) {
+      attackRollResult.crit = true
+    }
+
     // Render the chat card template
     const templateData = {
       canDelete: game.user.isGM,
@@ -655,7 +660,8 @@ class DCCQOL extends Actor {
     /* Check for crit or fumble */
     const fumble = d20RollResult === 1
     const naturalCrit = d20RollResult >= critRange
-    const crit = !fumble && (naturalCrit || options.backstab)
+    const crit = !fumble && (naturalCrit) // is this still needed?
+
 
     if (game.settings.get('dcc-qol', 'log') && game.user.isGM) { console.warn('DCC-QOL |', debuginfo) }
 
