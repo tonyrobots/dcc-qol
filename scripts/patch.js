@@ -15,7 +15,7 @@ class DCCQOL extends Actor {
    * Roll a Critical Hit
    * @param {Object} options     Options which configure how attacks are rolled E.g. Backstab
    */
-  async rollCriticalQOL (options = {}, targettoken) {
+  async rollCriticalQOL (options = {}, targettoken, actor) {
     /* Collecting modifiers to console logging */
     let debuginfo
 
@@ -48,6 +48,20 @@ class DCCQOL extends Actor {
         terms.splice(index, 1)
       }
     }
+
+    if (
+      this.type === 'Player'
+    ) {
+      terms.push({
+        type: 'Modifier',
+        label: game.i18n.localize('DCC.AbilityLck'),
+        formula: parseInt(actor.system.abilities.lck.mod || '0')
+      })
+        const luckModifier = actor.system.abilities.lck.mod
+        debuginfo =
+          'Crit roll: ' + this.name + ` [LuckModifier:${luckModifier}]`
+        if (game.settings.get('dcc-qol', 'log') && game.user.isGM) { console.warn('DCC-QOL |', debuginfo) }
+    }    
 
     // Roll object for the crit die
     let roll = await game.dcc.DCCRoll.createRoll(

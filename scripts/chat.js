@@ -169,7 +169,7 @@ async function ChatCardAction (event) {
     case 'crit':
       cToken = canvas.tokens.get(fromUuidSync(card.dataset.tokenId)._id)
       cToken.control({ releaseOthers: true })
-      await DCCQOLactor.rollCriticalQOL(options, targettoken)
+      await DCCQOLactor.rollCriticalQOL(options, targettoken, actor)
       canvas.tokens.selectObjects()
       for (const token of controlledTokens) {
         cToken = canvas.tokens.get(token.id)
