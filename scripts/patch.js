@@ -487,6 +487,7 @@ class DCCQOL extends Actor {
 
     /* If we don't have a valid formula, bail out here */
     if (!(await Roll.validate(toHit))) {
+    console.warn('DCC-QOL | Invalid toHit formula:', toHit);
       return {
         rolled: false,
         formula: weapon.system.toHit
@@ -508,6 +509,7 @@ class DCCQOL extends Actor {
     /* Remove empty toHit value from RollFormula */
     if (Number(toHit) !== 0 || options.showModifierDialog) {
       const newToHit = toHit.replace('+@ab', '')
+
       if (newToHit.length !== 0) debuginfo = debuginfo + `[ToHit:${newToHit}]`
       terms.push({
         type: 'Compound',
@@ -525,8 +527,12 @@ class DCCQOL extends Actor {
     ) {
       const index = terms.findIndex((element) => element.type === 'Compound')
       if (index !== -1) {
-        const deedDie = this.system.details.attackBonus.replace(/\+1?/i, '') // previously was replacing with 1
-        terms[index].formula = terms[index].formula.replace('+@ab', deedDie)
+        // console.warn('DCC-QOL | attackBonus:', this.system.details.attackBonus)
+        const deedDie = this.system.details.attackBonus.replace(/\+1?/i, '1') 
+        // console.warn('DCC-QOL | deedDie:', deedDie);
+        // console.warn('DCC-QOL | terms[index].formula:', terms[index].formula)
+        terms[index].formula = terms[index].formula.replace('@ab', deedDie)
+        // console.warn('DCC-QOL | new terms[index].formula:', terms[index].formula);
       }
     }
 
