@@ -277,7 +277,7 @@ class DCCQOL extends Actor {
       game.settings.get('dcc-qol', 'automateDeedDieRoll')
     ) {
       const deedDieFace = Number(
-        this.system.details.attackBonus.replace('+d', '')
+        this.system.details.attackBonus.replace(/\+1?d/, '')
       )
       if (weapon.system.toHit.includes('+@ab')) {
         lastDeedRoll = attackRollResult.roll.terms.find(
@@ -297,7 +297,7 @@ class DCCQOL extends Actor {
         }
       } else {
         console.warn(
-          'DCC-QOL | Missing “+“ sign before @ab in toHit. Dice So Nice cannot display deed die roll. '
+          'DCC-QOL | Missing "+@ab" in toHit. Dice So Nice cannot display deed die roll.: ' + weapon.system.toHit 
         )
       }
     }
@@ -525,7 +525,7 @@ class DCCQOL extends Actor {
     ) {
       const index = terms.findIndex((element) => element.type === 'Compound')
       if (index !== -1) {
-        const deedDie = this.system.details.attackBonus.replace('+', '1')
+        const deedDie = this.system.details.attackBonus.replace(/\+1?/i, '') // previously was replacing with 1
         terms[index].formula = terms[index].formula.replace('+@ab', deedDie)
       }
     }
