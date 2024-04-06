@@ -277,9 +277,9 @@ class DCCQOL extends Actor {
       game.settings.get('dcc-qol', 'automateDeedDieRoll')
     ) {
       const deedDieFace = Number(
-        this.system.details.attackBonus.replace('+d', '')
+        this.system.details.attackBonus.replace(/\+1?d/, '')
       )
-      if (weapon.system.toHit.includes('+@ab')) {
+      if (weapon.system.toHit.includes('@ab')) {
         lastDeedRoll = attackRollResult.roll.terms.find(
           (element) => element.faces === deedDieFace
         ).results[0].result
@@ -297,7 +297,7 @@ class DCCQOL extends Actor {
         }
       } else {
         console.warn(
-          'DCC-QOL | Missing "+@ab" in toHit. Dice So Nice cannot display deed die roll.: ' + weapon.system.toHit 
+          'DCC-QOL | Missing "@ab" in "To Hit" bonus on weapon ('+ weapon.system.toHit+'), so deed roll/attack bonus is not included.'  
         )
       }
     }
@@ -534,7 +534,7 @@ class DCCQOL extends Actor {
         terms[index].formula = terms[index].formula.replace('@ab', deedDie)
         // console.warn('DCC-QOL | new terms[index].formula:', terms[index].formula);
       }
-    }
+    } 
 
     // Add backstab bonus if required
     if (options.backstab) {
