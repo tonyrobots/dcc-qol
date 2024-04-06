@@ -277,7 +277,7 @@ class DCCQOL extends Actor {
       game.settings.get('dcc-qol', 'automateDeedDieRoll')
     ) {
       const deedDieFace = Number(
-        this.system.details.attackBonus.replace(/\+1?d/, '')
+        this.system.details.attackBonus.replace('+d', '')
       )
       if (weapon.system.toHit.includes('+@ab')) {
         lastDeedRoll = attackRollResult.roll.terms.find(
@@ -525,8 +525,8 @@ class DCCQOL extends Actor {
     ) {
       const index = terms.findIndex((element) => element.type === 'Compound')
       if (index !== -1) {
-        const deedDie = this.system.details.attackBonus.replace(/\+1?/i, '') // previously was replacing with 1
-        terms[index].formula = terms[index].formula.replace('+@ab', deedDie)
+        const deedDie = this.system.details.attackBonus.replace('+', '1')
+        terms[index].formula = terms[index].formula.replace('@ab', deedDie)
       }
     }
 
