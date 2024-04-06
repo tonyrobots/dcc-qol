@@ -277,7 +277,7 @@ class DCCQOL extends Actor {
       game.settings.get('dcc-qol', 'automateDeedDieRoll')
     ) {
       const deedDieFace = Number(
-        this.system.details.attackBonus.replace(/\+1?d/, '')
+        this.system.details.attackBonus.replace('+d', '')
       )
       if (weapon.system.toHit.includes('+@ab')) {
         lastDeedRoll = attackRollResult.roll.terms.find(

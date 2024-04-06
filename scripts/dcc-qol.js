@@ -6,26 +6,14 @@ export async function preloadTemplates () {
   const templatePaths = ['modules/dcc-qol/templates/attackroll-card.html']
   return loadTemplates(templatePaths)
 }
-
-function tokenForActorId (actorId) {
-  const actor = game.actors.get(actorId)
-  const allTokens = actor.getActiveTokens()
-  if (allTokens.length === 1) return allTokens[0].document
-  else {
-    const controlled = canvas?.tokens?.controlled
-    const filteredTokens = allTokens.filter((value) =>
-      controlled.includes(value)
-    )
-    if (filteredTokens.length === 1) return filteredTokens[0].document
-    else {
-      return undefined
-    }
-  }
+function tokenForActorId (tokenUuid) {
+  const position = tokenUuid.indexOf('.Actor.')
+  if (position === -1) { return undefined } else { return fromUuidSync(tokenUuid.substr(0, position)) }
 }
 
 function rollPatchedWeaponAttack (wrapped, ...args) {
   const actor = new DCCQOL(this)
-  const tokenD = tokenForActorId(this._id)
+  const tokenD = tokenForActorId(this.uuid)
   // if settings are set to checkWeaponRange, or automateFriendlyFire, require a token to be in scene; otherwise, proceed without one
   if (
     game.settings.get('dcc-qol', 'checkWeaponRange') ||
