@@ -276,10 +276,9 @@ class DCCQOL extends Actor {
         DCCActor.system.details.sheetClass === 'Dwarf') &&
       game.settings.get('dcc-qol', 'automateDeedDieRoll')
     ) {
-      const deedDieFace = Number(
-        this.system.details.attackBonus.replace('+d', '')
-      )
-      if (weapon.system.toHit.includes('+@ab')) {
+      const deedDieFace = extractDieValue(this.system.details.attackBonus);
+      // console.warn('DCC-QOL | deedDieFace:', deedDieFace)
+      if (weapon.system.toHit.includes('@ab')) {
         lastDeedRoll = attackRollResult.roll.terms.find(
           (element) => element.faces === deedDieFace
         ).results[0].result
@@ -297,7 +296,7 @@ class DCCQOL extends Actor {
         }
       } else {
         console.warn(
-          'DCC-QOL | Missing "+@ab" in toHit. Dice So Nice cannot display deed die roll.: ' + weapon.system.toHit 
+          'DCC-QOL | Missing "@ab" in "To Hit" bonus on weapon ('+ weapon.system.toHit+'), so deed roll/attack bonus is not included.'  
         )
       }
     }
@@ -487,6 +486,7 @@ class DCCQOL extends Actor {
 
     /* If we don't have a valid formula, bail out here */
     if (!(await Roll.validate(toHit))) {
+    console.warn('DCC-QOL | Invalid toHit formula:', toHit);
       return {
         rolled: false,
         formula: weapon.system.toHit
@@ -508,6 +508,7 @@ class DCCQOL extends Actor {
     /* Remove empty toHit value from RollFormula */
     if (Number(toHit) !== 0 || options.showModifierDialog) {
       const newToHit = toHit.replace('+@ab', '')
+
       if (newToHit.length !== 0) debuginfo = debuginfo + `[ToHit:${newToHit}]`
       terms.push({
         type: 'Compound',
@@ -525,10 +526,13 @@ class DCCQOL extends Actor {
     ) {
       const index = terms.findIndex((element) => element.type === 'Compound')
       if (index !== -1) {
-        const deedDie = this.system.details.attackBonus.replace('+', '1')
+        const deedDie = this.system.details.attackBonus.replace(/\+1?/i, '1') 
+        // console.warn('DCC-QOL | deedDie:', deedDie);
+        // console.warn('DCC-QOL | terms[index].formula:', terms[index].formula)
         terms[index].formula = terms[index].formula.replace('@ab', deedDie)
+        // console.warn('DCC-QOL | revised terms[index].formula:', terms[index].formula);
       }
-    }
+    } 
 
     // Add backstab bonus if required
     if (options.backstab) {
@@ -690,6 +694,17 @@ class DCCQOL extends Actor {
       fumble,
       firingIntoMelee
     }
+  }
+}
+function extractDieValue(diceString) {
+  // Regular expression to match the dice notation including optional modifiers
+  const pattern = /\d*d(\d+)[+-]?/;
+
+  const match = diceString.match(pattern);
+  if (match) {
+    return parseInt(match[1], 10); // Return the captured die value as an integer
+  } else {
+    return null; // Return null if no valid die notation is found
   }
 }
 
