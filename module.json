@@ -2,7 +2,7 @@
     "id": "dcc-qol",
     "title": "DCC Quality of Life Improvements",
     "description": "",
-    "version": "0.0.18",
+    "version": "0.0.20",
     "library": "false",
     "manifestPlusVersion": "1.2.0",
     "compatibility": {
@@ -12,9 +12,9 @@
     },
     "authors": [
       {
-        "name": "sasquach45932",
-        "url": "https://github.com/sasquach45932/dcc-qol",
-        "discord": "sasquach45932"
+        "name": "tonyrobots",
+        "url": "https://github.com/tonyrobots/dcc-qol",
+        "discord": "tonyrobots"
       }
     ],
     "relationships": {
