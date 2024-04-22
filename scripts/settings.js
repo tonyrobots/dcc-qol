@@ -96,18 +96,6 @@ export const registerSystemSettings = async function () {
     });
 
     /**
-     * Check weapon can be used for backstab if not UI warning diplay appears and prevent rolls
-     */
-    game.settings.register("dcc-qol", "checkWeaponBackstab", {
-        name: "DCC-QOL.SettingWeaponBackstab",
-        hint: "DCC-QOL.SettingWeaponBackstabHint",
-        scope: "world",
-        type: Boolean,
-        default: false,
-        config: true,
-    });
-
-    /**
      * Logging to console.log
      */
     game.settings.register("dcc-qol", "log", {

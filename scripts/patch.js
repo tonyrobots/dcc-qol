@@ -263,15 +263,6 @@ class DCCQOL extends Actor {
                 game.i18n.localize("DCC.WeaponWarningUnequipped")
             );
         }
-        if (
-            !weapon.system.backstab &&
-            game.settings.get("dcc-qol", "checkWeaponBackstab") &&
-            options.backstab
-        ) {
-            return ui.notifications.warn(
-                game.i18n.localize("DCC-QOL.WeaponWarningNonBackstabBonus")
-            );
-        }
 
         const targets = Array.from(game.user.targets);
 
