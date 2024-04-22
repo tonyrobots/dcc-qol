@@ -2,55 +2,50 @@
     "id": "dcc-qol",
     "title": "DCC Quality of Life Improvements",
     "description": "",
-    "version": "0.0.20",
+    "version": "0.0.21",
     "library": "false",
     "manifestPlusVersion": "1.2.0",
     "compatibility": {
-      "minimum": 11,
-      "verified": 11,
-      "maximum": 11
+        "minimum": 11,
+        "verified": 11,
+        "maximum": 11
     },
     "authors": [
-      {
-        "name": "tonyrobots",
-        "url": "https://github.com/tonyrobots/dcc-qol",
-        "discord": "tonyrobots"
-      }
+        {
+            "name": "tonyrobots",
+            "url": "https://github.com/tonyrobots/dcc-qol",
+            "discord": "tonyrobots"
+        }
     ],
     "relationships": {
-      "systems": [
-        {
-          "id": "dcc",
-          "type": "system",
-          "compatibility":
-          {
-            "minimum": "0.36.0"
-          }
-        }
-      ],  
-      "requires": [
-        {
-          "id": "lib-wrapper",
-          "type": "module"
-        },
-        {
-          "id": "socketlib",
-          "type": "module"
-        }  
-      ] 
+        "systems": [
+            {
+                "id": "dcc",
+                "type": "system",
+                "compatibility": {
+                    "minimum": "0.36.0"
+                }
+            }
+        ],
+        "requires": [
+            {
+                "id": "lib-wrapper",
+                "type": "module"
+            },
+            {
+                "id": "socketlib",
+                "type": "module"
+            }
+        ]
     },
-    "esmodules": [
-      "scripts/dcc-qol.js"
-    ],
-    "styles": [
-      "styles/dcc-qol.css"
-    ],
+    "esmodules": ["scripts/dcc-qol.js"],
+    "styles": ["styles/dcc-qol.css"],
     "languages": [
-      {
-        "lang": "en",
-        "name": "English",
-        "path": "language/en.json"
-      }
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "language/en.json"
+        }
     ],
     "url": "#{URL}#",
     "manifest": "#{MANIFEST}#",
@@ -58,5 +53,4 @@
     "license": "LICENSE",
     "readme": "README.md",
     "socket": true
-  }
-  
+}
