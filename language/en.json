@@ -36,8 +36,8 @@
     "DCC-QOL.TargetAToken": "You must target a token before rolling the attack!",
     "DCC-QOL.TargetOneToken": "You must target only one token before rolling the attack!",
     "DCC-QOL.libwrapperWarning": "Module DCC-QOL requires the 'libWrapper' module. Please install and activate it.",
-    "DCC-QOL.WeaponMeleeWarn": "Target appears to be too far for a melee attack.",
-    "DCC-QOL.WeaponRangedWarn": "Target appears to be too far for this ranged weapon.",
+    "DCC-QOL.WeaponMeleeWarn": "Target appears to be too far ({distance} {units}) for a melee attack.",
+    "DCC-QOL.WeaponRangedWarn": "Target appears to be too far ({distance} {units}) for a {weapon} (maximum {range} {units}.)",
     "DCC-QOL.WeaponMissileToMelee": "Missile into Melee Penalty",
     "DCC-QOL.WeaponRangePenalty": "Range Penalty",
     "DCC-QOL.WeaponWarningNonBackstabBonus": "This weapon does not give you a backstab bonus."

@@ -157,13 +157,14 @@ class DCCQOL extends Actor {
     }
 
     /*
-     * Measure distance between 2 tokens
-     * @param {Object} token1    The token "from"
-     * @param {Object} token2    The token "to"
+     * Measure distance between 2 tokens (documents), taking size of tokens into account
+     * @param {Object} token1D    The token.document "from"
+     * @param {Object} token2D    The token.document "to"
      */
-    async measureTokenDistance(token1, token2) {
+    async measureTokenDistance(token1D, token2D) {
         const gs = game.canvas.dimensions.size;
-        const ray = new Ray(token1, token2);
+        // originate ray from center of token1 to center of token2
+        const ray = new Ray(token1D.object.center, token2D.object.center);
 
         const nx = Math.ceil(Math.abs(ray.dx / gs));
         const ny = Math.ceil(Math.abs(ray.dy / gs));
@@ -172,10 +173,13 @@ class DCCQOL extends Actor {
         const nDiagonal = Math.min(nx, ny);
         const nStraight = Math.abs(ny - nx);
 
-        // Diagonals in DDC calculated as 1.0 times a straight
+        // Diagonals in DDC calculated as equal to (1.0x) the straight distance - pythagoras be damned!
         const distance = Math.floor(nDiagonal * 1.0 + nStraight);
-        const distanceOnGrid = distance * game.canvas.dimensions.distance;
-        return distanceOnGrid;
+        let distanceOnGrid = distance * game.canvas.dimensions.distance;
+        // make adjustment to account for size of token. Using width as tokens are assumed to be square.
+        let adjustment = Math.round((token1D.width + token2D.width) * 0.5) - 1;
+
+        return distanceOnGrid - adjustment * game.canvas.dimensions.distance;
     }
 
     /* Returns "true" if the targetToken is adjacent to an ally */
@@ -188,7 +192,7 @@ class DCCQOL extends Actor {
                 if (
                     (await this.measureTokenDistance(
                         targetTokenDocument,
-                        token
+                        token.document
                     )) <= 5 &&
                     token.document.disposition === 1
                 ) {
@@ -348,20 +352,20 @@ class DCCQOL extends Actor {
             if (targets.length !== 0) {
                 const tokenDistance = await this.measureTokenDistance(
                     tokenD,
-                    game.user.targets.first()
+                    game.user.targets.first().document
                 );
-                console.warn("DCC-QOL | tokenDistance:", tokenDistance);
+                console.info("DCC-QOL | tokenDistance:", tokenDistance);
 
                 // warn if melee attack and target is out of melee range
                 if (
                     weapon.system.melee &&
                     tokenDistance / game.canvas.scene.grid.distance > 1
                 ) {
-                    ui.notifications.info(
-                        game.i18n.localize("DCC-QOL.WeaponMeleeWarn") +
-                            " (" +
-                            tokenDistance +
-                            ")"
+                    return ui.notifications.warn(
+                        game.i18n.format("DCC-QOL.WeaponMeleeWarn", {
+                            distance: tokenDistance,
+                            units: game.scenes.active.grid.units,
+                        })
                     );
                 } else {
                     const range = weapon.system.range;
@@ -369,7 +373,12 @@ class DCCQOL extends Actor {
                     // warn if ranged attack target is too far for weapon
                     if (tokenDistance > rangeArray[2]) {
                         return ui.notifications.warn(
-                            game.i18n.localize("DCC-QOL.WeaponRangedWarn")
+                            game.i18n.format("DCC-QOL.WeaponRangedWarn", {
+                                distance: tokenDistance,
+                                units: game.scenes.active.grid.units,
+                                weapon: weapon.name,
+                                range: rangeArray[2],
+                            })
                         );
                     }
 
@@ -585,7 +594,7 @@ class DCCQOL extends Actor {
             } else {
                 const tokenDistance = await this.measureTokenDistance(
                     tokenD,
-                    game.user.targets.first()
+                    game.user.targets.first().document
                 );
                 const range = weapon.system.range;
                 const rangeArray = range.split("/");
