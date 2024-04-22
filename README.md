@@ -1,4 +1,5 @@
 # DCC Quality of Life Improvements
+<img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/tonyrobots/dcc-qol?style=flat-square"> <img alt="GitHub" src="https://img.shields.io/github/license/tonyrobots/dcc-qol?style=flat-square"> <img alt="GitHub Releases" src="https://img.shields.io/github/downloads/tonyrobots/dcc-qol/latest/total?style=flat-square">  
 
 (Originally based on https://github.com/sasquach45932/dcc-qol)
 
