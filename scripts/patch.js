@@ -346,10 +346,10 @@ class DCCQOL extends Actor {
             );
         }
 
-        // Check if the target is within range, if there is a token defined
-        if (tokenD !== undefined) {
-            // determine token distance
-            if (targets.length !== 0) {
+        // Perform the checks that require a token to be controlled and a target to be defined
+        if (tokenD !== undefined && targets.length !== 0) {
+            // first, check ranges if setting is enabled
+            if (game.settings.get("dcc-qol", "checkWeaponRange")) {
                 const tokenDistance = await this.measureTokenDistance(
                     tokenD,
                     game.user.targets.first().document
@@ -381,23 +381,22 @@ class DCCQOL extends Actor {
                             })
                         );
                     }
-
-                    // check for friendly fire
-                    hitsTarget =
-                        game.user.targets.first().actor.system.attributes.ac
-                            .value <= attackRollResult.hitsAc ||
-                        attackRollResult.crit;
-
-                    if (
-                        !hitsTarget &&
-                        game.settings.get("dcc-qol", "automateFriendlyFire") &&
-                        !weapon.system.melee
-                    ) {
-                        friendlyFire = await this.checkFiringIntoMelee(
-                            game.user.targets.first().document
-                        );
-                    }
                 }
+            }
+            // check if attack hits target
+            hitsTarget =
+                game.user.targets.first().actor.system.attributes.ac.value <=
+                    attackRollResult.hitsAc || attackRollResult.crit;
+
+            // check for friendly fire if attack misses and setting is enabled
+            if (
+                !hitsTarget &&
+                game.settings.get("dcc-qol", "automateFriendlyFire") &&
+                !weapon.system.melee
+            ) {
+                friendlyFire = await this.checkFiringIntoMelee(
+                    game.user.targets.first().document
+                );
             }
         }
 
