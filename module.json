@@ -2,7 +2,7 @@
     "id": "dcc-qol",
     "title": "DCC Quality of Life Improvements",
     "description": "",
-    "version": "0.0.21",
+    "version": "0.0.22",
     "library": "false",
     "manifestPlusVersion": "1.2.0",
     "compatibility": {
