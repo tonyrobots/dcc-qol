@@ -178,18 +178,21 @@ class DCCQOL extends Actor {
         return distanceOnGrid;
     }
 
+    /* Returns "true" if the targetToken is adjacent to an ally */
     async checkFiringIntoMelee(targetTokenDocument) {
         let firingIntoMelee = false;
 
         for (const token of game.canvas.tokens.placeables) {
             if (!(token.document === targetTokenDocument)) {
+                // Check if the token is an ally and in melee range
                 if (
                     (await this.measureTokenDistance(
                         targetTokenDocument,
                         token
-                    )) <= 5
+                    )) <= 5 &&
+                    token.document.disposition === 1
                 ) {
-                    firingIntoMelee = true;
+                    return true;
                 }
             }
         }
@@ -356,47 +359,43 @@ class DCCQOL extends Actor {
                     tokenD,
                     game.user.targets.first()
                 );
+                console.warn("DCC-QOL | tokenDistance:", tokenDistance);
+
                 // warn if melee attack and target is out of melee range
                 if (
                     weapon.system.melee &&
                     tokenDistance / game.canvas.scene.grid.distance > 1
                 ) {
-                    return ui.notifications.warn(
-                        game.i18n.localize("DCC-QOL.WeaponMeleeWarn")
+                    ui.notifications.info(
+                        game.i18n.localize("DCC-QOL.WeaponMeleeWarn") +
+                            " (" +
+                            tokenDistance +
+                            ")"
                     );
-                }
-
-                const range = weapon.system.range;
-                const rangeArray = range.split("/");
-                // warn if ranged attack target is too far for weapon
-                if (tokenDistance > rangeArray[2]) {
-                    return ui.notifications.warn(
-                        game.i18n.localize("DCC-QOL.WeaponRangedWarn")
-                    );
-                }
-
-                // check for friendly fire
-                hitsTarget =
-                    game.user.targets.first().actor.system.attributes.ac
-                        .value <= attackRollResult.hitsAc ||
-                    attackRollResult.crit;
-
-                if (
-                    !hitsTarget &&
-                    game.settings.get("dcc-qol", "automateFriendlyFire") &&
-                    !weapon.system.melee
-                ) {
-                    let Allies = 0;
-                    for (const token of game.canvas.tokens.placeables) {
-                        if (
-                            token.document.disposition === 1 &&
-                            !(token.document === tokenD)
-                        ) {
-                            Allies++;
-                        }
+                } else {
+                    const range = weapon.system.range;
+                    const rangeArray = range.split("/");
+                    // warn if ranged attack target is too far for weapon
+                    if (tokenDistance > rangeArray[2]) {
+                        return ui.notifications.warn(
+                            game.i18n.localize("DCC-QOL.WeaponRangedWarn")
+                        );
                     }
-                    if (Allies >= 1 && attackRollResult.firingIntoMelee) {
-                        friendlyFire = true;
+
+                    // check for friendly fire
+                    hitsTarget =
+                        game.user.targets.first().actor.system.attributes.ac
+                            .value <= attackRollResult.hitsAc ||
+                        attackRollResult.crit;
+
+                    if (
+                        !hitsTarget &&
+                        game.settings.get("dcc-qol", "automateFriendlyFire") &&
+                        !weapon.system.melee
+                    ) {
+                        friendlyFire = await this.checkFiringIntoMelee(
+                            game.user.targets.first().document
+                        );
                     }
                 }
             }
@@ -650,7 +649,7 @@ class DCCQOL extends Actor {
 
         /* Check firing into melee and apply penalty */
         if (
-            game.settings.get("dcc-qol", "automateFriendlyFire") &&
+            game.settings.get("dcc-qol", "automateFiringIntoMeleePenalty") &&
             game.user.targets.first() &&
             !weapon.system.melee
         ) {
@@ -667,6 +666,7 @@ class DCCQOL extends Actor {
             }
         }
 
+        /* Check for Lucky Weapon */
         if (
             DCCActor.system.details.sheetClass === "Warrior" ||
             DCCActor.system.details.sheetClass === "Dwarf"

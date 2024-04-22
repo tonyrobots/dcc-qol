@@ -94,14 +94,12 @@ async function ChatCardAction(event) {
                             damage: damageRollResult.damage,
                         });
                 } else {
-                    if (game.settings.get("dcc-qol", "manualDamageApplyHint")) {
-                        diceHTML =
-                            diceHTML +
-                            game.i18n.format("DCC-QOL.TakeDamageManual", {
-                                actor: targetActor.name,
-                                damage: damageRollResult.damage,
-                            });
-                    }
+                    diceHTML =
+                        diceHTML +
+                        game.i18n.format("DCC-QOL.TakeDamageManual", {
+                            actor: targetActor.name,
+                            damage: damageRollResult.damage,
+                        });
                 }
 
                 const msg = await damageRollResult.roll.toMessage({

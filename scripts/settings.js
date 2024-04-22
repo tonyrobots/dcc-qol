@@ -11,17 +11,17 @@ export const registerSystemSettings = async function () {
         default: false,
         config: true,
     });
-    /**
-     * Manual damage apply hint
-     */
-    game.settings.register("dcc-qol", "manualDamageApplyHint", {
-        name: "DCC-QOL.SettingTakeDamageManual",
-        hint: "DCC-QOL.SettingTakeDamageManualHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: true,
-    });
+    // /**
+    //  * Manual damage apply hint
+    //  */
+    // game.settings.register("dcc-qol", "manualDamageApplyHint", {
+    //     name: "DCC-QOL.SettingTakeDamageManual",
+    //     hint: "DCC-QOL.SettingTakeDamageManualHint",
+    //     scope: "world",
+    //     type: Boolean,
+    //     default: true,
+    //     config: true,
+    // });
     /**
      * Automate Deed Die Roll for warrior/dwarf attacks
      */
@@ -41,6 +41,19 @@ export const registerSystemSettings = async function () {
     game.settings.register("dcc-qol", "automateFriendlyFire", {
         name: "DCC-QOL.SettingAutomateFriendlyFire",
         hint: "DCC-QOL.SettingAutomateFriendlyFireHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: true,
+    });
+
+    /**
+     * Automatically add Firing into Melee penalty
+     * Add a -1 penalty when firing a missile weapon into melee
+     */
+    game.settings.register("dcc-qol", "automateFiringIntoMeleePenalty", {
+        name: "DCC-QOL.SettingFiringIntoMeleePenalty",
+        hint: "DCC-QOL.SettingFiringIntoMeleePenaltyHint",
         scope: "world",
         type: Boolean,
         default: false,
