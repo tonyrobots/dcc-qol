@@ -12,8 +12,9 @@ async function applyDamageQOL(targettoken, damage) {
     } else {
         targetActor = game.user.targets.first().actor;
     }
+
     await targetActor.update({
-        "data.attributes.hp.value":
+        "system.attributes.hp.value":
             targetActor.system.attributes.hp.value - damage,
     });
 }
@@ -46,14 +47,24 @@ async function ChatCardAction(event) {
     button.disabled = false;
     const actor = game.actors.get(card.dataset.actorId) || null;
 
-    const messagecreator = message._source.user;
+    // const messagecreator = message._source.user;
+    // console.warn("message", message);
+    const messagecreator = message._source.author;
 
     if (game.user._id !== messagecreator && !game.user.isGM) return;
 
     if (!actor) return;
 
+    // Why are these two additional actor objects created? In console they look identical to the actor object.
     const act = new game.dcc.DCCActor(actor);
     const DCCQOLactor = new DCCQOL(actor);
+
+    // output to console for debugging the following: actor, act, DCCQOLactor, action, card
+    // console.log("actor", actor);
+    // console.log("act", act);
+    // console.log("DCCQOLactor", DCCQOLactor);
+    // console.log("action", action);
+    // console.log("card", card);
 
     const options = JSON.parse(card.dataset.options);
     const weapon = actor.items.get(card.dataset.weaponId);

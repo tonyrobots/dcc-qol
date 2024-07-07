@@ -100,7 +100,7 @@ class DCCQOL extends Actor {
 
         // Either roll the die or grab the roll from the table lookup
         if (!critResult) {
-            await roll.evaluate({ async: true });
+            await roll.evaluate();
         } else {
             roll = critResult.roll;
         }
@@ -709,9 +709,7 @@ class DCCQOL extends Actor {
             ),
             rollOptions
         );
-        await attackRoll.evaluate({
-            async: true,
-        });
+        await attackRoll.evaluate();
 
         // Adjust crit range if the die size was adjusted
         critRange += parseInt(
