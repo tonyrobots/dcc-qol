@@ -284,6 +284,7 @@ class DCCQOL extends Actor {
             options.naturalCrit = true;
         }
 
+        // if automateDeedDieRoll is enabled, extract the deed die value from "attack bonus" and roll it
         if (
             (DCCActor.system.details.sheetClass === "Warrior" ||
                 DCCActor.system.details.sheetClass === "Dwarf") &&
@@ -294,9 +295,14 @@ class DCCQOL extends Actor {
             );
             // console.warn('DCC-QOL | deedDieFace:', deedDieFace)
             if (weapon.system.toHit.includes("@ab")) {
+                // roll the deed die, and set the lastDeedRoll value
                 lastDeedRoll = attackRollResult.roll.terms.find(
                     (element) => element.faces === deedDieFace
                 ).results[0].result;
+                // set the deedDie value in the character sheet
+                this.update({
+                    "data.details.lastRolledAttackBonus": lastDeedRoll,
+                });
                 const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize(
                     "DCC.DeedRollValue"
                 )}</div> </div>`;
@@ -354,7 +360,7 @@ class DCCQOL extends Actor {
                     tokenD,
                     game.user.targets.first().document
                 );
-                console.info("DCC-QOL | tokenDistance:", tokenDistance);
+                // console.info("DCC-QOL | tokenDistance:", tokenDistance);
 
                 // warn if melee attack and target is out of melee range
                 if (
@@ -468,6 +474,8 @@ class DCCQOL extends Actor {
                 DCCActor.system.details.sheetClass === "Dwarf") &&
             game.settings.get("dcc-qol", "automateDeedDieRoll")
         ) {
+            console.log("DCC-QOL | updating lastDeedRoll:", lastDeedRoll);
+
             if (game.modules.get("dice-so-nice")?.active) {
                 game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() =>
                     this.update({
