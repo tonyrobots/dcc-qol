@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.24 - 2024-08-16
+
+**Deed Die Damage Fix**
+This is a quick fix to automated Deed Die handling. It addresses an issue whereby the deed die would be automatically rolled with the attack roll, but it wasn't updating on the attacker's character sheet, and therefore wasn't being applied correctly when rolling damage.
+
 ## 0.0.23 - 2024-07-07
 
 Small update to add compatibility for Foundry v12/DCC system v0.42
