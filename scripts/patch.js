@@ -299,10 +299,7 @@ class DCCQOL extends Actor {
                 lastDeedRoll = attackRollResult.roll.terms.find(
                     (element) => element.faces === deedDieFace
                 ).results[0].result;
-                // set the deedDie value in the character sheet
-                this.update({
-                    "data.details.lastRolledAttackBonus": lastDeedRoll,
-                });
+
                 const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize(
                     "DCC.DeedRollValue"
                 )}</div> </div>`;
@@ -474,17 +471,17 @@ class DCCQOL extends Actor {
                 DCCActor.system.details.sheetClass === "Dwarf") &&
             game.settings.get("dcc-qol", "automateDeedDieRoll")
         ) {
-            console.log("DCC-QOL | updating lastDeedRoll:", lastDeedRoll);
+            // console.log("DCC-QOL | updating last Deed Roll:", lastDeedRoll);
 
             if (game.modules.get("dice-so-nice")?.active) {
                 game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() =>
                     this.update({
-                        "data.details.lastRolledAttackBonus": lastDeedRoll,
+                        "system.details.lastRolledAttackBonus": lastDeedRoll,
                     })
                 );
             } else {
                 this.update({
-                    "data.details.lastRolledAttackBonus": lastDeedRoll,
+                    "system.details.lastRolledAttackBonus": lastDeedRoll,
                 });
             }
         }
