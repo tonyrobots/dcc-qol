@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Gotta smash those bugs!
-title: ''
+title: "[BUG] "
 labels: ''
 assignees: ''
 
