@@ -38,5 +38,11 @@
     "DCC-QOL.WeaponRangedWarn": "Target appears to be too far ({distance} {units}) for a {weapon} (maximum {range} {units}.)",
     "DCC-QOL.WeaponMissileToMelee": "Missile into Melee Penalty",
     "DCC-QOL.WeaponRangePenalty": "Range Penalty",
-    "DCC-QOL.WeaponWarningNonBackstabBonus": "This weapon does not give you a backstab bonus."
+    "DCC-QOL.WeaponWarningNonBackstabBonus": "This weapon does not give you a backstab bonus.",
+    "DCC-QOL.SettingAutomateLuckyWeaponModifier": "Automate Lucky Weapon Modifier",
+    "DCC-QOL.SettingAutomateLuckyWeaponModifierHint": "If the name of the weapon used matches the specified lucky weapon (case-insensitive, substrings okay), choose an option of how to automate.",
+    "DCC-QOL.SettingAutomateLuckyWeaponModifierNone": "NONE: No automation for lucky weapon modifier",
+    "DCC-QOL.SettingAutomateLuckyWeaponModifierStandard": "STANDARD: Apply attacker's current luck modifier",
+    "DCC-QOL.SettingAutomateLuckyWeaponModifierPlus1": "PLUS ONE: Always add +1, regardless of attacker's luck score",
+    "DCC-QOL.SettingAutomateLuckyWeaponModifierPositive": "POSITIVE: Only apply attacker's luck mod if it's > 0 (no negative luck)"
 }

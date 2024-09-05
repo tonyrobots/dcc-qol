@@ -83,6 +83,34 @@ export const registerSystemSettings = async function () {
     });
 
     /**
+     * Automatically apply lucky weapon modifier
+     * For classes with lucky weapons (e.g. Warriors & Dwarves, set in config.js), automatically apply the lucky weapon modifier (as specified) to the attack roll.
+     */
+    game.settings.register("dcc-qol", "automateLuckyWeaponModifier", {
+        name: "DCC-QOL.SettingAutomateLuckyWeaponModifier",
+        hint: "DCC-QOL.SettingAutomateLuckyWeaponModifierHint",
+        scope: "world",
+        type: String,
+        default: "none",
+        choices: {
+            none: "DCC-QOL.SettingAutomateLuckyWeaponModifierNone",
+            standard: "DCC-QOL.SettingAutomateLuckyWeaponModifierStandard",
+            plus1: "DCC-QOL.SettingAutomateLuckyWeaponModifierPlus1",
+            positive: "DCC-QOL.SettingAutomateLuckyWeaponModifierPositive",
+        },
+        config: true,
+    });
+
+    game.settings.register("dcc-qol", "DisplayHitMiss", {
+        name: "DCC-QOL.SettingDisplayHitMiss",
+        hint: "DCC-QOL.SettingDisplayHitMissHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: true,
+    });
+
+    /**
      * Check weapon's range and if target is beyond UI warning diplay appears and prevent rolls
      * Applies penalty for ranged weapons based on range
      */

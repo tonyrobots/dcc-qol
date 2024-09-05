@@ -1,5 +1,7 @@
 /* global Actor, ChatMessage, CONFIG, game, Ray, Roll, renderTemplate, ui */
 
+import * as config from "./config.js";
+
 class DCCQOL extends Actor {
     /** @override */
     prepareBaseData() {
@@ -286,14 +288,16 @@ class DCCQOL extends Actor {
 
         // if automateDeedDieRoll is enabled, extract the deed die value from "attack bonus" and roll it
         if (
-            (DCCActor.system.details.sheetClass === "Warrior" ||
-                DCCActor.system.details.sheetClass === "Dwarf") &&
+            (config.DEED_DIE_CLASSES.includes(
+                DCCActor.system.details.sheetClass
+            ) ||
+                DCCActor.system.details.lastRolledAttackBonus != "") &&
             game.settings.get("dcc-qol", "automateDeedDieRoll")
         ) {
             const deedDieFace = extractDieValue(
                 this.system.details.attackBonus
             );
-            // console.warn('DCC-QOL | deedDieFace:', deedDieFace)
+            // console.warn("DCC-QOL | deedDieFace:", deedDieFace);
             if (weapon.system.toHit.includes("@ab")) {
                 // roll the deed die, and set the lastDeedRoll value
                 lastDeedRoll = attackRollResult.roll.terms.find(
@@ -322,8 +326,10 @@ class DCCQOL extends Actor {
         }
 
         if (
-            (DCCActor.system.details.sheetClass === "Warrior" ||
-                DCCActor.system.details.sheetClass === "Dwarf") &&
+            (config.DEED_DIE_CLASSES.includes(
+                DCCActor.system.details.sheetClass
+            ) ||
+                DCCActor.system.details.lastRolledAttackBonus != "") &&
             !game.settings.get("dcc-qol", "automateDeedDieRoll")
         ) {
             lastDeedRoll = this.system.details.lastRolledAttackBonus;
@@ -467,8 +473,10 @@ class DCCQOL extends Actor {
 
         /* Update AttackBonus only after Dice So Nice animation finished */
         if (
-            (DCCActor.system.details.sheetClass === "Warrior" ||
-                DCCActor.system.details.sheetClass === "Dwarf") &&
+            (config.DEED_DIE_CLASSES.includes(
+                DCCActor.system.details.sheetClass
+            ) ||
+                DCCActor.system.details.lastRolledAttackBonus != "") &&
             game.settings.get("dcc-qol", "automateDeedDieRoll")
         ) {
             // console.log("DCC-QOL | updating last Deed Roll:", lastDeedRoll);
@@ -541,8 +549,9 @@ class DCCQOL extends Actor {
         if (Number(toHit) !== 0 || options.showModifierDialog) {
             const newToHit = toHit.replace("+@ab", "");
 
-            if (newToHit.length !== 0)
+            if (newToHit.length !== 0) {
                 debuginfo = debuginfo + `[ToHit:${newToHit}]`;
+            }
             terms.push({
                 type: "Compound",
                 dieLabel: game.i18n.localize("DCC.DeedDie"),
@@ -553,8 +562,10 @@ class DCCQOL extends Actor {
 
         /* Replace Deed roll value with Deed die */
         if (
-            (DCCActor.system.details.sheetClass === "Warrior" ||
-                DCCActor.system.details.sheetClass === "Dwarf") &&
+            (config.DEED_DIE_CLASSES.includes(
+                DCCActor.system.details.sheetClass
+            ) ||
+                DCCActor.system.details.lastRolledAttackBonus != "") &&
             game.settings.get("dcc-qol", "automateDeedDieRoll")
         ) {
             const index = terms.findIndex(
@@ -672,8 +683,9 @@ class DCCQOL extends Actor {
 
         /* Check for Lucky Weapon */
         if (
-            DCCActor.system.details.sheetClass === "Warrior" ||
-            DCCActor.system.details.sheetClass === "Dwarf"
+            config.LUCKY_WEAPON_CLASSES.includes(
+                DCCActor.system.details.sheetClass
+            )
         ) {
             if (
                 weapon.name
@@ -681,16 +693,38 @@ class DCCQOL extends Actor {
                     .includes(
                         DCCActor.system.class.luckyWeapon.toLowerCase()
                     ) &&
-                game.settings.get("dcc", "automateLuckyWeaponAttack") &&
+                game.settings.get("dcc-qol", "automateLuckyWeaponModifier") !==
+                    "none" &&
                 DCCActor.system.class.luckyWeapon !== ""
             ) {
+                let luckyModifier = 0;
+                switch (
+                    game.settings.get("dcc-qol", "automateLuckyWeaponModifier")
+                ) {
+                    case "standard":
+                        luckyModifier = DCCActor.system.abilities.lck.mod;
+                        break;
+                    case "plus1":
+                        luckyModifier = 1;
+                        break;
+                    case "positive":
+                        luckyModifier = Math.max(
+                            0,
+                            DCCActor.system.abilities.lck.mod
+                        );
+                        break;
+                    default:
+                        break;
+                }
+
+                console.log("DCC-QOL | Lucky Weapon Modifier:", luckyModifier);
                 terms.push({
                     type: "Modifier",
                     label:
                         game.i18n.localize("DCC.AbilityLck") +
                         " " +
                         game.i18n.localize("DCC.Modifier"),
-                    formula: DCCActor.system.abilities.lck.mod,
+                    formula: luckyModifier,
                 });
                 debuginfo =
                     debuginfo + `[Luck:${DCCActor.system.abilities.lck.mod}]`;

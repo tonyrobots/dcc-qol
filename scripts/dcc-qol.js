@@ -75,11 +75,11 @@ Hooks.once("setup", async function () {
 
 Hooks.once("ready", async function () {
     if (!game.modules.get("lib-wrapper")?.active && game.user.isGM) {
-        console.warn("DCC-QOL | libWrapper is NOT active exiting!");
+        console.warn("DCC-QOL | libWrapper is NOT active; exiting!");
         ui.notifications.warn(game.i18n.localize("DCC-QOL.libwrapperWarning"));
     }
     if (!game.modules.get("socketlib")?.active && game.user.isGM) {
-        console.warn("DCC-QOL | socketlib is NOT active exiting!");
+        console.warn("DCC-QOL | socketlib is NOT active; exiting!");
         ui.notifications.warn(game.i18n.localize("DCC-QOL.socketlibWarning"));
     }
 });
