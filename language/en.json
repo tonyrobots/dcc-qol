@@ -20,7 +20,7 @@
     "DCC-QOL.SettingAutomateFriendlyFireHint": "When firing into melee and missile attack misses, request an additional d100 roll .",
     "DCC-QOL.SettingFiringIntoMeleePenalty": "Automate penalty when firing into melee",
     "DCC-QOL.SettingFiringIntoMeleePenaltyHint": "When firing a missile attack into melee, apply a -1 penalty to the attack roll.",
-    "DCC-QOL.SettingAutomateMonsterCritLuck": "Automate PC's Luck modifier aginst monster's critical hit.",
+    "DCC-QOL.SettingAutomateMonsterCritLuck": "Automate PC's Luck modifier against monster's critical hit.",
     "DCC-QOL.SettingAutomateMonsterCritLuckHint": "PC's Luck modifier always alters a monster's critical hit.",
     "DCC-QOL.SettingDisplayHitMiss": "Display hit/miss on attack chat card",
     "DCC-QOL.SettingDisplayHitMissHint": "Display hit/miss and target on attack chat card.",
