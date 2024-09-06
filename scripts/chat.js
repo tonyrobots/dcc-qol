@@ -45,7 +45,26 @@ async function ChatCardAction(event) {
     const message = game.messages.get(messageId);
     const action = button.dataset.action;
     button.disabled = false;
-    const actor = game.actors.get(card.dataset.actorId) || null;
+    // const actor = game.actors.get(card.dataset.actorId) || null;
+
+    // Use the token actor, not the base actor
+    const tokenUuid = card.dataset.tokenId;
+    // console.log("Token UUID:", tokenUuid);
+
+    let token;
+    try {
+        token = await fromUuid(tokenUuid);
+    } catch (error) {
+        console.error(`Error resolving UUID ${tokenUuid}:`, error);
+    }
+
+    if (!token) {
+        console.warn(`Token with ID ${tokenUuid} not found on the canvas.`);
+    }
+    const actor = token ? token.actor : null;
+    if (!actor) {
+        console.warn(`Actor for token ID ${tokenUuid} not found.`);
+    }
 
     // const messagecreator = message._source.user;
     // console.warn("message", message);
@@ -53,9 +72,11 @@ async function ChatCardAction(event) {
 
     if (game.user._id !== messagecreator && !game.user.isGM) return;
 
-    if (!actor) return;
-
-    // Why are these two additional actor objects created? In console they look identical to the actor object.
+    if (!actor) {
+        console.error("No actor found for card!", card);
+        return;
+    }
+    // Why are these two additional actor objects created? In console they look identical to the actor object. Tested, they are not identical, don't yet know difference.
     const act = new game.dcc.DCCActor(actor);
     const DCCQOLactor = new DCCQOL(actor);
 
@@ -63,6 +84,7 @@ async function ChatCardAction(event) {
     // console.log("actor", actor);
     // console.log("act", act);
     // console.log("DCCQOLactor", DCCQOLactor);
+
     // console.log("action", action);
     // console.log("card", card);
 
@@ -77,6 +99,7 @@ async function ChatCardAction(event) {
 
     switch (action) {
         case "damage":
+            console.log("weapon:", weapon);
             const damageRollResult = await act.rollDamage(weapon, options);
             let targetActor;
 
