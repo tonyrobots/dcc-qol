@@ -693,8 +693,9 @@ class DCCQOL extends Actor {
                     .includes(
                         DCCActor.system.class.luckyWeapon.toLowerCase()
                     ) &&
-                game.settings.get("dcc-qol", "automateLuckyWeaponModifier") !==
-                    "none" &&
+                // Respect the DCC system automation setting
+                game.settings.get("dcc", "automateLuckyWeaponAttack") &&
+                // game.settings.get("dcc-qol", "automateLuckyWeaponModifier") !== "none" &&
                 DCCActor.system.class.luckyWeapon !== ""
             ) {
                 let luckyModifier = 0;
