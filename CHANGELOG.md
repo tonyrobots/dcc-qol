@@ -1,5 +1,16 @@
 # Changelog
+## 0.1.26 - 2024-09-05
+Just a version bump to fix a publishing error. Blerg. See notes for v0.1.25 for the latest changes.
 
+## 0.1.25 - 2024-09-05
+### Added
+- Added automated deed dice support for Rangers and Halfling Champions. (Thanks to clayworks on the Goodman Games discord for the suggestion.)
+- Other classes can also enable automated deed dice (in case people are using non-standard variants, etc)... You just need to  a)  turn on "Attack Bonus Mode: Manual Roll" in the sheet configuration, and b) manually roll the deed die at least once (from the equipment tab on the sheet)
+- Added support for alt/house rules for Lucky Weapon attack modifier. (n.b. you still need to enable "Automate Lucky Weapon" in the DCC system settings first)
+
+### Changed
+- Moved some system-wide configuration stuff to a config.js file to clean things up
+- Changed version numbering scheme to better conform to semantic versioning standards... (hooray for v0.1.x!!)
 ## 0.0.24 - 2024-08-16
 
 **Deed Die Damage Fix**
