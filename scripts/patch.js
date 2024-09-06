@@ -291,7 +291,7 @@ class DCCQOL extends Actor {
             (config.DEED_DIE_CLASSES.includes(
                 DCCActor.system.details.sheetClass
             ) ||
-                DCCActor.system.details.lastRolledAttackBonus != "") &&
+                DCCActor.system.details.lastRolledAttackBonus > 0) &&
             game.settings.get("dcc-qol", "automateDeedDieRoll")
         ) {
             const deedDieFace = extractDieValue(
@@ -329,7 +329,7 @@ class DCCQOL extends Actor {
             (config.DEED_DIE_CLASSES.includes(
                 DCCActor.system.details.sheetClass
             ) ||
-                DCCActor.system.details.lastRolledAttackBonus != "") &&
+                DCCActor.system.details.lastRolledAttackBonus > 0) &&
             !game.settings.get("dcc-qol", "automateDeedDieRoll")
         ) {
             lastDeedRoll = this.system.details.lastRolledAttackBonus;
@@ -476,7 +476,7 @@ class DCCQOL extends Actor {
             (config.DEED_DIE_CLASSES.includes(
                 DCCActor.system.details.sheetClass
             ) ||
-                DCCActor.system.details.lastRolledAttackBonus != "") &&
+                DCCActor.system.details.lastRolledAttackBonus > 0) &&
             game.settings.get("dcc-qol", "automateDeedDieRoll")
         ) {
             // console.log("DCC-QOL | updating last Deed Roll:", lastDeedRoll);
@@ -565,7 +565,7 @@ class DCCQOL extends Actor {
             (config.DEED_DIE_CLASSES.includes(
                 DCCActor.system.details.sheetClass
             ) ||
-                DCCActor.system.details.lastRolledAttackBonus != "") &&
+                DCCActor.system.details.lastRolledAttackBonus > 0) &&
             game.settings.get("dcc-qol", "automateDeedDieRoll")
         ) {
             const index = terms.findIndex(
