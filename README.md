@@ -6,16 +6,16 @@
 The DCC-QoL module aims to bring some convenience & automation functions that are not present in the core Dungeon Crawl Classics system. 
 
 Some highlights:
+* Auto-applies damage to target (targeting can be done before attack roll or before damage roll)
 * Separates attack/damage/crit and fumble rolls for weapon attacks
 * Displays on attack chat-card information about the weapon/actor (type, equipped, range, (un)trained, two-handed)
-* Displays weapon description (weapon.system.description.value)
-* Automates deed die roll for warriors/dwarves (in manual roll mode)
+* Displays weapon description (weapon.system.description.value) in attack chat card
+* Automates deed die roll for warriors and dwarves (in manual roll mode)
 * Subtracts PC's Luck score from monsters' crit roll
 * Checks the weapon range (requires token targeting)
-  * Checks hits and misses
+  * Applies medium/long range penalty to attack roll depending on target distance
   * Checks for friendly fire when firing into melee ("Friendly Fire" button displays when ally is near)
-* Calculates range penalty during attack rolls
-* Auto-applies damage (targeting can be done before attack roll or before damage roll)
+* Allows "house rule" modifiers to lucky weapon bonus
   
 ![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/de00db42-eab4-491f-afca-244f742be62a)
 ![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/786a457a-31a2-4733-b3e7-ba2d75e1c2f9)
@@ -31,7 +31,7 @@ Applying Luck score on monsters' crit roll
 ![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/e1475ec2-f5d3-467d-a02a-dcac9e565d70)
 
 
-Range penalty applying:
+Range penalty application:
 
 ![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/e7961451-b345-4942-ba20-c310cac1a0f5)
 ![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/a1fc425b-f3b5-4868-8804-6a80675ef583)
