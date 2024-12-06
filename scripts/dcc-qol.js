@@ -83,3 +83,6 @@ Hooks.once("ready", async function () {
         ui.notifications.warn(game.i18n.localize("DCC-QOL.socketlibWarning"));
     }
 });
+
+// testing dcc attack hook
+// Hooks.on("preCreateChatMessage", (data, options, userId) => {

@@ -93,23 +93,25 @@ export const registerSystemSettings = async function () {
         type: String,
         default: "standard",
         choices: {
-            // none: "DCC-QOL.SettingAutomateLuckyWeaponModifierNone",
+            none: "DCC-QOL.SettingAutomateLuckyWeaponModifierNone",
+            manual: "DCC-QOL.SettingAutomateLuckyWeaponModifierManual",
             standard: "DCC-QOL.SettingAutomateLuckyWeaponModifierStandard",
             plus1: "DCC-QOL.SettingAutomateLuckyWeaponModifierPlus1",
             positive: "DCC-QOL.SettingAutomateLuckyWeaponModifierPositive",
         },
         config: true,
-        onChange: (value) => {
-            // value is the new value of the setting
-            // warn if dcc automate lucky is not enabled
-            if (!game.settings.get("dcc", "automateLuckyWeaponAttack")) {
-                ui.notifications.warn(
-                    game.i18n.localize(
-                        "DCC-QOL.AutomateLuckyWeaponsNotEnabledWarning"
-                    )
-                );
-            }
-        },
+        // This is no longer relevant for versions 0.5.0 and later
+        // onChange: (value) => {
+        //     // value is the new value of the setting
+        //     // warn if dcc automate lucky is not enabled
+        //     if (!game.settings.get("dcc", "automateLuckyWeaponAttack")) {
+        //         ui.notifications.warn(
+        //             game.i18n.localize(
+        //                 "DCC-QOL.AutomateLuckyWeaponsNotEnabledWarning"
+        //             )
+        //         );
+        //     }
+        // },
     });
 
     game.settings.register("dcc-qol", "DisplayHitMiss", {

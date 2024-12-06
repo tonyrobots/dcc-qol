@@ -298,30 +298,22 @@ class DCCQOL extends Actor {
                 this.system.details.attackBonus
             );
             // console.warn("DCC-QOL | deedDieFace:", deedDieFace);
-            if (weapon.system.toHit.includes("@ab")) {
-                // roll the deed die, and set the lastDeedRoll value
-                lastDeedRoll = attackRollResult.roll.terms.find(
-                    (element) => element.faces === deedDieFace
-                ).results[0].result;
+            // roll the deed die, and set the lastDeedRoll value
+            lastDeedRoll = attackRollResult.roll.terms.find(
+                (element) => element.faces === deedDieFace
+            ).results[0].result;
 
-                const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize(
-                    "DCC.DeedRollValue"
-                )}</div> </div>`;
-                if (lastDeedRoll >= 3) {
-                    deedDieHTML =
-                        preDeedDieHTML +
-                        `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:green">${lastDeedRoll}</span> </h4> </div> </div>`;
-                } else {
-                    deedDieHTML =
-                        preDeedDieHTML +
-                        `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:black">${lastDeedRoll}</span> </h4> </div> </div>`;
-                }
+            const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize(
+                "DCC.DeedRollValue"
+            )}</div> </div>`;
+            if (lastDeedRoll >= 3) {
+                deedDieHTML =
+                    preDeedDieHTML +
+                    `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:green">${lastDeedRoll}</span> </h4> </div> </div>`;
             } else {
-                console.warn(
-                    'DCC-QOL | Missing "@ab" in "To Hit" bonus on weapon (' +
-                        weapon.system.toHit +
-                        "), so deed roll/attack bonus is not included."
-                );
+                deedDieHTML =
+                    preDeedDieHTML +
+                    `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:black">${lastDeedRoll}</span> </h4> </div> </div>`;
             }
         }
 
@@ -511,10 +503,17 @@ class DCCQOL extends Actor {
         let firingIntoMelee;
 
         /* Determine using untrained weapon */
-        const automateUntrainedAttack = game.settings.get(
-            "dcc",
-            "automateUntrainedAttack"
-        );
+        // fix so it doesn't throw error if setting is not defined
+
+        let automateUntrainedAttack;
+        try {
+            automateUntrainedAttack = game.settings.get(
+                "dcc",
+                "automateUntrainedAttack"
+            );
+        } catch (error) {
+            automateUntrainedAttack = true; // default to true if setting is not defined (as in DCC v1.0+)
+        }
         if (!weapon.system.trained && automateUntrainedAttack) {
             die = game.dcc.DiceChain.bumpDie(die, "-1");
             debuginfo = debuginfo + "[Untrained:-1D]";
@@ -638,8 +637,20 @@ class DCCQOL extends Actor {
         // Add Strength or Agility modifier to attack rolls
         let modifier;
         let modifierLabel;
+
+        // Check if the DCC system automation setting is enabled; this is only present in versions prior to 0.5.0
+        let automateCombatModifier;
+        try {
+            automateCombatModifier = game.settings.get(
+                "dcc",
+                "automateCombatModifier"
+            );
+        } catch (error) {
+            automateCombatModifier = true; // or any default value you prefer
+        }
+
         if (
-            game.settings.get("dcc", "automateCombatModifier") &&
+            automateCombatModifier &&
             (DCCActor.system.abilities.agl.mod !== 0 ||
                 DCCActor.system.abilities.str.mod !== 0)
         ) {
@@ -693,9 +704,8 @@ class DCCQOL extends Actor {
                     .includes(
                         DCCActor.system.class.luckyWeapon.toLowerCase()
                     ) &&
-                // Respect the DCC system automation setting
-                game.settings.get("dcc", "automateLuckyWeaponAttack") &&
-                // game.settings.get("dcc-qol", "automateLuckyWeaponModifier") !== "none" &&
+                game.settings.get("dcc-qol", "automateLuckyWeaponModifier") !==
+                    "none" &&
                 DCCActor.system.class.luckyWeapon !== ""
             ) {
                 let luckyModifier = 0;
@@ -712,6 +722,13 @@ class DCCQOL extends Actor {
                         luckyModifier = Math.max(
                             0,
                             DCCActor.system.abilities.lck.mod
+                        );
+                        break;
+                    case "manual":
+                        luckyModifier = weapon.system.attackBonusLucky;
+                        console.warn(
+                            "luckyModifier:",
+                            weapon.system.attackBonusLucky
                         );
                         break;
                     default:
