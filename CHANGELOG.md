@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.28 - 2024-12-06
+
+#### DCC-QOL is incompatible with the (very cool) new DCC system update
+
+The 0.5 version of the DCC system brings a number of exciting changes, but unfortunately will require an extensive rework to dcc-qol to make it compatible. This small dcc-qol update specifies a max compatible DCC system version of 0.49; anyone running a DCC system version > 0.49 will have dcc-qol automatically disabled. We're hoping this will help users avoid some unnecessary confusion when updating to the new system version.
+
+Also hoping to have a compatible release in the coming weeks, but holidays might throw a bit of a wrench into that. In the meantime, please let me know what feature(s) you miss most and would most like to see prioritized for a compatible version on the [github issues board](https://github.com/tonyrobots/dcc-qol/issues).
+
+Note: for the small group of you who want to keep using dcc-qol, and are therefore sticking to DCC system version 0.49, and happen to be Brazilian --  thanks to contributor unnamed-gw, dcc-qol now includes a Brazilian Portuguese (PT-BR) translation. (You are on your own getting it to work, though -- will require another module since PT-BR isn't selectable in the vanilla language dropdown.)
+
+Thank you!
+
+### What's Changed
+
+* Added pt-br translation file by @unnamed-gw in https://github.com/tonyrobots/dcc-qol/pull/5
+
+### New Contributors
+
+* @unnamed-gw made their first contribution in https://github.com/tonyrobots/dcc-qol/pull/5
+
+**Full Changelog**: https://github.com/tonyrobots/dcc-qol/compare/0.1.27...0.1.28
+
 ## 0.1.27 - 2024-09-06
 
 Fast follow fix for a bug introduced in the update earlier today, as well as one for a persnickety little bug that's been haunting me.
