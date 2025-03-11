@@ -317,27 +317,27 @@ class DCCQOL extends Actor {
             }
         }
 
-        if (
-            (config.DEED_DIE_CLASSES.includes(
-                DCCActor.system.details.sheetClass
-            ) ||
-                DCCActor.system.details.lastRolledAttackBonus > 0) &&
-            !game.settings.get("dcc-qol", "automateDeedDieRoll")
-        ) {
-            lastDeedRoll = this.system.details.lastRolledAttackBonus;
-            const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize(
-                "DCC.DeedRollValue"
-            )}</div> </div>`;
-            if (lastDeedRoll >= 3) {
-                deedDieHTML =
-                    preDeedDieHTML +
-                    `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:green">${lastDeedRoll}</span> </h4> </div> </div>`;
-            } else {
-                deedDieHTML =
-                    preDeedDieHTML +
-                    `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:black">${lastDeedRoll}</span> </h4> </div> </div>`;
-            }
-        }
+        // if (
+        //     (config.DEED_DIE_CLASSES.includes(
+        //         DCCActor.system.details.sheetClass
+        //     ) ||
+        //         DCCActor.system.details.lastRolledAttackBonus > 0) &&
+        //     !game.settings.get("dcc-qol", "automateDeedDieRoll")
+        // ) {
+        //     lastDeedRoll = this.system.details.lastRolledAttackBonus;
+        //     const preDeedDieHTML = `<div class="chat-details"> <div class="roll-result">${game.i18n.localize(
+        //         "DCC.DeedRollValue"
+        //     )}</div> </div>`;
+        //     if (lastDeedRoll >= 3) {
+        //         deedDieHTML =
+        //             preDeedDieHTML +
+        //             `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:green">${lastDeedRoll}</span> </h4> </div> </div>`;
+        //     } else {
+        //         deedDieHTML =
+        //             preDeedDieHTML +
+        //             `<div class="dice-roll"> <div class="dice-result"> <h4 class="dice-total"><span style="color:black">${lastDeedRoll}</span> </h4> </div> </div>`;
+        //     }
+        // }
 
         const diceHTML = await attackRollResult.roll.render();
 
@@ -471,7 +471,7 @@ class DCCQOL extends Actor {
                 DCCActor.system.details.lastRolledAttackBonus > 0) &&
             game.settings.get("dcc-qol", "automateDeedDieRoll")
         ) {
-            // console.log("DCC-QOL | updating last Deed Roll:", lastDeedRoll);
+            console.log("DCC-QOL | updating last Deed Roll:", lastDeedRoll);
 
             if (game.modules.get("dice-so-nice")?.active) {
                 game.dice3d.waitFor3DAnimationByMessageID(msg.id).then(() =>
@@ -646,7 +646,7 @@ class DCCQOL extends Actor {
                 "automateCombatModifier"
             );
         } catch (error) {
-            automateCombatModifier = true; // or any default value you prefer
+            automateCombatModifier = false; // if setting isn't present, default to false since it's not needed in 0.5.0+
         }
 
         if (
