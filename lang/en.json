@@ -1,0 +1,44 @@
+{
+    "DCC-QOL": {
+        "SettingAutomateDamageApply": "Automate Damage Application",
+        "SettingAutomateDamageApplyHint": "Automatically apply damage to targeted token when damage is rolled.",
+
+        "SettingTakeDamageManual": "Show Manual Damage Reminder",
+        "SettingTakeDamageManualHint": "Display a reminder message when damage needs to be applied manually.",
+
+        "SettingAutomateDeedDieRoll": "Automate Deed Die Roll",
+        "SettingAutomateDeedDieRollHint": "Automatically roll and display deed die results for warrior and dwarf attacks.",
+
+        "SettingAutomateFriendlyFire": "Check Friendly Fire",
+        "SettingAutomateFriendlyFireHint": "When firing into melee and missing, automatically check for friendly fire (50% chance).",
+
+        "SettingFiringIntoMeleePenalty": "Apply Firing into Melee Penalty",
+        "SettingFiringIntoMeleePenaltyHint": "Automatically apply -1 penalty when firing a missile weapon into melee.",
+
+        "SettingAutomateMonsterCritLuck": "Adjust Monster Crits by Luck",
+        "SettingAutomateMonsterCritLuckHint": "Automatically adjust monster critical hits based on target's Luck modifier.",
+
+        "SettingDisplayHitMiss": "Display Hit/Miss",
+        "SettingDisplayHitMissHint": "Show whether an attack hits or misses on the chat card.",
+
+        "SettingAutomateLuckyWeaponModifier": "Lucky Weapon Modifier",
+        "SettingAutomateLuckyWeaponModifierHint": "How to apply lucky weapon modifiers for Warriors and Dwarves.",
+        "SettingAutomateLuckyWeaponModifierNone": "Don't Apply",
+        "SettingAutomateLuckyWeaponModifierManual": "Manual Entry",
+        "SettingAutomateLuckyWeaponModifierStandard": "Standard (Per Rules)",
+        "SettingAutomateLuckyWeaponModifierPlus1": "Always +1",
+        "SettingAutomateLuckyWeaponModifierPositive": "Only Positive Modifiers",
+
+        "SettingWeaponRangeCheck": "Check Weapon Range",
+        "SettingWeaponRangeCheckHint": "Check weapon range and apply appropriate penalties based on distance.",
+
+        "SettingLog": "Enable Debug Logging",
+        "SettingLogHint": "Output debug information to the browser console.",
+
+        "TakeDamage": "{actor} takes {damage} damage",
+        "TakeDamageManual": "Apply {damage} damage to {actor}",
+        "FriendlyFireCheck": "Friendly Fire Check",
+        "FriendlyFireSuccess": "The shot misses all allies!",
+        "FriendlyFireFail": "The shot hits an ally!"
+    }
+}

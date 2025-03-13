@@ -1,111 +1,121 @@
 .dccqol.chat-card {
-  font-size: 12px;
-  font-style: normal;
+    font-family: "Modesto Condensed", "Palatino Linotype", serif;
+    font-size: 14px;
+    margin: 5px 0;
+    border: 2px solid #782e22;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .dccqol.chat-card .card-header {
-  border-bottom: 2px groove #fff;
-  border-top: 2px groove #fff;
-  padding: 3px 0;
+    padding: 3px 0;
+    border-bottom: 2px solid #782e22;
+    background: rgba(120, 46, 34, 0.1);
 }
 
 .dccqol.chat-card .card-header img {
-  flex: 0 0 36px;
-  margin-right: 5px;
+    flex: 0 0 36px;
+    margin-right: 5px;
 }
 
-.dccqol.chat-card .card-header h4 {
-  flex: 1;
-  font-family: 'Book Antiqua', 'Palatino Linotype', serif;
-  font-size: 15px;
-  font-weight: bold;
-  line-height: 36px;
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dccqol.chat-card .card-header h4:hover {
-  color: #111;
-  text-shadow: 0 0 10px red;
+.dccqol.chat-card .card-header h3 {
+    flex: 1;
+    margin: 0;
+    line-height: 36px;
+    color: #4b1810;
 }
 
 .dccqol.chat-card .card-content {
-  margin: 5px 0;
+    padding: 5px;
+    border-bottom: 1px solid #782e22;
 }
 
-.dccqol.chat-card .card-content h3 {
-  font-size: 12px;
-  font-weight: bold;
-  margin: 0;
+.dccqol.chat-card .dice-roll {
+    padding: 5px;
+    border-bottom: 1px solid #782e22;
 }
 
-.dccqol.chat-card .card-content > * {
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
+.dccqol.chat-card .deed-die {
+    padding: 5px;
+    border-bottom: 1px solid #782e22;
+    background: rgba(120, 46, 34, 0.05);
 }
 
-.dccqol.chat-card .card-buttons {
-  margin: 5px 0;
-}
-
-.dccqol.chat-card .card-buttons span {
-  border: 1px solid #ccc;
-  display: block;
-  line-height: 28px;
-  text-align: center;
-}
-
-.dccqol.chat-card .card-buttons button {
-  font-size: 12px;
-  height: 24px;
-  line-height: 20px;
-  margin: 2px 0;
-}
-
-.dccqol.chat-card .card-footer {
-  border-top: 2px groove #fff;
-  padding: 3px 0 0;
-}
-
-.dccqol.chat-card .card-footer span {
-  border-right: 2px groove #fff;
-  font-size: 10px;
-  padding: 0 3px 0 0;
-}
-
-.dccqol.chat-card .card-footer span:last-child {
-  padding-right: 0;
+.dccqol.chat-card .chat-details {
+    padding: 5px;
+    text-align: center;
 }
 
 .dccqol.chat-card .roll-result {
-  font-size: 13px;
-  font-weight: bold;
-  margin: 5px 0;
-  text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
 }
 
-.dccqol.chat-card .ff-result {
-  font-size: 12px;
-  padding: 3px 0 0;
+.dccqol.chat-card .roll-result.fumble {
+    color: #aa0200;
 }
 
-.dccqol.chat-card .roll-resultx {
-  font-weight: bold;
-  margin: 5px 0;
-  text-align: left;
+.dccqol.chat-card .roll-result.critical {
+    color: #18520b;
 }
 
-.dice-roll .dice-total.success {
-  color: green;
-  font-weight: 900;
+.dccqol.chat-card .roll-result.hit {
+    color: #18520b;
 }
 
-.dice-roll .dice-total.fail {
-  color: red;
-  font-weight: 900;
+.dccqol.chat-card .roll-result.miss {
+    color: #782e22;
 }
 
+.dccqol.chat-card .roll-result.warning {
+    color: #aa5502;
+}
+
+.dccqol.chat-card .card-buttons {
+    padding: 5px;
+    border-top: 1px solid #782e22;
+    text-align: center;
+}
+
+.dccqol.chat-card .card-buttons button {
+    background: #782e22;
+    color: white;
+    border: 1px solid #4b1810;
+    border-radius: 3px;
+    padding: 2px 6px;
+    margin: 0 3px;
+    font-size: 12px;
+    line-height: 16px;
+    cursor: pointer;
+}
+
+.dccqol.chat-card .card-buttons button:hover {
+    background: #4b1810;
+}
+
+.dccqol.chat-card .card-footer {
+    padding: 3px;
+    border-top: 2px solid #782e22;
+    background: rgba(120, 46, 34, 0.1);
+}
+
+.dccqol.chat-card .card-footer .tag {
+    display: inline-block;
+    margin: 0 2px;
+    padding: 0 3px;
+    font-size: 10px;
+    line-height: 16px;
+    border: 1px solid #782e22;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.dccqol.chat-card .dice-total.fumble {
+    color: #aa0200;
+    text-shadow: 0 0 8px #aa0200;
+}
+
+.dccqol.chat-card .dice-total.critical {
+    color: #18520b;
+    text-shadow: 0 0 8px #18520b;
+}

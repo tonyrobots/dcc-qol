@@ -1,7 +1,11 @@
 /* global canvas, game, Hooks, libWrapper, loadTemplates, ui */
-import { registerSystemSettings } from "./settings.js";
+import { registerSettings } from "./settings.js";
 import DCCQOL from "./patch.js";
 import * as chat from "./chat.js";
+import { registerHooks } from "./hooks.js";
+import { registerWebsocketListeners } from "./socket.js";
+import { registerDevModeTools } from "./utils.js";
+
 export async function preloadTemplates() {
     const templatePaths = ["modules/dcc-qol/templates/attackroll-card.html"];
     return loadTemplates(templatePaths);
@@ -77,24 +81,40 @@ async function loadTemplate(data) {
 }
 
 Hooks.once("init", async function () {
-    console.log("DCC-QOL | Initializing DCC-QOL.");
+    console.log("DCC-QOL | Initializing DCC Quality of Life Improvements");
+
+    // Check for required modules
     if (!game.modules.get("lib-wrapper")?.active) {
-        console.warn("DCC-QOL | libWrapper is NOT active; exiting!");
+        console.warn(
+            "DCC-QOL | libWrapper is NOT active; some features may not work!"
+        );
     }
     if (!game.modules.get("socketlib")?.active) {
-        console.warn("DCC-QOL | socketlib is NOT active; exiting!");
+        console.warn(
+            "DCC-QOL | socketlib is NOT active; some features may not work!"
+        );
         return;
     }
-    await registerSystemSettings();
-    preloadTemplates();
+
+    // Register module hooks
+    registerHooks();
+
+    // Register settings
+    registerSettings();
+
+    // Preload templates and initialize
+    await preloadTemplates();
     initPatching();
+
+    // Add chat listeners
     Hooks.on("renderChatLog", (app, html, data) => chat.addChatListeners(html));
 
+    // Handle chat message creation
     Hooks.on("createChatMessage", async (chatMessage, options, userId) => {
         if (chatMessage.flags.dcc?.isToHit) {
-            // Modify the chat message as needed
             const actor = game.actors.get(chatMessage.speaker.actor);
             const tokenD = tokenForActorId(actor._id);
+
             if (
                 game.settings.get("dcc-qol", "checkWeaponRange") ||
                 game.settings.get("dcc-qol", "automateFriendlyFire")
@@ -105,13 +125,11 @@ Hooks.once("init", async function () {
                     );
                 }
             }
-            // Perform additional modifications to the chat message here
-            // Prepare data for the template
+
             const weapon = actor.items.get(chatMessage.system.weaponId);
             const target = game.user.targets.first()
                 ? game.user.targets.first().actor.name
                 : null;
-
             const targetTokenId = game.user.targets.first()
                 ? game.user.targets.first().document.uuid
                 : null;
@@ -122,25 +140,10 @@ Hooks.once("init", async function () {
                 tokenId: tokenD.id,
                 target: target,
                 targettokenId: targetTokenId,
-                // options: chatMessage.system.flags.dcc.roll.options,
-                // diceHTML: chatMessage.system.flags.dcc.roll.diceHTML,
-                // deedDieHTML: chatMessage.system.flags.dcc.roll.deedDieHTML,
-                // isFumble: chatMessage.system.flags.dcc.roll.isFumble,
-                // hitsTarget: chatMessage.system.flags.dcc.roll.hitsTarget,
-                // isDisplayHitMiss:
-                //     chatMessage.system.flags.dcc.roll.isDisplayHitMiss,
-                // isCrit: chatMessage.system.flags.dcc.roll.isCrit,
-                // hitsAc: chatMessage.system.flags.dcc.roll.hitsAc,
-                // headerText: chatMessage.system.flags.dcc.roll.headerText,
             };
 
-            // Render the template
             const content = await loadTemplate(data);
-            console.log("Chat content:" + content);
-            console.log(chatMessage);
 
-            // Update the chat message content
-            // chatMessage.update({ content: content });
             await ChatMessage.updateDocuments([
                 {
                     _id: chatMessage.id,
@@ -152,9 +155,9 @@ Hooks.once("init", async function () {
     });
 });
 
-Hooks.once("setup", async function () {
-    // Do anything after initialization but before ready
-    chat.setupSocket();
+Hooks.once("socketlib.ready", async function () {
+    // Register socketlib listeners
+    registerWebsocketListeners();
 });
 
 Hooks.once("ready", async function () {
@@ -166,6 +169,9 @@ Hooks.once("ready", async function () {
         console.warn("DCC-QOL | socketlib is NOT active; exiting!");
         ui.notifications.warn(game.i18n.localize("DCC-QOL.socketlibWarning"));
     }
+
+    // Register dev mode tools if available
+    registerDevModeTools();
 });
 
 // testing dcc attack hook

@@ -461,6 +461,7 @@ class DCCQOL extends Actor {
                 "dcc.RollType": "ToHit",
                 "dcc.ItemId": options.weaponId,
             },
+            timestamp: Date.now(),
         });
 
         /* Update AttackBonus only after Dice So Nice animation finished */

@@ -1,49 +1,51 @@
 /* global game */
-export const registerSystemSettings = async function () {
+export function registerSettings() {
     /**
      * Automate damage apply
      */
     game.settings.register("dcc-qol", "automateDamageApply", {
-        name: "DCC-QOL.SettingAutomateDamageApply",
-        hint: "DCC-QOL.SettingAutomateDamageApplyHint",
-        scope: "world",
-        type: Boolean,
-        default: false,
+        name: "Auto Apply Damage",
+        hint: "Automatically apply damage to targeted token.",
+        scope: "client",
         config: true,
-    });
-    // /**
-    //  * Manual damage apply hint
-    //  */
-    // game.settings.register("dcc-qol", "manualDamageApplyHint", {
-    //     name: "DCC-QOL.SettingTakeDamageManual",
-    //     hint: "DCC-QOL.SettingTakeDamageManualHint",
-    //     scope: "world",
-    //     type: Boolean,
-    //     default: true,
-    //     config: true,
-    // });
-    /**
-     * Automate Deed Die Roll for warrior/dwarf attacks
-     */
-    game.settings.register("dcc-qol", "automateDeedDieRoll", {
-        name: "DCC-QOL.SettingAutomateDeedDieRoll",
-        hint: "DCC-QOL.SettingAutomateDeedDieRollHint",
-        scope: "world",
         type: Boolean,
         default: false,
+    });
+
+    /**
+     * Manual damage apply hint
+     */
+    game.settings.register("dcc-qol", "takeDamageManual", {
+        name: "DCC-QOL.SettingTakeDamageManual",
+        hint: "DCC-QOL.SettingTakeDamageManualHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
         config: true,
     });
 
     /**
+     * Automate Deed Die Roll for warrior/dwarf attacks
+     */
+    game.settings.register("dcc-qol", "automateDeedDieRoll", {
+        name: "Automate Deed Die Roll",
+        hint: "Automatically roll the deed die when making an attack roll.",
+        scope: "client",
+        config: true,
+        type: Boolean,
+        default: true,
+    });
+
+    /**
      * Automatically check Friendly Fire
-     * Firing a missile weapon into melee 50% chance of “friendly fire” if attack misses; see page 96.
+     * Firing a missile weapon into melee 50% chance of "friendly fire" if attack misses; see page 96.
      */
     game.settings.register("dcc-qol", "automateFriendlyFire", {
         name: "DCC-QOL.SettingAutomateFriendlyFire",
         hint: "DCC-QOL.SettingAutomateFriendlyFireHint",
         scope: "world",
         type: Boolean,
-        default: false,
+        default: true,
         config: true,
     });
 
@@ -51,7 +53,7 @@ export const registerSystemSettings = async function () {
      * Automatically add Firing into Melee penalty
      * Add a -1 penalty when firing a missile weapon into melee
      */
-    game.settings.register("dcc-qol", "automateFiringIntoMeleePenalty", {
+    game.settings.register("dcc-qol", "automateFriendlyFirePenalty", {
         name: "DCC-QOL.SettingFiringIntoMeleePenalty",
         hint: "DCC-QOL.SettingFiringIntoMeleePenaltyHint",
         scope: "world",
@@ -62,7 +64,7 @@ export const registerSystemSettings = async function () {
 
     /**
      * Automatically adjust monster's critical hit.
-     * A positive Luck modifier reduces the monster’s roll, whereas a negative modifier grants a bonus to the monster’s critical hit roll.
+     * A positive Luck modifier reduces the monster's roll, whereas a negative modifier grants a bonus to the monster's critical hit roll.
      */
     game.settings.register("dcc-qol", "automateMonsterCritLuck", {
         name: "DCC-QOL.SettingAutomateMonsterCritLuck",
@@ -73,18 +75,21 @@ export const registerSystemSettings = async function () {
         config: true,
     });
 
+    /**
+     * Display hit/miss on attack chat card
+     */
     game.settings.register("dcc-qol", "DisplayHitMiss", {
-        name: "DCC-QOL.SettingDisplayHitMiss",
-        hint: "DCC-QOL.SettingDisplayHitMissHint",
-        scope: "world",
+        name: "Display Hit/Miss",
+        hint: "Display whether an attack hits or misses in the chat message.",
+        scope: "client",
+        config: true,
         type: Boolean,
         default: true,
-        config: true,
     });
 
     /**
      * Automatically apply lucky weapon modifier
-     * For classes with lucky weapons (e.g. Warriors & Dwarves, set in config.js), automatically apply the lucky weapon modifier (as specified) to the attack roll.
+     * For classes with lucky weapons (e.g. Warriors & Dwarves), automatically apply the lucky weapon modifier
      */
     game.settings.register("dcc-qol", "automateLuckyWeaponModifier", {
         name: "DCC-QOL.SettingAutomateLuckyWeaponModifier",
@@ -100,31 +105,10 @@ export const registerSystemSettings = async function () {
             positive: "DCC-QOL.SettingAutomateLuckyWeaponModifierPositive",
         },
         config: true,
-        // This is no longer relevant for versions 0.5.0 and later
-        // onChange: (value) => {
-        //     // value is the new value of the setting
-        //     // warn if dcc automate lucky is not enabled
-        //     if (!game.settings.get("dcc", "automateLuckyWeaponAttack")) {
-        //         ui.notifications.warn(
-        //             game.i18n.localize(
-        //                 "DCC-QOL.AutomateLuckyWeaponsNotEnabledWarning"
-        //             )
-        //         );
-        //     }
-        // },
-    });
-
-    game.settings.register("dcc-qol", "DisplayHitMiss", {
-        name: "DCC-QOL.SettingDisplayHitMiss",
-        hint: "DCC-QOL.SettingDisplayHitMissHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: true,
     });
 
     /**
-     * Check weapon's range and if target is beyond UI warning diplay appears and prevent rolls
+     * Check weapon's range and if target is beyond UI warning display appears and prevent rolls
      * Applies penalty for ranged weapons based on range
      */
     game.settings.register("dcc-qol", "checkWeaponRange", {
@@ -140,11 +124,52 @@ export const registerSystemSettings = async function () {
      * Logging to console.log
      */
     game.settings.register("dcc-qol", "log", {
-        name: "DCC-QOL.SettingLog",
-        hint: "DCC-QOL.SettingLogHint",
-        scope: "world",
+        name: "Enable Logging",
+        hint: "Log debug information to the console.",
+        scope: "client",
+        config: true,
         type: Boolean,
         default: false,
-        config: true,
     });
-};
+
+    // Debug settings for development
+    game.settings.register("dcc-qol", "debugExplore", {
+        name: "Debug - Explore Objects",
+        hint: "Explore and log object structures to console when processing messages",
+        scope: "client",
+        config: true,
+        type: Boolean,
+        default: false,
+    });
+
+    game.settings.register("dcc-qol", "debugTargetMessage", {
+        name: "Debug - Target Message ID",
+        hint: "Enter a message ID to explore its structure (leave empty to disable)",
+        scope: "client",
+        config: true,
+        type: String,
+        default: "",
+        onChange: (value) => {
+            if (value && game.messages) {
+                const message = game.messages.get(value);
+                if (message) {
+                    // Import dynamically to avoid circular dependency
+                    import("./utils.js").then((utils) => {
+                        utils.exploreObject(message, "Targeted Message", {
+                            depth: 3,
+                        });
+                        if (message.rolls?.length) {
+                            utils.exploreObject(
+                                message.rolls[0],
+                                "Message Roll",
+                                { depth: 3 }
+                            );
+                        }
+                    });
+                } else {
+                    ui.notifications.warn(`Message with ID ${value} not found`);
+                }
+            }
+        },
+    });
+}

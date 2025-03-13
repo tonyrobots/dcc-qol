@@ -149,6 +149,7 @@ async function ChatCardAction(event) {
                         "dcc.RollType": "Damage",
                         "dcc.ItemId": options.weaponId,
                     },
+                    timestamp: Date.now(),
                 });
 
                 if (game.settings.get("dcc-qol", "automateDamageApply")) {
@@ -185,6 +186,7 @@ async function ChatCardAction(event) {
                         "dcc.RollType": "Damage",
                         "dcc.ItemId": options.weaponId,
                     },
+                    timestamp: Date.now(),
                 });
             }
 
@@ -245,6 +247,7 @@ async function ChatCardAction(event) {
                 flavor: game.i18n.localize("DCC-QOL.FriendlyFireCheck"),
                 content: friendlyFireHTML,
                 rollMode: game.settings.get("core", "rollMode"),
+                timestamp: Date.now(),
             });
             break;
     }
