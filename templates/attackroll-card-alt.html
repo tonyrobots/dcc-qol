@@ -1,0 +1,67 @@
+<div
+    class="dccqol chat-card"
+    data-actor-id="{{actor.id}}"
+    data-weapon-id="{{weapon.id}}"
+    data-token-id="{{tokenId}}"
+    data-hits-target="{{hitsTarget}}"
+    data-is-crit="{{isCrit}}"
+    data-is-fumble="{{isFumble}}"
+>
+    <header class="card-header flexrow">
+        <img
+            src="{{weapon.img}}"
+            title="{{weapon.name}}"
+            width="36"
+            height="36"
+        />
+        <h4 class="weapon-name">{{headerText}}</h4>
+    </header>
+
+    <div class="card-content">{{{weapon.system.description.value}}}</div>
+
+    {{{diceHTML}}} {{{deedDieHTML}}} {{#if isFumble}}
+    <div class="chat-details">
+        <div class="roll-result">{{localize "DCC.Fumble"}}</div>
+    </div>
+    <div class="card-buttons">
+        <button data-action="fumble">{{ localize "DCC.Fumble" }}</button>
+    </div>
+    {{else}} {{#if hitsTarget}} {{#if isDisplayHitMiss}}
+    <div class="chat-details">
+        <div class="roll-resultx">
+            <span style="color: green">{{ localize "DCC.RollsHit" }}</span>
+        </div>
+    </div>
+    {{/if}}
+    <div class="card-buttons">
+        <button data-action="damage">{{ localize "DCC.Damage" }}</button>
+    </div>
+    {{else}} {{#if target}} {{#if isDisplayHitMiss}}
+    <div class="chat-details">
+        <div class="roll-resultx">{{ localize "DCC.RollsMiss" }}</div>
+    </div>
+    {{/if}} {{else}}
+    <div class="chat-details">
+        <div class="roll-result">{{{hitsAc}}}</div>
+    </div>
+    <div class="card-buttons">
+        <button data-action="damage">{{ localize "DCC.Damage" }}</button>
+    </div>
+    {{/if}} {{/if}} {{/if}} {{#if isCrit}}
+    <div class="card-buttons">
+        <button data-action="crit">{{ localize "DCC.CriticalHit" }}</button>
+    </div>
+    {{/if}} {{#if friendlyFire}}
+    <div class="card-buttons">
+        <button data-action="friendlyFire">
+            {{ localize "DCC-QOL.FriendlyFireCheck" }}
+        </button>
+    </div>
+    {{/if}}
+
+    <footer class="card-footer">
+        {{#each properties}}
+        <span class="tag">{{this}}</span>
+        {{/each}}
+    </footer>
+</div>

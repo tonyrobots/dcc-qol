@@ -56,21 +56,65 @@ export function extractDieValue(diceString) {
 export async function getWeaponProperties(weapon, options) {
     const properties = [];
 
+    // Debug weapon properties if enabled
+    if (game.settings.get("dcc-qol", "log")) {
+        console.log("DCC-QOL | Weapon properties:", {
+            name: weapon.name,
+            equipped: weapon.system.equipped,
+            trained: weapon.system.trained,
+            melee: weapon.system.melee,
+            range: weapon.system.range,
+            options: options,
+        });
+    }
+
+    // Basic weapon type
     if (weapon.system.melee) {
         properties.push("Melee");
     } else {
         properties.push("Ranged");
-        properties.push(weapon.system.range + " ft.");
+        if (weapon.system.range) {
+            properties.push(`Range: ${weapon.system.range} ft`);
+        }
     }
 
-    if (weapon.system.equipped) properties.push("Equipped");
-    else properties.push("Not Equipped");
+    // Show equipment state
+    if (weapon.system.equipped === true) {
+        properties.push("Equipped");
+    } else if (weapon.system.equipped === false) {
+        properties.push("Not Equipped");
+    }
 
-    if (weapon.system.trained) properties.push("Trained");
-    else properties.push("Not Trained");
+    // Show training status
+    if (weapon.system.trained === true) {
+        properties.push("Trained");
+    } else if (weapon.system.trained === false) {
+        properties.push("Untrained");
+    }
 
-    if (weapon.system.twoHanded) properties.push("Two handed");
+    // Add other relevant properties
+    if (weapon.system.twoHanded) properties.push("Two-Handed");
+
+    // Special attack properties
     if (options.backstab) properties.push("Backstab");
+    if (options.useDeedDie) properties.push("Warrior Attack");
+
+    // Add damage type if present
+    if (weapon.system.damageType && weapon.system.damageType !== "none") {
+        properties.push(weapon.system.damageType.capitalize());
+    }
+
+    // Add other relevant weapon qualities
+    if (weapon.system.qualities) {
+        const qualities = weapon.system.qualities
+            .split(",")
+            .map((q) => q.trim());
+        properties.push(...qualities.filter((q) => q.length > 0));
+    }
+
+    if (game.settings.get("dcc-qol", "log")) {
+        console.log("DCC-QOL | Final weapon properties:", properties);
+    }
 
     return properties;
 }
@@ -252,4 +296,358 @@ export function registerDevModeTools() {
             },
         });
     });
+}
+
+/**
+ * Look up a critical hit result from the compendium
+ * @param {Roll} roll - The roll to look up
+ * @param {string} critTableName - The name of the crit table to use
+ * @returns {Promise<Object|null>} The table result, or null if not found
+ */
+export async function lookupCritResult(roll, critTableName) {
+    try {
+        if (!roll || !critTableName) {
+            console.warn("DCC-QOL | Invalid arguments for crit lookup", {
+                roll,
+                critTableName,
+            });
+            ui.notifications.error(
+                game.i18n.localize("DCC-QOL.ErrorLookingUpCrit")
+            );
+            return null;
+        }
+
+        if (game.settings.get("dcc-qol", "log")) {
+            console.log(
+                `DCC-QOL | Looking up crit result: ${roll.total} on ${critTableName}`
+            );
+        }
+
+        // Format the crit table name correctly
+        let formattedCritTableName = critTableName;
+        if (!formattedCritTableName.startsWith("Crit Table ")) {
+            const match = critTableName.match(/crit table ([^:]+)(?::|\s|$)/i);
+            if (match) {
+                formattedCritTableName = `Crit Table ${match[1].trim()}`;
+            } else {
+                console.warn(
+                    `DCC-QOL | Could not parse crit table name: ${critTableName}`
+                );
+                ui.notifications.error(
+                    `Could not parse critical hit table name: ${critTableName}`
+                );
+                return null;
+            }
+        }
+
+        // Try multiple approaches to lookup the result
+        let critResult = null;
+        let methodUsed = null;
+
+        // Approach 1: Directly check available compendium packs
+        if (!critResult) {
+            try {
+                // The actual lookup function implementation
+                const tableID = formattedCritTableName.replace(
+                    "Crit Table ",
+                    ""
+                );
+
+                // Look through critical hit packs
+                for (const packName of game.settings.get(
+                    "dcc",
+                    "criticalHitPacks"
+                ) || ["dcc-core-book.dcc-crit-tables"]) {
+                    if (!packName) continue;
+
+                    const pack = game.packs.get(packName);
+                    if (!pack) continue;
+
+                    await pack.getIndex();
+                    const entry = pack.index.find((e) =>
+                        e.name.startsWith(formattedCritTableName)
+                    );
+                    if (!entry) continue;
+
+                    const table = await pack.getDocument(entry._id);
+                    const result = table.getResultsForRoll(roll.total);
+                    if (result && result.length > 0) {
+                        critResult = result[0];
+                        methodUsed = "Direct compendium lookup";
+                        break;
+                    }
+                }
+            } catch (err) {
+                console.warn(
+                    "DCC-QOL | Error looking up crit result from compendium:",
+                    err
+                );
+            }
+        }
+
+        // Approach 2: Use game.dcc.getCritTableResult if available
+        if (
+            !critResult &&
+            game.dcc &&
+            typeof game.dcc.getCritTableResult === "function"
+        ) {
+            try {
+                critResult = await game.dcc.getCritTableResult(
+                    roll,
+                    formattedCritTableName
+                );
+                methodUsed = "game.dcc.getCritTableResult";
+            } catch (err) {
+                console.warn(
+                    "DCC-QOL | Error using game.dcc.getCritTableResult:",
+                    err
+                );
+            }
+        }
+
+        // Approach 3: Use game.dcc.utilities.getCritTableResult if available
+        if (
+            !critResult &&
+            game.dcc?.utilities &&
+            typeof game.dcc.utilities.getCritTableResult === "function"
+        ) {
+            try {
+                critResult = await game.dcc.utilities.getCritTableResult(
+                    roll,
+                    formattedCritTableName
+                );
+                methodUsed = "game.dcc.utilities.getCritTableResult";
+            } catch (err) {
+                console.warn(
+                    "DCC-QOL | Error using game.dcc.utilities.getCritTableResult:",
+                    err
+                );
+            }
+        }
+
+        // Approach 4: Use the chat lookup method if available
+        if (
+            !critResult &&
+            game.dcc?.chat &&
+            typeof game.dcc.chat.lookupCriticalRoll === "function"
+        ) {
+            try {
+                const mockMessage = {
+                    rolls: [roll],
+                    isContentVisible: true,
+                    flavor: `Critical (${formattedCritTableName.replace(
+                        "Crit Table ",
+                        ""
+                    )})`,
+                };
+                const mockHtml = $('<div class="message-content"></div>');
+
+                await game.dcc.chat.lookupCriticalRoll(mockMessage, mockHtml);
+                const resultText = mockHtml.html();
+
+                if (
+                    resultText &&
+                    !resultText.includes("Unable to find crit result")
+                ) {
+                    critResult = { text: resultText };
+                    methodUsed = "game.dcc.chat.lookupCriticalRoll";
+                }
+            } catch (err) {
+                console.warn(
+                    "DCC-QOL | Error using game.dcc.chat.lookupCriticalRoll:",
+                    err
+                );
+            }
+        }
+
+        // Process and return result if found
+        if (critResult) {
+            if (game.settings.get("dcc-qol", "log")) {
+                console.log(
+                    `DCC-QOL | Found crit result using ${methodUsed}:`,
+                    critResult
+                );
+            }
+            return {
+                text: critResult.text || critResult,
+                entry: critResult,
+            };
+        } else {
+            console.warn(
+                `DCC-QOL | No crit result found for roll ${roll.total} in ${formattedCritTableName}`
+            );
+            ui.notifications.warn(
+                `No result found for ${roll.total} in critical hit table ${formattedCritTableName}`
+            );
+            return null;
+        }
+    } catch (error) {
+        console.error("DCC-QOL | Error looking up crit result:", error);
+        ui.notifications.error(
+            `Error looking up critical hit result: ${error.message}`
+        );
+        return null;
+    }
+}
+
+/**
+ * Look up a fumble result from the compendium
+ * @param {Roll} roll - The roll to look up
+ * @returns {Promise<Object|null>} The table result, or null if not found
+ */
+export async function lookupFumbleResult(roll) {
+    try {
+        if (!roll) {
+            console.warn("DCC-QOL | Invalid roll for fumble lookup");
+            ui.notifications.error(
+                game.i18n.localize("DCC-QOL.ErrorLookingUpFumble")
+            );
+            return null;
+        }
+
+        if (game.settings.get("dcc-qol", "log")) {
+            console.log(`DCC-QOL | Looking up fumble result: ${roll.total}`);
+        }
+
+        // Try multiple approaches to find the fumble result
+        let fumbleResult = null;
+        let methodUsed = null;
+
+        // Approach 1: Direct lookup in fumble table compendium pack
+        if (!fumbleResult) {
+            try {
+                const fumbleTableName =
+                    game.settings.get("dcc", "fumbleTable") ||
+                    "dcc-core-book.dcc-fumble-tables.Fumble Table";
+                const pathParts = fumbleTableName.split(".");
+
+                if (pathParts.length >= 2) {
+                    const packName = pathParts.slice(0, 2).join(".");
+                    const tableName =
+                        pathParts.length === 3 ? pathParts[2] : "Fumble Table";
+
+                    const pack = game.packs.get(packName);
+                    if (pack) {
+                        await pack.getIndex();
+                        const entry = pack.index.find(
+                            (e) => e.name === tableName
+                        );
+
+                        if (entry) {
+                            const table = await pack.getDocument(entry._id);
+                            const result = table.getResultsForRoll(roll.total);
+
+                            if (result && result.length > 0) {
+                                fumbleResult = result[0];
+                                methodUsed = "Direct compendium lookup";
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn(
+                    "DCC-QOL | Error looking up fumble result from compendium:",
+                    err
+                );
+            }
+        }
+
+        // Approach 2: Use game.dcc.getFumbleTableResult if available
+        if (
+            !fumbleResult &&
+            game.dcc &&
+            typeof game.dcc.getFumbleTableResult === "function"
+        ) {
+            try {
+                fumbleResult = await game.dcc.getFumbleTableResult(roll);
+                methodUsed = "game.dcc.getFumbleTableResult";
+            } catch (err) {
+                console.warn(
+                    "DCC-QOL | Error using game.dcc.getFumbleTableResult:",
+                    err
+                );
+            }
+        }
+
+        // Approach 3: Use game.dcc.utilities.getFumbleTableResult if available
+        if (
+            !fumbleResult &&
+            game.dcc?.utilities &&
+            typeof game.dcc.utilities.getFumbleTableResult === "function"
+        ) {
+            try {
+                fumbleResult = await game.dcc.utilities.getFumbleTableResult(
+                    roll
+                );
+                methodUsed = "game.dcc.utilities.getFumbleTableResult";
+            } catch (err) {
+                console.warn(
+                    "DCC-QOL | Error using game.dcc.utilities.getFumbleTableResult:",
+                    err
+                );
+            }
+        }
+
+        // Approach 4: Use the chat lookup method if available
+        if (
+            !fumbleResult &&
+            game.dcc?.chat &&
+            typeof game.dcc.chat.lookupFumbleRoll === "function"
+        ) {
+            try {
+                const mockMessage = {
+                    rolls: [roll],
+                    isContentVisible: true,
+                    flavor: game.i18n.localize("DCC.Fumble"),
+                };
+                const mockHtml = $('<div class="message-content"></div>');
+                const mockData = {};
+
+                await game.dcc.chat.lookupFumbleRoll(
+                    mockMessage,
+                    mockHtml,
+                    mockData
+                );
+                const resultText = mockHtml.html();
+
+                if (
+                    resultText &&
+                    !resultText.includes("Unable to find fumble result")
+                ) {
+                    fumbleResult = { text: resultText };
+                    methodUsed = "game.dcc.chat.lookupFumbleRoll";
+                }
+            } catch (err) {
+                console.warn(
+                    "DCC-QOL | Error using game.dcc.chat.lookupFumbleRoll:",
+                    err
+                );
+            }
+        }
+
+        // Process and return result if found
+        if (fumbleResult) {
+            if (game.settings.get("dcc-qol", "log")) {
+                console.log(
+                    `DCC-QOL | Found fumble result using ${methodUsed}:`,
+                    fumbleResult
+                );
+            }
+            return fumbleResult;
+        } else {
+            console.warn(
+                `DCC-QOL | No fumble result found for roll ${roll.total}`
+            );
+            ui.notifications.warn(
+                `No result found for ${roll.total} in fumble table`
+            );
+            return null;
+        }
+    } catch (error) {
+        console.error("DCC-QOL | Error looking up fumble result:", error);
+        ui.notifications.error(
+            `Error looking up fumble result: ${error.message}`
+        );
+        return null;
+    }
 }

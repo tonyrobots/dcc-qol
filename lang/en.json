@@ -1,5 +1,12 @@
 {
     "DCC-QOL": {
+        "Settings": {
+            "LogDebug": "Enable Debug Logging",
+            "LogDebugHint": "Enables verbose logging to the console for debugging",
+            "EnableApplyDamage": "Enable Apply Damage Button",
+            "EnableApplyDamageHint": "Adds an 'Apply Damage' button to damage rolls"
+        },
+
         "SettingAutomateDamageApply": "Automate Damage Application",
         "SettingAutomateDamageApplyHint": "Automatically apply damage to targeted token when damage is rolled.",
 
@@ -39,6 +46,56 @@
         "TakeDamageManual": "Apply {damage} damage to {actor}",
         "FriendlyFireCheck": "Friendly Fire Check",
         "FriendlyFireSuccess": "The shot misses all allies!",
-        "FriendlyFireFail": "The shot hits an ally!"
+        "FriendlyFireFail": "The shot hits an ally!",
+
+        "AttackRollHits": "Hit!",
+        "AttackRollMisses": "Miss!",
+        "Success": "Success!",
+        "AttackMissedNoDamage": "Attack missed! No damage will be rolled.",
+        "AttackFumbledNoDamage": "Attack fumbled! No damage will be rolled.",
+        "TiesHitAC": "Ties favor attacker",
+
+        "FumblesWith": "{name} fumbles!",
+        "FumbleResult": "Fumble Roll: {value}",
+        "FumbleRoll": "Fumble Die: {value}",
+        "NoFumbleTableResult": "No fumble table result found. Check your DCC compendium packs.",
+        "ErrorRollingFumble": "Error rolling fumble. Check the console for details.",
+        "ErrorLookingUpFumble": "Error looking up fumble result. Check the console for details.",
+
+        "CriticalHitWith": "{name} scores a critical hit with {weapon}!",
+        "CriticalHitResult": "Critical Hit Roll: {value}",
+        "CriticalHitRoll": "Critical Hit Die: {value}",
+        "NoCritTableResult": "No critical hit table result found. Check your DCC compendium packs.",
+        "ErrorRollingCriticalHit": "Error rolling critical hit. Check the console for details.",
+        "ErrorLookingUpCrit": "Error looking up critical hit result. Check the console for details.",
+
+        "Damage": "{weapon} - Damage",
+        "DamageCritical": "{weapon} Critical Hit Damage",
+        "ErrorRollingDamage": "Error rolling damage. Check the console for details.",
+        "NoDamageFormula": "No damage formula found for this weapon.",
+
+        "CritPackNotFound": "Critical hit pack {pack} not found",
+        "CritTableNotFound": "Critical hit table {table} not found",
+        "TableDocumentFailed": "Failed to get table {table} document",
+        "CritTableLookupError": "Error looking up critical hit result. See console for details.",
+
+        "FumblePackNotFound": "Fumble table pack {pack} not found",
+        "FumbleTableNotFound": "Fumble table {table} not found",
+        "FumbleTableDocumentFailed": "Failed to get fumble table document",
+        "FumbleTableLookupError": "Error looking up fumble result. See console for details.",
+
+        "ControlAToken": "Please control a token first!",
+        "TargetOneToken": "Please target one token at a time!",
+        "WeaponMeleeWarn": "Target is {distance} {units} away and out of melee range!",
+        "WeaponRangedWarn": "Target is {distance} {units} away, beyond the {weapon} maximum range of {range} {units}!",
+        "WeaponMissileToMelee": "Firing into melee",
+        "WeaponRangePenalty": "Medium range penalty",
+        "AttackRollHitsAC": "Hits AC {AC}",
+        "BackstabsWith": "Backstabs with {weapon}",
+        "AttacksWith": "Attacks with {weapon}",
+        "DeedRollValue": "Deed Roll Value",
+
+        "libwrapperWarning": "Module DCC-QOL requires the 'libWrapper' module. Please install and activate it.",
+        "socketlibWarning": "Module DCC-QOL requires the 'socketlib' module. Please install and activate it."
     }
 }

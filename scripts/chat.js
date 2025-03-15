@@ -173,6 +173,7 @@ async function ChatCardAction(event) {
                     }
                 }
             } else {
+                // No target selected, just show the damage roll
                 await damageRollResult.roll.toMessage({
                     user: game.user.id,
                     speaker: {
@@ -194,7 +195,7 @@ async function ChatCardAction(event) {
         case "fumble":
             cToken = canvas.tokens.get(fromUuidSync(card.dataset.tokenId)._id);
             cToken.control({ releaseOthers: true });
-            await act.rollFumble(options);
+            await rollFumble(message, actor);
             canvas.tokens.selectObjects();
             for (const token of controlledTokens) {
                 cToken = canvas.tokens.get(token.id);
@@ -250,5 +251,42 @@ async function ChatCardAction(event) {
                 timestamp: Date.now(),
             });
             break;
+    }
+}
+
+async function rollFumble(message, actor) {
+    const fumbleDie = actor.system.attributes?.fumble?.die || "1d4";
+
+    if (game.settings.get("dcc-qol", "log")) {
+        console.log(`DCC-QOL | Rolling fumble die: ${fumbleDie}`);
+    }
+
+    try {
+        // Roll the fumble die
+        const roll = await new Roll(fumbleDie).evaluate({ async: true });
+
+        // The DCC system expects a specific format for fumble messages
+        // Simply format the message correctly and let the system handle the lookup
+        const messageData = {
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor: game.i18n.localize("DCC.Fumble"),
+            // Adding our module flags but not interfering with system functionality
+            flags: {
+                "dcc-qol": {
+                    type: "fumble",
+                    actorId: actor.id,
+                },
+            },
+        };
+
+        // Send the roll message - the system will handle the lookup via its renderChatMessage hook
+        await roll.toMessage(messageData);
+    } catch (error) {
+        console.error("DCC-QOL | Error rolling fumble:", error);
+        ui.notifications.error(
+            `${game.i18n.localize("DCC-QOL.ErrorRollingFumble")}: ${
+                error.message
+            }`
+        );
     }
 }

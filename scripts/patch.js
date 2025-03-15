@@ -17,116 +17,62 @@ class DCCQOL extends Actor {
      * Roll a Critical Hit
      * @param {Object} options     Options which configure how attacks are rolled E.g. Backstab
      */
-    async rollCriticalQOL(options = {}, targettoken, actor) {
-        /* Collecting modifiers to console logging */
-        let debuginfo;
+    async rollCriticalQOL(options = {}) {
+        try {
+            const die = this.system.attributes.critical.die;
+            const die_object = {};
+            die_object.die = die;
 
-        // Construct the terms
-        const terms = [
-            {
-                type: "Die",
-                formula: this.system.attributes.critical.die,
-            },
-        ];
-
-        if (
-            this.type === "NPC" &&
-            game.settings.get("dcc-qol", "automateMonsterCritLuck")
-        ) {
-            terms.push({
-                type: "Modifier",
-                label: game.i18n.localize("DCC.AbilityLck"),
-                formula: parseInt(this.system.abilities.lck.mod || "0"),
-            });
-            const index = terms.findIndex(
-                (element) => element.type === "Modifier"
-            );
-            if (targettoken) {
-                const targetactor = game.actors.get(targettoken.actorId);
-                const luckModifier = targetactor.system.abilities.lck.mod;
-                terms[index].formula = luckModifier * -1;
-                debuginfo =
-                    "Crit roll: " +
-                    this.name +
-                    ` [TargetLuckModifier:${luckModifier}]`;
-                if (game.settings.get("dcc-qol", "log") && game.user.isGM) {
-                    console.warn("DCC-QOL |", debuginfo);
-                }
-            } else {
-                terms.splice(index, 1);
+            if (CONFIG.debug.dice) {
+                console.log("DCC-QOL | Rolling " + die + " for critical hit");
             }
-        }
 
-        if (this.type === "Player") {
-            terms.push({
-                type: "Modifier",
-                label: game.i18n.localize("DCC.AbilityLck"),
-                formula: parseInt(actor.system.abilities.lck.mod || "0"),
-            });
-            const luckModifier = actor.system.abilities.lck.mod;
-            debuginfo =
-                "Crit roll: " + this.name + ` [LuckModifier:${luckModifier}]`;
-            if (game.settings.get("dcc-qol", "log") && game.user.isGM) {
-                console.warn("DCC-QOL |", debuginfo);
+            // Add modifiers for crits based on optional features and bonuses
+            let modifiers = "";
+
+            // Determine all active modifiers
+            if (options.backstab === true) {
+                // Add backstab bonus if backstabbing
+                modifiers += " + @backstab";
+                die_object.backstab = this.system.class.backstab;
             }
-        }
 
-        // Roll object for the crit die
-        let roll = await game.dcc.DCCRoll.createRoll(
-            terms,
-            this.getRollData(),
-            {} // Ignore options for crits
-        );
+            // Roll the critical die
+            const roll = await new Roll(
+                `${die}${modifiers}`,
+                die_object
+            ).evaluate({ async: true });
 
-        // Lookup the crit table if available
-        let critResult = null;
-        for (const criticalHitPackName of CONFIG.DCC.criticalHitPacks.packs) {
-            if (criticalHitPackName) {
-                const pack = game.packs.get(criticalHitPackName);
-                if (pack) {
-                    await pack.getIndex(); // Load the compendium index
-                    const critTableFilter = `Crit Table ${this.system.attributes.critical.table}`;
-                    const entry = pack.index.find((entity) =>
-                        entity.name.startsWith(critTableFilter)
-                    );
-                    if (entry) {
-                        const table = await pack.getDocument(entry._id);
-                        critResult = await table.draw({
-                            roll,
-                            displayChat: true,
-                        });
-                    }
-                }
-            }
-        }
+            // The DCC system expects a specific format for critical hit messages
+            // Simply format the message correctly and let the system handle the lookup
+            const tableName = this.system.attributes.critical.table || "III";
 
-        // Either roll the die or grab the roll from the table lookup
-        if (!critResult) {
-            await roll.evaluate();
-        } else {
-            roll = critResult.roll;
-        }
-
-        // Create the roll emote
-        // const rollData = escape(JSON.stringify(roll))
-        // const rollTotal = roll.total
-
-        // Generate flags for the roll
-        const flags = {
-            "dcc.RollType": "CriticalHit",
-            "dcc.ItemId": options.weaponId,
-        };
-        if (options.naturalCrit) {
-            game.dcc.FleetingLuck.updateFlagsForCrit(flags);
-        }
-
-        // Display crit result or just a notification of the crit
-        if (!critResult) {
-            await roll.toMessage({
+            // Create the message with the format the system expects to process
+            const messageData = {
                 speaker: ChatMessage.getSpeaker({ actor: this }),
-                flavor: `${game.i18n.localize("DCC.CriticalHit")}!`,
-                flags,
-            });
+                flavor: `Critical (${tableName})`,
+                // Adding flags our module needs but not overriding system functionality
+                flags: {
+                    "dcc-qol": {
+                        type: "crit",
+                        actorId: this.id,
+                        weaponId: options.weaponId || null,
+                    },
+                },
+            };
+
+            // Send the roll message - the system will handle the lookup via its renderChatMessage hook
+            await roll.toMessage(messageData);
+
+            return roll;
+        } catch (error) {
+            console.error("Error rolling critical hit:", error);
+            ui.notifications.error(
+                `${game.i18n.localize("DCC-QOL.ErrorRollingCritical")}: ${
+                    error.message
+                }`
+            );
+            return null;
         }
     }
 
@@ -445,7 +391,7 @@ class DCCQOL extends Actor {
             hitsTarget,
             friendlyFire,
         };
-        const html = await renderTemplate(
+        const content = await renderTemplate(
             "modules/dcc-qol/templates/attackroll-card.html",
             templateData
         );
@@ -455,7 +401,7 @@ class DCCQOL extends Actor {
             speaker: {
                 alias: DCCActor.name,
             },
-            content: html,
+            content: content,
             rollMode: game.settings.get("core", "rollMode"),
             flags: {
                 "dcc.RollType": "ToHit",

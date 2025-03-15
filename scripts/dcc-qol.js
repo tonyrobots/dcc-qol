@@ -7,13 +7,11 @@ import { registerWebsocketListeners } from "./socket.js";
 import { registerDevModeTools } from "./utils.js";
 
 export async function preloadTemplates() {
-    const templatePaths = ["modules/dcc-qol/templates/attackroll-card.html"];
+    const templatePaths = [
+        "modules/dcc-qol/templates/attackroll-card-alt.html",
+    ];
     return loadTemplates(templatePaths);
 }
-// function tokenForActorId (tokenUuid) {
-//   const position = tokenUuid.indexOf('.Actor.')
-//   if (position === -1) { return undefined } else { return fromUuidSync(tokenUuid.substr(0, position)) }
-// }
 
 function tokenForActorId(actorId) {
     const actor = game.actors.get(actorId);
@@ -61,22 +59,6 @@ async function loadTemplate(data) {
     return await renderTemplate(
         "modules/dcc-qol/templates/attackroll-card.html",
         data
-        // {
-        // actor: actor,
-        // weapon: weapon,
-        // tokenId: tokenD.id,
-        // target: target,
-        // targettokenId: targetTokenId,
-        // options: options,
-        // diceHTML: diceHTML,
-        // deedDieHTML: deedDieHTML,
-        // isFumble: isFumble,
-        // hitsTarget: hitsTarget,
-        // isDisplayHitMiss: isDisplayHitMiss,
-        // isCrit: isCrit,
-        // hitsAc: hitsAc,
-        // headerText: headerText,
-        // }
     );
 }
 
@@ -161,6 +143,7 @@ Hooks.once("socketlib.ready", async function () {
 });
 
 Hooks.once("ready", async function () {
+    // Check for system requirements
     if (!game.modules.get("lib-wrapper")?.active && game.user.isGM) {
         console.warn("DCC-QOL | libWrapper is NOT active; exiting!");
         ui.notifications.warn(game.i18n.localize("DCC-QOL.libwrapperWarning"));

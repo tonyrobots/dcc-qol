@@ -4,8 +4,8 @@ export function registerSettings() {
      * Automate damage apply
      */
     game.settings.register("dcc-qol", "automateDamageApply", {
-        name: "Auto Apply Damage",
-        hint: "Automatically apply damage to targeted token.",
+        name: game.i18n.localize("DCC-QOL.Settings.EnableApplyDamage"),
+        hint: game.i18n.localize("DCC-QOL.Settings.EnableApplyDamageHint"),
         scope: "client",
         config: true,
         type: Boolean,
@@ -124,8 +124,8 @@ export function registerSettings() {
      * Logging to console.log
      */
     game.settings.register("dcc-qol", "log", {
-        name: "Enable Logging",
-        hint: "Log debug information to the console.",
+        name: game.i18n.localize("DCC-QOL.Settings.LogDebug"),
+        hint: game.i18n.localize("DCC-QOL.Settings.LogDebugHint"),
         scope: "client",
         config: true,
         type: Boolean,
