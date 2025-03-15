@@ -99,14 +99,43 @@ async function ChatCardAction(event) {
 
     switch (action) {
         case "damage":
-            console.log("weapon:", weapon);
-            const damageRollResult = await act.rollDamage(weapon, options);
-            let targetActor;
+            console.log("DCC-QOL | Damage action triggered with:", {
+                weapon: weapon,
+                options: options,
+                actor: actor.name,
+                actorId: actor.id,
+                weaponId: weapon?.id,
+                weaponName: weapon?.name,
+            });
 
-            if (damageRollResult.damage < 1) {
-                damageRollResult.damage = 1;
-                damageRollResult.roll._total = 1;
+            // Check the weapon damage data
+            if (weapon) {
+                console.log("DCC-QOL | Weapon damage data:", {
+                    damage: weapon.system.damage,
+                    hasValue: !!weapon.system.damage?.value,
+                    damageValue: weapon.system.damage?.value,
+                    damageRollData: await weapon.getRollData(),
+                });
+            } else {
+                console.error("DCC-QOL | Weapon not found for damage roll!");
             }
+
+            const damageRollResult = await act.rollDamage(weapon, options);
+            console.log("DCC-QOL | Damage roll result:", {
+                result: damageRollResult,
+                damage: damageRollResult?.damage,
+                roll: damageRollResult?.roll,
+                formula: damageRollResult?.roll?.formula,
+                wasDefined: !!damageRollResult,
+            });
+
+            // If damage roll fails, simply return - no fallbacks
+            if (!damageRollResult || !damageRollResult.damage) {
+                console.error("DCC-QOL | Damage roll failed");
+                return;
+            }
+
+            let targetActor;
 
             let diceHTML = await damageRollResult.roll.render();
 
@@ -137,7 +166,7 @@ async function ChatCardAction(event) {
                 }
 
                 const msg = await damageRollResult.roll.toMessage({
-                    user: game.user.id,
+                    author: game.user.id,
                     speaker: {
                         alias: actor.name,
                     },
@@ -175,7 +204,7 @@ async function ChatCardAction(event) {
             } else {
                 // No target selected, just show the damage roll
                 await damageRollResult.roll.toMessage({
-                    user: game.user.id,
+                    author: game.user.id,
                     speaker: {
                         alias: actor.name,
                     },
@@ -241,7 +270,7 @@ async function ChatCardAction(event) {
             }
 
             roll.toMessage({
-                user: game.user.id,
+                author: game.user.id,
                 speaker: {
                     alias: actor.name,
                 },
@@ -269,6 +298,8 @@ async function rollFumble(message, actor) {
         // Simply format the message correctly and let the system handle the lookup
         const messageData = {
             speaker: ChatMessage.getSpeaker({ actor }),
+            // Add author ID for v12+ compatibility
+            author: game.user.id,
             flavor: game.i18n.localize("DCC.Fumble"),
             // Adding our module flags but not interfering with system functionality
             flags: {

@@ -1,7 +1,7 @@
 {
     "DCC-QOL.AttackRollHitsAC": "Hits AC {AC} or below",
-    "DCC-QOL.AttackRollHits": "and hits",
-    "DCC-QOL.AttackRollMisses": "and misses",
+    "DCC-QOL.AttackRollHits": "hits",
+    "DCC-QOL.AttackRollMisses": "misses",
     "DCC-QOL.AttacksWith": "Attacks with {weapon}",
     "DCC-QOL.BackstabsWith": "Backstabs with {weapon}",
     "DCC-QOL.ControlAToken": "You must control a token in the scene if you want to make range-based or friendly fire checks.",

@@ -839,14 +839,62 @@ export class DCCQOLChat {
                 return;
             }
 
+            // Add detailed debugging for weapon damage
+            console.log("DCC-QOL | Weapon details for damage roll:", {
+                name: weapon.name,
+                id: weapon.id,
+                type: weapon.type,
+                damageData: weapon.system.damage,
+                entireWeapon: weapon,
+            });
+
             // Roll the damage
             const weaponRollData = await weapon.getRollData();
-            const formula =
-                isCritical && weapon.system?.damage?.critDamage
-                    ? weapon.system.damage.critDamage
-                    : weapon.system.damage.value;
+
+            // Handle different possible damage property structures
+            let formula = "";
+
+            // Check for different data structures the weapon damage could have
+            if (typeof weapon.system.damage === "string") {
+                // Simple string damage formula
+                formula = weapon.system.damage;
+            } else if (typeof weapon.system.damage === "object") {
+                // Object with damage properties
+                if (isCritical && weapon.system.damage?.critDamage) {
+                    formula = weapon.system.damage.critDamage;
+                } else if (weapon.system.damage?.value) {
+                    formula = weapon.system.damage.value;
+                } else if (weapon.system.damage?.normal) {
+                    // Some systems use 'normal' instead of 'value'
+                    formula = weapon.system.damage.normal;
+                } else if (weapon.system.damage?.formula) {
+                    // Some systems use 'formula'
+                    formula = weapon.system.damage.formula;
+                } else if (weapon.system.damage?.dice) {
+                    // Some use 'dice'
+                    formula = weapon.system.damage.dice;
+                }
+            }
+
+            // Log formula details
+            console.log("DCC-QOL | Damage formula details:", {
+                formula,
+                isCritical,
+                critDamage: weapon.system?.damage?.critDamage,
+                normalDamage: weapon.system?.damage?.value,
+                damageStructure: typeof weapon.system.damage,
+            });
 
             if (!formula || formula === "0" || formula === "") {
+                // Log formula retrieval failure
+                console.error("DCC-QOL | Invalid damage formula:", {
+                    formula: formula,
+                    weaponName: weapon.name,
+                    weaponId: weapon.id,
+                    damageObj: weapon.system.damage,
+                });
+
+                // Simply show the warning and return without fallbacks
                 ui.notifications.warn(
                     game.i18n.localize("DCC-QOL.NoDamageFormula")
                 );
@@ -1024,6 +1072,8 @@ export class DCCQOLChat {
             const messageData = {
                 flavor: game.i18n.localize("DCC.Fumble"),
                 speaker: ChatMessage.getSpeaker({ actor }),
+                // Add the author ID explicitly for v12+ compatibility
+                author: game.user.id,
                 flags: {
                     "dcc-qol": { type: "fumble", actorId: actor.id },
                 },
@@ -1086,6 +1136,8 @@ export class DCCQOLChat {
             // Create the roll message
             const messageData = {
                 speaker: ChatMessage.getSpeaker({ actor }),
+                // Add the author ID explicitly for v12+ compatibility
+                author: game.user.id,
                 flavor: `Critical (${critTable.replace("Crit Table ", "")})`,
                 flags: {
                     "dcc-qol": {

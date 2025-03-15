@@ -14,45 +14,46 @@
         <!-- Roll Results - First the formula, then the total -->
         {{{diceHTML}}}
 
-        <!-- Hit/Miss/Crit/Fumble Status - Green text for hits -->
+        <!-- Hit/Miss/Crit/Fumble Status -->
         {{#if isDisplayHitMiss}} {{#if isFumble}}
-        <div class="roll-result fumble">{{localize "DCC.Fumble"}}!</div>
+        <div class="roll-result status-failure">{{localize "DCC.Fumble"}}!</div>
         {{else if isCrit}}
-        <div class="roll-result critical">{{localize "DCC.CriticalHit"}}!</div>
+        <div class="roll-result status-success">
+            {{localize "DCC.CriticalHit"}}!
+        </div>
         {{else if hitsTarget}}
-        <div class="roll-result hit">
-            {{#if target}}{{localize "DCC-QOL.AttackRollHits"}}
+        <div class="roll-result status-success">
+            {{actor.name}} {{#if target}}{{localize "DCC-QOL.AttackRollHits"}}
             {{target.name}}{{else}}{{localize "DCC-QOL.AttackRollHits"}}{{/if}}
         </div>
         {{else}} {{#if target}}
-        <div class="roll-result miss">
-            {{localize "DCC-QOL.AttackRollMisses"}} {{target.name}}
+        <div class="roll-result status-failure">
+            {{actor.name}} {{localize "DCC-QOL.AttackRollMisses"}}
+            {{target.name}}
         </div>
         {{/if}} {{/if}} {{/if}}
 
         <!-- Deed Die Results -->
         {{#if deedDieValue}}
         <div
-            class="deed-die {{#if deedRollSuccess}}deed-success{{else}}deed-normal{{/if}}"
+            class="roll-result {{#if deedRollSuccess}}status-success{{else}}status-failure{{/if}}"
         >
-            <span
-                >{{localize "DCC.DeedDie"}}:
-                <strong>{{deedDieValue}}</strong>{{#if deedRollSuccess}}{{#if
-                hitsTarget}} ({{localize
-                "DCC-QOL.Success"}}){{/if}}{{/if}}</span
-            >
+            {{localize "DCC.DeedDie"}}: <strong>{{deedDieValue}}</strong>{{#if
+            deedRollSuccess}}{{#if hitsTarget}}
+             ({{localize "DCC-QOL.Success"}})
+             {{/if}} {{/if}}
         </div>
         {{/if}}
 
         <!-- Action Buttons -->
-        <div class="card-buttons">
+        <div>
             {{#if isFumble}}
-            <button data-action="fumble">{{localize "DCC.Fumble"}}</button>
+            <button data-action="fumble">{{localize "DCC.RollFumble"}}</button>
             {{else if isCrit}}
-            <button data-action="crit">{{localize "DCC.Critical"}}</button>
-            <button data-action="damage">{{localize "DCC.Damage"}}</button>
+            <button data-action="crit">{{localize "DCC.RollCritical"}}</button>
+            <button data-action="damage">{{localize "DCC.RollDamage"}}</button>
             {{else if hitsTarget}}
-            <button data-action="damage">{{localize "DCC.Damage"}}</button>
+            <button data-action="damage">{{localize "DCC.RollDamage"}}</button>
             {{/if}} {{#if friendlyFire}}
             <button data-action="friendlyFire">
                 {{localize "DCC-QOL.FriendlyFireCheck"}}
@@ -62,18 +63,16 @@
 
         <!-- Optional Weapon Description -->
         {{#if weapon.system.description.value}}
-        <details class="weapon-description">
+        <details>
             <summary>{{localize "DCC.WeaponDetails"}}</summary>
-            <div class="description-content">
-                {{{weapon.system.description.value}}}
-            </div>
+            <div>{{{weapon.system.description.value}}}</div>
         </details>
         {{/if}}
 
         <!-- Warning for Friendly Fire -->
         {{#if friendlyFire}}
-        <div class="friendly-fire-warning">
-            <p class="warning">
+        <div>
+            <p>
                 <i class="fas fa-exclamation-triangle"></i> {{localize
                 "DCC-QOL.WeaponMissileToMelee"}}
             </p>
@@ -82,18 +81,17 @@
 
         <!-- Debug Info (collapsible) -->
         {{#if target}}
-        <details class="attack-debug-details">
+        <details>
             <summary>{{localize "DCC.Details"}}</summary>
-            <div class="attack-debug">
+            <div>
                 <p>
-                    {{localize "DCC.Roll"}}: {{roll.total}} vs {{localize
-                    "DCC.ArmorClass"}}: {{target.ac}} {{#if (eq roll.total
-                    target.ac)}}({{localize "DCC-QOL.TiesHitAC"}}){{/if}}
+                    {{localize "DCC.Roll"}}: {{roll.total}} vs
+                     {{localize "DCC.ArmorClass"}}: {{target.ac}}
                 </p>
                 <p>
                     <small
-                        >{{localize "DCC.Attack"}}: {{hitsTarget}}, {{localize
-                        "DCC.Critical"}}: {{isCrit}}, {{localize "DCC.Fumble"}}:
+                        >{{localize "DCC.Attack"}}: {{hitsTarget}},
+                         {{localize "DCC.Critical"}}: {{isCrit}}, {{localize "DCC.Fumble"}}:
                         {{isFumble}}</small
                     >
                 </p>
@@ -104,9 +102,9 @@
 
     <!-- Weapon Properties as Tags -->
     {{#if properties.length}}
-    <footer class="card-footer">
+    <footer>
         {{#each properties as |property|}}
-        <span class="tag">{{property}}</span>
+        <span>{{property}}</span>
         {{/each}}
     </footer>
     {{/if}}

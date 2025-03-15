@@ -48,12 +48,9 @@
         "FriendlyFireSuccess": "The shot misses all allies!",
         "FriendlyFireFail": "The shot hits an ally!",
 
-        "AttackRollHits": "Hit!",
-        "AttackRollMisses": "Miss!",
+        "AttackRollHits": "hits",
+        "AttackRollMisses": "misses",
         "Success": "Success!",
-        "AttackMissedNoDamage": "Attack missed! No damage will be rolled.",
-        "AttackFumbledNoDamage": "Attack fumbled! No damage will be rolled.",
-        "TiesHitAC": "Ties favor attacker",
 
         "FumblesWith": "{name} fumbles!",
         "FumbleResult": "Fumble Roll: {value}",

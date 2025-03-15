@@ -1,32 +1,63 @@
+/* Minimal DCC-QoL Styles */
 .dccqol.chat-card {
     font-family: "Signika", sans-serif;
     font-size: 12px;
     margin: 0;
     border: 1px solid #782e22;
-    background: #e0dbd0; /* Original parchment color */
+    background: #e0dbd0; /* parchment background */
+    padding: 5px;
 }
 
-.dccqol.chat-card .card-header {
-    padding: 3px 0;
+.dccqol.chat-card header {
+    display: flex;
+    align-items: center;
     border-bottom: 1px solid #782e22;
-    background: rgba(120, 46, 34, 0.1);
+    padding: 3px 0;
 }
 
-.dccqol.chat-card .card-header img {
-    flex: 0 0 36px;
+.dccqol.chat-card header img {
+    width: 36px;
     margin-right: 5px;
 }
 
-.dccqol.chat-card .card-header h3 {
-    flex: 1;
+.dccqol.chat-card header h3 {
     margin: 0;
     line-height: 36px;
-    color: #4b1810;
     font-size: 14px;
+    color: #4b1810;
 }
 
 .dccqol.chat-card .card-content {
-    padding: 0;
+    padding: 5px 0;
+}
+
+.dccqol.chat-card footer {
+    text-align: center;
+    border-top: 1px solid #782e22;
+    padding: 5px 0;
+}
+
+/* Roll Result Base Style */
+.dccqol.chat-card .roll-result {
+    text-align: center;
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+/* Status Colors */
+.status-success {
+    color: #18520b;
+    font-weight: bold;
+}
+
+.status-failure {
+    color: #aa0200;
+    font-weight: bold;
+}
+
+.status-warning {
+    color: #aa5502;
+    font-weight: bold;
 }
 
 /* Attack Status Styling */
@@ -300,4 +331,8 @@
 .crit-result th {
     padding: 3px 5px;
     border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.centered {
+    text-align: center;
 }

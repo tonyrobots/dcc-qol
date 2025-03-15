@@ -1,7 +1,7 @@
 {
     "DCC-QOL.AttackRollHitsAC": "Acerta CA {AC} ou inferior",
-    "DCC-QOL.AttackRollHits": "e acerta",
-    "DCC-QOL.AttackRollMisses": "e erra",
+    "DCC-QOL.AttackRollHits": "acerta",
+    "DCC-QOL.AttackRollMisses": "erra",
     "DCC-QOL.AttacksWith": "Ataca com {weapon}",
     "DCC-QOL.BackstabsWith": "Apunhala pelas costas com {weapon}",
     "DCC-QOL.ControlAToken": "Você deve controlar um token na cena se quiser realizar verificações de alcance ou de fogo amigo.",

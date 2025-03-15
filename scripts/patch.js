@@ -50,6 +50,8 @@ class DCCQOL extends Actor {
             // Create the message with the format the system expects to process
             const messageData = {
                 speaker: ChatMessage.getSpeaker({ actor: this }),
+                // Add author ID for v12+ compatibility
+                author: game.user.id,
                 flavor: `Critical (${tableName})`,
                 // Adding flags our module needs but not overriding system functionality
                 flags: {
@@ -396,17 +398,23 @@ class DCCQOL extends Actor {
             templateData
         );
 
-        // ChatMessage.create(chatData)
+        // Create the chat message
         const msg = await attackRollResult.roll.toMessage({
             speaker: {
                 alias: DCCActor.name,
             },
+            // Add author ID for v12+ compatibility
+            author: game.user.id,
             content: content,
             rollMode: game.settings.get("core", "rollMode"),
             flags: {
                 "dcc.RollType": "ToHit",
                 "dcc.ItemId": options.weaponId,
+                "dcc-qol": {
+                    type: "attack",
+                },
             },
+            cssClass: "dccqol-message",
             timestamp: Date.now(),
         });
 
