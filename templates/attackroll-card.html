@@ -40,13 +40,13 @@
         >
             {{localize "DCC.DeedDie"}}: <strong>{{deedDieValue}}</strong>{{#if
             deedRollSuccess}}{{#if hitsTarget}}
-             ({{localize "DCC-QOL.Success"}})
+             ({{localize "DCC-QOL.DeedRollSuccess"}})
              {{/if}} {{/if}}
         </div>
         {{/if}}
 
         <!-- Action Buttons -->
-        <div>
+        <div class="card-buttons">
             {{#if isFumble}}
             <button data-action="fumble">{{localize "DCC.RollFumble"}}</button>
             {{else if isCrit}}
