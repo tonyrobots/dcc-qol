@@ -1,0 +1,17 @@
+---
+description: principles of architecture for DCC-QOL module
+globs: 
+alwaysApply: false
+---
+
+# Your rule content
+
+1. Always try to base logic on structured data coming from the Foundry and/or DCC systems. Never parse strings for use in business logic, if it can be avoided -- it's unreliable and brittle. If there is data we need, and it's not available, indicate that and we can a) first try to find it, and b) ask the DCC system developers to add it to an object they are passing.
+
+2. Try to allow the DCC system to interpret and execute the game rules. For example, instead of comparing the player's "to-hit" roll and the target's AC, instead look for a flag or data attribute that indicates a hit or a miss on the attack. That determination is best made by the system if possible. (In some cases we will want to override that, but that should be a conscious decision.)
+
+3. It's important that the DCC-QOL module is as resiliant as possible to changes upstream to the DCC system. To that end, we use a hook-based system that reacts to messages from the system, and (when appropriate) updates/edits the messages.
+
+4. While the DCC system code is in our workspace, so you can read and understand it, NEVER change the DCC system code.
+
+5. Always use localized strings in user-facing messages, rather than hardcoded english. E.g. Not "Fumble" but {{localize "DCC.Fumble"}}, or not "The attack hits!" but instead {{ localize "DCC-QOL.AttackRollHits"}}
