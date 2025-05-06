@@ -47,8 +47,6 @@ export function addTestBonus(terms, actor, weapon, targets, options) {
     }
 }
 
-// Add other attack-roll related hook listeners here in the future...
-
 /**
  * Hooks into 'dcc.rollWeaponAttack' to prepare data for the QoL Attack Card.
  * Augments the messageData object with flags needed by the renderChatMessage hook.
@@ -122,6 +120,7 @@ export function prepareQoLAttackData(rolls, messageData) {
         hitsTarget: hitsTarget,
         isCrit: isCrit,
         isFumble: isFumble,
+        deedDieResult: messageData.system?.deedDieRollResult ?? null,
         isDisplayHitMiss: game.settings.get("dcc-qol", "DisplayHitMiss"), // Get setting value
         hitsAc: hitsAc, // Pass the raw hitsAC value for display when no target
         friendlyFire: friendlyFire,
