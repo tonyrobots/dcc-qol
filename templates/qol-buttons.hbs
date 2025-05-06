@@ -1,0 +1,86 @@
+{{! templates/qol-buttons.hbs }}
+{{! This template assumes the context 'this' is the qolData object from message.flags.dccqol }}
+<div
+    class="dccqol-buttons chat-card-buttons"
+    data-actor-id="{{actorId}}"
+    data-weapon-id="{{weaponId}}"
+    data-token-id="{{tokenId}}"
+    data-target="{{target}}"
+    data-targettoken-id="{{targettokenId}}"
+    data-options="{{options}}"
+>
+
+    {{#if isFumble}}
+        <div class="chat-details fumble-notice">
+            <span style="color:red;">{{localize "DCC.Fumble"}}!</span>
+        </div>
+        <div class="card-buttons">
+            <button data-action="fumble">{{localize "DCC.Fumble"}}</button>
+        </div>
+    {{else}}
+        {{#if hitsTarget}}
+            {{#if isDisplayHitMiss}}
+                <div class="chat-details hit-notice">
+                    <span style="color:green;">{{localize
+                            "DCC-QOL.AttackRollHits"
+                        }}
+                        {{target}}</span>
+                </div>
+            {{/if}}
+            <div class="card-buttons">
+                <button data-action="damage">{{localize "DCC.Damage"}}</button>
+            </div>
+        {{else}}
+            {{#if target}}
+                {{! There was a target, but we missed }}
+                {{#if isDisplayHitMiss}}
+                    <div class="chat-details miss-notice">
+                        <span style="color:darkred;">{{localize
+                                "DCC-QOL.AttackRollMisses"
+                            }}
+                            {{target}}</span>
+                    </div>
+                {{/if}}
+                {{! No damage button on a miss against a specific target }}
+            {{else}}
+                {{! No target was specified }}
+                <div class="chat-details hits-ac-notice">
+                    <span>{{{localize "DCC-QOL.AttackRollHitsAC"}}}
+                        {{{hitsAc}}}</span>
+                </div>
+                {{! Still show damage button if no target, as per original template logic }}
+                <div class="card-buttons">
+                    <button data-action="damage">{{localize
+                            "DCC.Damage"
+                        }}</button>
+                </div>
+            {{/if}}
+        {{/if}}
+    {{/if}}
+
+    {{#if isCrit}}
+        <div class="chat-details crit-notice">
+            <span style="color:purple;">{{localize "DCC.CriticalHit"}}!</span>
+        </div>
+        <div class="card-buttons">
+            <button data-action="crit">{{localize "DCC.CriticalHit"}}</button>
+        </div>
+    {{/if}}
+
+    {{#if friendlyFire}}
+        <div class="card-buttons">
+            <button data-action="friendlyFire">{{localize
+                    "DCC-QOL.FriendlyFireCheck"
+                }}</button>
+        </div>
+    {{/if}}
+
+    {{#if properties}}
+        {{! Assuming properties are added to qolData if needed }}
+        <footer class="card-footer qol-footer">
+            {{#each properties}}
+                <span>{{this}}</span>
+            {{/each}}
+        </footer>
+    {{/if}}
+</div>

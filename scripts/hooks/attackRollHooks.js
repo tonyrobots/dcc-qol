@@ -1,3 +1,5 @@
+import { getFirstTarget } from "../utils.js";
+
 /**
  * Test Listener for the dcc.modifyAttackRollTerms hook.
  * Adds a bonus based on the length of the target's name.
@@ -46,3 +48,91 @@ export function addTestBonus(terms, actor, weapon, targets, options) {
 }
 
 // Add other attack-roll related hook listeners here in the future...
+
+/**
+ * Hooks into 'dcc.rollWeaponAttack' to prepare data for the QoL Attack Card.
+ * Augments the messageData object with flags needed by the renderChatMessage hook.
+ *
+ * @param {Roll[]} rolls - Array of roll objects involved in the attack.
+ * @param {object} messageData - The chat message data object before creation.
+ */
+export function prepareQoLAttackData(rolls, messageData) {
+    const useQoLAttackCard = game.settings.get("dcc-qol", "useQoLAttackCard");
+    if (!useQoLAttackCard) {
+        return; // Do nothing if the setting is disabled
+    }
+
+    console.debug("DCC-QOL | prepareQoLAttackData hook listener called");
+    console.debug("DCC-QOL | Received messageData:", messageData);
+
+    // Extract basic data
+    const actorId = messageData.system.actorId;
+    const weaponId = messageData.system.weaponId;
+    const tokenId = messageData.speaker.token; // Attacker's token ID
+    const isCrit = messageData.flags["dcc.isCrit"] || false;
+    const isFumble = messageData.flags["dcc.isFumble"] || false;
+    const hitsAc = messageData.system.hitsAc; // What AC value the roll hits
+
+    // Process Targets using utility function
+    const targetsSet = messageData.system.targets; // This is a Set<Token>
+    const targetDocument = getFirstTarget(targetsSet); // Get the TokenDocument object
+
+    let targetName = "";
+    let targetTokenId = null;
+    let hitsTarget = false; // Default to false
+
+    if (targetDocument) {
+        targetName = targetDocument.name || ""; // Get name directly
+        targetTokenId = targetDocument.id; // Get ID directly
+        const targetActor = targetDocument.actor; // Get actor from document
+
+        if (targetActor) {
+            const targetAC = targetActor.system?.attributes?.ac?.value;
+            if (targetAC !== undefined && hitsAc !== undefined) {
+                hitsTarget =
+                    !isFumble && parseInt(hitsAc) >= parseInt(targetAC); // Hit if not a fumble and roll >= AC
+                console.debug(
+                    `DCC-QOL | Target AC: ${targetAC}, Hits AC: ${hitsAc}, Hits Target: ${hitsTarget}`
+                );
+            } else {
+                console.debug(
+                    `DCC-QOL | Could not determine target AC (${targetAC}) or Hits AC (${hitsAc})`
+                );
+            }
+        }
+    } else {
+        console.debug(
+            "DCC-QOL | No valid targets found by getFirstTarget utility."
+        );
+    }
+
+    // --- Friendly Fire Check ---
+    // TODO: Implement friendly fire logic if needed.
+    // Needs to check: ranged weapon, fumble, presence of allies near target/attacker.
+    const friendlyFire = false; // Placeholder
+
+    // --- Prepare QoL Data ---
+    const qolData = {
+        isAttackRoll: true, // Flag for the render hook
+        actorId: actorId,
+        weaponId: weaponId,
+        tokenId: tokenId,
+        target: targetName,
+        targettokenId: targetTokenId,
+        hitsTarget: hitsTarget,
+        isCrit: isCrit,
+        isFumble: isFumble,
+        isDisplayHitMiss: game.settings.get("dcc-qol", "DisplayHitMiss"), // Get setting value
+        hitsAc: hitsAc, // Pass the raw hitsAC value for display when no target
+        friendlyFire: friendlyFire,
+        options: {}, // Placeholder for future options
+    };
+
+    // Attach QoL data to message flags
+    messageData.flags.dccqol = qolData;
+
+    console.debug(
+        "DCC-QOL | Augmented messageData with flags:",
+        messageData.flags.dccqol
+    );
+}

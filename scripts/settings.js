@@ -1,5 +1,5 @@
 /* global game */
-export const registerSystemSettings = async function () {
+export const registerSettings = async function () {
     /**
      * Automate damage apply
      */
@@ -36,7 +36,7 @@ export const registerSystemSettings = async function () {
 
     /**
      * Automatically check Friendly Fire
-     * Firing a missile weapon into melee 50% chance of “friendly fire” if attack misses; see page 96.
+     * Firing a missile weapon into melee 50% chance of "friendly fire" if attack misses; see page 96.
      */
     game.settings.register("dcc-qol", "automateFriendlyFire", {
         name: "DCC-QOL.SettingAutomateFriendlyFire",
@@ -62,7 +62,7 @@ export const registerSystemSettings = async function () {
 
     /**
      * Automatically adjust monster's critical hit.
-     * A positive Luck modifier reduces the monster’s roll, whereas a negative modifier grants a bonus to the monster’s critical hit roll.
+     * A positive Luck modifier reduces the monster's roll, whereas a negative modifier grants a bonus to the monster's critical hit roll.
      */
     game.settings.register("dcc-qol", "automateMonsterCritLuck", {
         name: "DCC-QOL.SettingAutomateMonsterCritLuck",
@@ -143,6 +143,19 @@ export const registerSystemSettings = async function () {
         scope: "world",
         type: Boolean,
         default: false,
+        config: true,
+    });
+
+    /**
+     * Use QoL Attack Card
+     * Use the QoL Attack Card for attack rolls
+     */
+    game.settings.register("dcc-qol", "useQoLAttackCard", {
+        name: "DCC-QOL.SettingUseQoLAttackCard",
+        hint: "DCC-QOL.SettingUseQoLAttackCardHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
         config: true,
     });
 };
