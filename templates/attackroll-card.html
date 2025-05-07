@@ -43,14 +43,14 @@
     <div class="chat-details">
         <div class="roll-result hit">
             <span
-                >{{ tokenName }} {{ localize "DCC-QOL.AttackRollHits"}}
-                {{target}}</span
+                >{{ localize "DCC.Attack" }} {{ localize
+                "DCC-QOL.AttackRollHits"}} {{target}}</span
             >
         </div>
     </div>
     {{/if}}
     <div class="card-buttons">
-        <button data-action="damage">{{ localize "DCC.Damage" }}</button>
+        <button data-action="damage">{{ localize "DCC.RollDamage" }}</button>
     </div>
     {{else}} {{#if target}} {{#if isDisplayHitMiss}}
     <div class="chat-details">

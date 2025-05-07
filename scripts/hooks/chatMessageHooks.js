@@ -30,17 +30,42 @@ export async function enhanceAttackRollCard(message, html, data) {
     // );
 
     try {
-        // --- Fetch Actor FIRST ---
-        const actor = game.actors.get(qolFlags.actorId);
+        // --- Fetch Actor ---
+        let actor;
+        const speaker = message.speaker;
+        const actorIdFromFlags = qolFlags.actorId;
+
+        if (speaker.token && speaker.scene) {
+            const scene = game.scenes.get(speaker.scene);
+            if (scene) {
+                const tokenDocument = scene.tokens.get(speaker.token);
+                if (tokenDocument) {
+                    actor = tokenDocument.actor;
+                }
+            }
+        }
+
+        // If actor wasn't found via token, or if the message wasn't from a token,
+        // fall back to using the actorId from qolFlags.
+        if (!actor && actorIdFromFlags) {
+            actor = game.actors.get(actorIdFromFlags);
+            if (!actor) {
+                console.warn(
+                    `DCC-QOL | Actor not found for ID: ${actorIdFromFlags} (fallback). Message ID: ${message.id}`
+                );
+            }
+        }
+
+        // Final check if an actor was determined
         if (!actor) {
             console.warn(
-                `DCC-QOL | Actor not found for ID: ${qolFlags.actorId} | Message ID: ${message.id}`
+                `DCC-QOL | Actor could not be determined. Speaker Token: ${speaker.token}, Speaker Scene: ${speaker.scene}, Flagged Actor ID: ${actorIdFromFlags}. Message ID: ${message.id}`
             );
             return; // Can't get weapon without actor
         }
 
         // --- Fetch Weapon FROM ACTOR ---
-        const weapon = actor.items.get(qolFlags.weaponId); // Corrected: Use actor.items
+        const weapon = actor.items.get(qolFlags.weaponId);
         if (!weapon) {
             // --- Debug: Log the actor and the weapon ID we tried ---
             console.warn(

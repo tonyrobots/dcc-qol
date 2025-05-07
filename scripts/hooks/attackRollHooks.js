@@ -81,7 +81,7 @@ export function prepareQoLAttackData(rolls, messageData) {
     let hitsTarget = false; // Default to false
 
     if (targetDocument) {
-        targetName = targetDocument.name || ""; // Get name directly
+        targetName = targetDocument.name || "target"; // Get name directly
         targetTokenId = targetDocument.id; // Get ID directly
         const targetActor = targetDocument.actor; // Get actor from document
 
