@@ -39,45 +39,6 @@ function tokenForActorId(actorId) {
     }
 }
 
-// --- PATCHING/OVERRIDING DISABLED FOR MIGRATION TO HOOK-BASED LISTENERS --- //
-// The following patching logic is intentionally disabled while we migrate to a hook/listener architecture.
-// If needed, restore by uncommenting the relevant code below.
-
-/*
-function rollPatchedWeaponAttack(wrapped, ...args) {
-    const actor = new DCCQOL(this);
-    const tokenD = tokenForActorId(this._id);
-    // if settings are set to checkWeaponRange, or automateFriendlyFire, require a token to be in scene; otherwise, proceed without one
-    if (
-        game.settings.get("dcc-qol", "checkWeaponRange") ||
-        game.settings.get("dcc-qol", "automateFriendlyFire")
-    ) {
-        if (!tokenD) {
-            if (ui.notifications) {
-                return ui.notifications.warn(
-                    game.i18n.localize("DCC-QOL.ControlAToken")
-                );
-            } else {
-                console.warn(
-                    "DCC-QOL | Cannot display notification: Control a token."
-                );
-                return;
-            }
-        }
-    }
-    actor.rollWeaponAttackQOL(args[0], args[1], tokenD);
-}
-
-function initPatching() {
-    libWrapper.register(
-        "dcc-qol",
-        "game.dcc.DCCActor.prototype.rollWeaponAttack",
-        rollPatchedWeaponAttack,
-        "MIXED"
-    );
-}
-*/
-
 Hooks.once("init", async function () {
     console.log("DCC-QOL | Initializing DCC-QOL.");
     if (!game.modules.get("lib-wrapper")?.active) {
@@ -89,7 +50,6 @@ Hooks.once("init", async function () {
     }
     await registerSystemSettings();
     preloadTemplates();
-    // initPatching(); // PATCHING DISABLED FOR MIGRATION
     Hooks.on("renderChatLog", (app, html, data) => chat.addChatListeners(html));
 
     initializeHookListeners();

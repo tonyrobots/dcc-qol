@@ -80,19 +80,28 @@ export async function enhanceAttackRollCard(message, html, data) {
             templateData
         );
 
-        // --- Replace Message Content ---
+        // --- Modify existing message elements ---
+        const messageHeader = html.find(".message-header");
+        if (messageHeader.length > 0) {
+            // Remove the specific flavor text span
+            messageHeader.find("span.flavor-text").remove();
+
+            // Add a custom class to the sender for styling
+            messageHeader
+                .find("h4.message-sender")
+                .addClass("dccqol-speaker-name");
+        }
+
+        // Replace the content of the .message-content div with our card
         const messageContentElement = html.find(".message-content");
         if (messageContentElement.length > 0) {
             messageContentElement.html(renderedContentHtml);
-            // console.debug( // Keep this one commented out unless needed later
-            //     "DCC-QOL | Successfully replaced message content for:",
-            //     message.id
-            // );
         } else {
+            // Fallback if .message-content wasn't found (should be rare for standard messages)
             console.warn(
-                "DCC-QOL | Could not find .message-content element to replace in message:",
-                message.id
+                "DCC-QOL | .message-content not found. Appending card to main message element (li)."
             );
+            html.append(renderedContentHtml);
         }
     } catch (err) {
         console.error(

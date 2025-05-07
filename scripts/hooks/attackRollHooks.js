@@ -67,6 +67,7 @@ export function prepareQoLAttackData(rolls, messageData) {
     const actorId = messageData.system.actorId;
     const weaponId = messageData.system.weaponId;
     const tokenId = messageData.speaker.token; // Attacker's token ID
+    const tokenName = messageData.speaker.alias || messageData.speaker.name; // Attacker's display name
     const isCrit = messageData.flags["dcc.isCrit"] || false;
     const isFumble = messageData.flags["dcc.isFumble"] || false;
     const hitsAc = messageData.system.hitsAc; // What AC value the roll hits
@@ -115,6 +116,7 @@ export function prepareQoLAttackData(rolls, messageData) {
         actorId: actorId,
         weaponId: weaponId,
         tokenId: tokenId,
+        tokenName: tokenName,
         target: targetName,
         targettokenId: targetTokenId,
         hitsTarget: hitsTarget,

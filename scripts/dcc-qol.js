@@ -25,16 +25,16 @@ async function preloadTemplates() {
 
 // Initialize the module
 Hooks.once("init", () => {
-    console.log("DCC QoL | Initializing DCC Quality of Life Improvements");
+    console.log(
+        "DCC QoL | Initializing DCC Quality of Life Improvements module"
+    );
+    // CONFIG.debug.hooks = true;
 
     registerSettings();
     preloadTemplates();
-
-    // Any other init-time setup
+    registerHookListeners();
 });
 
-// Setup hook listeners
 Hooks.once("ready", () => {
-    registerHookListeners();
     // Any other ready-time setup
 });
