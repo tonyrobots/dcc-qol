@@ -1,0 +1,112 @@
+.dccqol.chat-card {
+    font-size: 12px;
+    font-style: normal;
+}
+
+.dccqol.chat-card .card-header {
+    border-bottom: 2px groove #fff;
+    border-top: 2px groove #fff;
+    padding: 3px 0;
+}
+
+.dccqol.chat-card .card-header img {
+    flex: 0 0 36px;
+    margin-right: 5px;
+}
+
+.dccqol.chat-card .card-header h4 {
+    flex: 1;
+    font-family: "Book Antiqua", "Palatino Linotype", serif;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 36px;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dccqol.chat-card .card-header h4:hover {
+    color: #111;
+    text-shadow: 0 0 10px red;
+}
+
+.dccqol.chat-card .card-content {
+    margin: 5px 0;
+}
+
+.dccqol.chat-card .card-content h3 {
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.dccqol.chat-card .card-content > * {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.dccqol.chat-card .card-buttons {
+    margin: 5px 0;
+}
+
+.dccqol.chat-card .card-buttons span {
+    border: 1px solid #ccc;
+    display: block;
+    line-height: 28px;
+    text-align: center;
+}
+
+.dccqol.chat-card .card-buttons button {
+    font-size: 12px;
+    height: 24px;
+    line-height: 20px;
+    margin: 2px 0;
+}
+
+.dccqol.chat-card .card-footer {
+    border-top: 2px groove #fff;
+    padding: 3px 0 0;
+}
+
+.dccqol.chat-card .card-footer span {
+    border-right: 2px groove #fff;
+    font-size: 10px;
+    padding: 0 3px 0 0;
+}
+
+.dccqol.chat-card .card-footer span:last-child {
+    padding-right: 0;
+}
+
+.dccqol.chat-card .ff-result {
+    font-size: 12px;
+    padding: 3px 0 0;
+}
+
+.dccqol.chat-card .roll-result {
+    font-size: 15px;
+    font-weight: bold;
+    margin: 5px 0;
+    text-align: center;
+}
+
+.dccqol.chat-card .roll-result.hit {
+    color: green;
+}
+
+.dccqol.chat-card .roll-result.miss {
+    color: red;
+}
+
+.dice-roll .dice-total.success {
+    color: green;
+    font-weight: 900;
+}
+
+.dice-roll .dice-total.fail {
+    color: red;
+    font-weight: 900;
+}
