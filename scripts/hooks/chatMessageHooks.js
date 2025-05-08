@@ -117,6 +117,95 @@ export async function enhanceAttackRollCard(message, html, data) {
             );
             html.append(renderedContentHtml);
         }
+
+        // --- Add Event Listeners for QoL Card Buttons ---
+        // Determine the correct element to attach listeners to (either the specific .message-content div or the whole html if .message-content wasn't found)
+        const cardElement =
+            messageContentElement.length > 0 ? messageContentElement : html;
+
+        cardElement
+            .find('button[data-action="damage"]')
+            .on("click", async (event) => {
+                event.preventDefault();
+                // console.log("DCC-QOL | Damage button clicked", { messageSystem: message.system, actor, weapon, qolFlags });
+
+                if (!message.system || !message.system.damageRollFormula) {
+                    console.error(
+                        "DCC-QOL | Damage roll formula not found in message.system",
+                        message
+                    );
+                    ui.notifications.error(
+                        "DCC QoL: Damage roll formula not found in the original message data!"
+                    );
+                    return;
+                }
+
+                // Ensure actor is available (it should be from the outer function's scope)
+                if (!actor) {
+                    console.error(
+                        "DCC-QOL | Actor not available for damage roll processing. Message ID:",
+                        message.id
+                    );
+                    ui.notifications.error(
+                        "DCC QoL: Actor context not found for damage roll."
+                    );
+                    return;
+                }
+
+                try {
+                    // Use actor.getRollData() to allow for @attributes in the formula from the actor's sheet
+                    const roll = new Roll(
+                        message.system.damageRollFormula,
+                        actor.getRollData()
+                    );
+                    await roll.evaluate({ async: true });
+
+                    // Construct flavor text for the damage roll
+                    // We'll need to add these localization strings to language/en.json later
+                    // For now, using placeholders or direct English strings.
+                    let flavorText = `Rolling Damage for ${
+                        message.system.weaponName || weapon?.name || "weapon"
+                    }`;
+                    if (qolFlags.target) {
+                        flavorText += ` against ${qolFlags.target}`;
+                    }
+                    // A more robust localization approach:
+                    // let weaponNameForFlavor = message.system.weaponName || weapon?.name || game.i18n.localize("DCC-QOL.UnknownWeapon");
+                    // let flavor = game.i18n.format("DCC-QOL.RollsDamageWith", { weaponName: weaponNameForFlavor });
+                    // if (qolFlags.target) {
+                    //     flavor += " " + game.i18n.format("DCC-QOL.AgainstTarget", { targetName: qolFlags.target });
+                    // }
+
+                    roll.toMessage({
+                        speaker: ChatMessage.getSpeaker({ actor: actor }),
+                        flavor: flavorText, // Replace with localized version later
+                        flags: {
+                            "dcc.RollType": "Damage", // Standard DCC system flag for damage type
+                            "dccqol.isDamageRoll": true,
+                            "dccqol.parentId": message.id, // Link back to the original attack card message
+                            "dccqol.actorId": actor.id,
+                            "dccqol.weaponId": weapon?.id || qolFlags.weaponId,
+                        },
+                    });
+                } catch (rollError) {
+                    console.error(
+                        "DCC-QOL | Error performing damage roll:",
+                        rollError,
+                        {
+                            formula: message.system.damageRollFormula,
+                            actorData: actor.getRollData(),
+                        }
+                    );
+                    ui.notifications.error(
+                        `DCC QoL: Error performing damage roll - ${rollError.message}`
+                    );
+                }
+            });
+
+        // Placeholder for other button listeners (fumble, crit, friendly fire)
+        // cardElement.find('button[data-action="fumble"]').on('click', async (event) => { /* ... handler ... */ });
+        // cardElement.find('button[data-action="crit"]').on('click', async (event) => { /* ... handler ... */ });
+        // cardElement.find('button[data-action="friendlyFire"]').on('click', async (event) => { /* ... handler ... */ });
     } catch (err) {
         console.error(
             "DCC QoL | Error enhancing attack roll card:",
