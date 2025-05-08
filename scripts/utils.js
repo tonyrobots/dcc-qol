@@ -68,21 +68,47 @@ export async function measureTokenDistance(token1D, token2D) {
 
 export async function checkFiringIntoMelee(targetTokenDocument) {
     let firingIntoMelee = false;
+    console.debug(
+        `DCC-QOL Utils | checkFiringIntoMelee: Checking target ${targetTokenDocument?.name} (ID: ${targetTokenDocument?.id})`
+    );
 
     for (const token of game.canvas.tokens.placeables) {
+        console.debug(
+            `DCC-QOL Utils |   - Iterating token: ${token.document?.name} (ID: ${token.document?.id})`
+        );
         if (!(token.document === targetTokenDocument)) {
             // Check if the token is an ally and in melee range
+            const distance = await measureTokenDistance(
+                targetTokenDocument,
+                token.document
+            );
+            const disposition = token.document.disposition;
+            console.debug(
+                `DCC-QOL Utils |     - Distance to ${token.document?.name}: ${distance}`
+            );
+            console.debug(
+                `DCC-QOL Utils |     - Disposition of ${token.document?.name}: ${disposition} (Friendly is 1)`
+            );
+
             if (
-                (await this.measureTokenDistance(
-                    targetTokenDocument,
-                    token.document
-                )) <= 5 &&
-                token.document.disposition === 1
+                distance <= game.canvas.dimensions.distance &&
+                disposition === 1 // CONST.TOKEN_DISPOSITIONS.FRIENDLY is 1
             ) {
-                return true;
+                console.debug(
+                    `DCC-QOL Utils |     - Ally ${token.document?.name} is in melee range!`
+                );
+                firingIntoMelee = true; // Set to true and break, as we found one
+                break;
             }
+        } else {
+            console.debug(
+                `DCC-QOL Utils |   - Skipping target token itself: ${token.document?.name}`
+            );
         }
     }
+    console.debug(
+        `DCC-QOL Utils | checkFiringIntoMelee: Returning ${firingIntoMelee}`
+    );
     return firingIntoMelee;
 }
 
@@ -118,4 +144,38 @@ export async function getWeaponProperties(weapon, options) {
         properties.push("Backstab");
     }
     return properties;
+}
+
+/**
+ * Retrieves a weapon item from an actor by its ID.
+ *
+ * @param {Actor} actor - The actor from whom to retrieve the weapon.
+ * @param {string} weaponId - The ID of the weapon item to retrieve.
+ * @returns {Item|null} The weapon item if found, otherwise null.
+ */
+export function getWeaponFromActorById(actor, weaponId) {
+    if (!actor) {
+        console.warn(
+            "DCC-QOL Utils | getWeaponFromActorById: Invalid actor provided."
+        );
+        return null;
+    }
+    if (!weaponId) {
+        console.warn(
+            "DCC-QOL Utils | getWeaponFromActorById: Invalid weaponId provided."
+        );
+        return null;
+    }
+
+    const weapon = actor.items.get(weaponId);
+
+    if (!weapon) {
+        console.warn(
+            `DCC-QOL Utils | getWeaponFromActorById: Weapon not found on Actor ${actor.name} (ID: ${actor.id}) with Weapon ID: ${weaponId}`
+        );
+        return null;
+    }
+
+    // console.debug(`DCC-QOL Utils | getWeaponFromActorById: Returning weapon ${weapon.name}`);
+    return weapon;
 }

@@ -77,9 +77,9 @@
     </div>
     {{/if}} {{/if}} {{/if}} {{#if isCrit}}
     <div class="card-buttons">
-        <button data-action="crit">{{ localize "DCC.RollCriticalHit" }}</button>
+        <button data-action="crit">{{ localize "DCC.RollCritical" }}</button>
     </div>
-    {{/if}} {{#if friendlyFire}}
+    {{/if}} {{#if showFriendlyFireButton}}
     <div class="card-buttons">
         <button data-action="friendlyFire">
             {{ localize "DCC-QOL.FriendlyFireCheck" }}

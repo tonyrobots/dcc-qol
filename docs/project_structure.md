@@ -12,6 +12,8 @@ This document outlines the file structure and architectural approach for the `dc
     -   **`scripts/hooks/`:** The core of the new architecture.
         -   `listeners.js`: Central file responsible for registering all hook listeners using `Hooks.on()` or `Hooks.once()`. It imports functions from other files within this directory.
         -   `*.js` (e.g., `attackRollHooks.js`): Individual files containing the specific logic (handler functions) that respond to different hooks. Files should be named logically based on the hooks they handle or the features they implement (e.g., `chatMessageHooks.js`, `damageApplicationHooks.js`).
+    -   **`scripts/chatCardActions/`:** Contains handler functions for actions triggered by user interactions with custom chat card elements (e.g., buttons on a QoL attack card). These are typically called by event listeners set up in `chatMessageHooks.js`.
+        -   `*.js` (e.g., `handleDamageClick.js`): Individual files for specific card actions.
     -   `settings.js`: Registers module settings and menus using Foundry VTT's Settings API.
     -   `config.js`: Contains module-level configuration constants or flags.
     -   **`scripts/legacy/`:** Contains legacy JavaScript files retained for reference during the migration to the hook-based system. **These files are deprecated and will be removed** once their functionality is fully reimplemented using hooks. **Do not add new code or modify files here.**

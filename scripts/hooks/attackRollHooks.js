@@ -1,4 +1,10 @@
+/**
+ * Handles Foundry VTT hooks related to the data generation and mechanics of attack rolls.
+ * This includes modifying roll terms, preparing data before a chat message is created,
+ * or reacting to events within the attack sequence itself.
+ */
 import { getFirstTarget } from "../utils.js";
+import { checkFiringIntoMelee, getWeaponFromActorById } from "../utils.js";
 
 /**
  * Test Listener for the dcc.modifyAttackRollTerms hook.
@@ -54,7 +60,7 @@ export function addTestBonus(terms, actor, weapon, targets, options) {
  * @param {Roll[]} rolls - Array of roll objects involved in the attack.
  * @param {object} messageData - The chat message data object before creation.
  */
-export function prepareQoLAttackData(rolls, messageData) {
+export async function prepareQoLAttackData(rolls, messageData) {
     const useQoLAttackCard = game.settings.get("dcc-qol", "useQoLAttackCard");
     if (!useQoLAttackCard) {
         return; // Do nothing if the setting is disabled
@@ -77,6 +83,7 @@ export function prepareQoLAttackData(rolls, messageData) {
     const isCrit = messageData.flags["dcc.isCrit"] || false;
     const isFumble = messageData.flags["dcc.isFumble"] || false;
     const hitsAc = messageData.system.hitsAc; // What AC value the roll hits
+    const weapon = getWeaponFromActorById(actor, weaponId);
 
     // Process Targets using utility function
     const targetsSet = messageData.system.targets; // This is a Set<Token>
@@ -112,9 +119,23 @@ export function prepareQoLAttackData(rolls, messageData) {
     }
 
     // --- Friendly Fire Check ---
-    // TODO: Implement friendly fire logic if needed.
-    // Needs to check: ranged weapon, fumble, presence of allies near target/attacker.
-    const friendlyFire = false; // Placeholder
+    let showFriendlyFireButton = false;
+    if (
+        game.settings.get("dcc-qol", "automateFriendlyFire") && // if setting is enabled
+        isPC &&
+        weapon &&
+        !weapon.system.melee && // is Ranged weapon
+        !hitsTarget &&
+        targetDocument
+    ) {
+        // Missed a specific target
+        try {
+            showFriendlyFireButton = await checkFiringIntoMelee(targetDocument);
+        } catch (e) {
+            console.error("DCC-QOL | Error calling checkFiringIntoMelee:", e);
+            showFriendlyFireButton = false; // Default to false on error
+        }
+    }
 
     // --- Prepare QoL Data ---
     const qolData = {
@@ -133,7 +154,7 @@ export function prepareQoLAttackData(rolls, messageData) {
         deedRollSuccess: messageData.system?.deedRollSuccess ?? null,
         isDisplayHitMiss: game.settings.get("dcc-qol", "DisplayHitMiss"), // Get setting value
         hitsAc: hitsAc, // Pass the raw hitsAC value for display when no target
-        friendlyFire: friendlyFire,
+        showFriendlyFireButton: showFriendlyFireButton, // New flag
         options: {}, // Placeholder for future options
     };
 

@@ -10,7 +10,7 @@
     "DCC-QOL.And": "and",
     "DCC-QOL.FriendlyFire": "Friendly Fire",
     "DCC-QOL.FriendlyFireCheck": "Friendly Fire Check",
-    "DCC-QOL.FriendlyFireFail": "{weapon} may strike your ally; make a second attack roll against their AC.",
+    "DCC-QOL.FriendlyFireFail": "Attack may strike your ally; make a second attack roll against their AC.",
     "DCC-QOL.FriendlyFireSuccess": "The attack misses everyone, enemies and allies alike.",
     "DCC-QOL.SettingAutomateDamageApply": "Auto apply damage",
     "DCC-QOL.SettingAutomateDamageApplyHint": "Automatically subtract rolled damage from target. (Requires a target, obviously.)",

@@ -1,5 +1,14 @@
+/**
+ * Handles Foundry VTT hooks related to chat message rendering and interaction.
+ * This typically involves modifying the HTML of a chat message before it's displayed
+ * or attaching event listeners to elements within a rendered chat message.
+ */
 /* global game, renderTemplate, $ */
-import { getWeaponProperties } from "../utils.js"; // Import the utility function
+import { getWeaponProperties, getWeaponFromActorById } from "../utils.js"; // Import the utility function
+import { handleDamageClick } from "../chatCardActions/handleDamageClick.js";
+import { handleCritClick } from "../chatCardActions/handleCritClick.js";
+import { handleFumbleClick } from "../chatCardActions/handleFumbleClick.js";
+import { handleFriendlyFireClick } from "../chatCardActions/handleFriendlyFireClick.js";
 
 /**
  * Replaces the content of DCC attack roll chat cards with a custom QoL template.
@@ -57,14 +66,10 @@ export async function enhanceAttackRollCard(message, html, data) {
             return; // Can't get weapon without actor
         }
 
-        // --- Fetch Weapon FROM ACTOR ---
-        const weapon = actor.items.get(qolFlags.weaponId);
+        // --- Fetch Weapon FROM ACTOR using utility function ---
+        const weapon = getWeaponFromActorById(actor, qolFlags.weaponId);
         if (!weapon) {
-            // --- Debug: Log the actor and the weapon ID we tried ---
-            console.warn(
-                `DCC-QOL | Weapon not found on Actor ${actor.name} (ID: ${actor.id}) with Weapon ID: ${qolFlags.weaponId} | Message ID: ${message.id}`
-            );
-            return; // Stop if weapon not found on the actor
+            return;
         }
 
         // --- Extract Original Roll HTML ---
@@ -125,248 +130,27 @@ export async function enhanceAttackRollCard(message, html, data) {
 
         cardElement
             .find('button[data-action="damage"]')
-            .on("click", async (event) => {
-                event.preventDefault();
-                // console.log("DCC-QOL | Damage button clicked", { messageSystem: message.system, actor, weapon, qolFlags });
-
-                if (!message.system || !message.system.damageRollFormula) {
-                    console.error(
-                        "DCC-QOL | Damage roll formula not found in message.system",
-                        message
-                    );
-                    ui.notifications.error(
-                        "DCC QoL: Damage roll formula not found in the original message data!"
-                    );
-                    return;
-                }
-
-                // Ensure actor is available (it should be from the outer function's scope)
-                if (!actor) {
-                    console.error(
-                        "DCC-QOL | Actor not available for damage roll processing. Message ID:",
-                        message.id
-                    );
-                    ui.notifications.error(
-                        "DCC QoL: Actor context not found for damage roll."
-                    );
-                    return;
-                }
-
-                try {
-                    // Use actor.getRollData() to allow for @attributes in the formula from the actor's sheet
-                    const roll = new Roll(
-                        message.system.damageRollFormula,
-                        actor.getRollData()
-                    );
-                    await roll.evaluate({ async: true });
-
-                    // Construct flavor text for the damage roll
-                    // We'll need to add these localization strings to language/en.json later
-                    // For now, using placeholders or direct English strings.
-                    let flavorText = `Rolling Damage for ${
-                        message.system.weaponName || weapon?.name || "weapon"
-                    }`;
-                    if (qolFlags.target) {
-                        flavorText += ` against ${qolFlags.target}`;
-                    }
-                    // A more robust localization approach:
-                    // let weaponNameForFlavor = message.system.weaponName || weapon?.name || game.i18n.localize("DCC-QOL.UnknownWeapon");
-                    // let flavor = game.i18n.format("DCC-QOL.RollsDamageWith", { weaponName: weaponNameForFlavor });
-                    // if (qolFlags.target) {
-                    //     flavor += " " + game.i18n.format("DCC-QOL.AgainstTarget", { targetName: qolFlags.target });
-                    // }
-
-                    roll.toMessage({
-                        speaker: ChatMessage.getSpeaker({ actor: actor }),
-                        flavor: flavorText, // Replace with localized version later
-                        flags: {
-                            "dcc.RollType": "Damage", // Standard DCC system flag for damage type
-                            "dccqol.isDamageRoll": true,
-                            "dccqol.parentId": message.id, // Link back to the original attack card message
-                            "dccqol.actorId": actor.id,
-                            "dccqol.weaponId": weapon?.id || qolFlags.weaponId,
-                        },
-                    });
-                } catch (rollError) {
-                    console.error(
-                        "DCC-QOL | Error performing damage roll:",
-                        rollError,
-                        {
-                            formula: message.system.damageRollFormula,
-                            actorData: actor.getRollData(),
-                        }
-                    );
-                    ui.notifications.error(
-                        `DCC QoL: Error performing damage roll - ${rollError.message}`
-                    );
-                }
-            });
+            .on("click", (event) =>
+                handleDamageClick(event, message, actor, weapon, qolFlags)
+            );
 
         cardElement
             .find('button[data-action="crit"]')
-            .on("click", async (event) => {
-                event.preventDefault();
-                // console.log("DCC-QOL | Crit button clicked", { messageSystem: message.system, actor, weapon, qolFlags });
-
-                if (!message.system || !message.system.critRollFormula) {
-                    console.error(
-                        "DCC-QOL | Critical roll formula not found in message.system",
-                        message
-                    );
-                    ui.notifications.error(
-                        "DCC QoL: Critical roll formula not found in the original message data!"
-                    );
-                    return;
-                }
-
-                if (!actor) {
-                    console.error(
-                        "DCC-QOL | Actor not available for critical roll processing. Message ID:",
-                        message.id
-                    );
-                    ui.notifications.error(
-                        "DCC QoL: Actor context not found for critical roll."
-                    );
-                    return;
-                }
-
-                try {
-                    let flavorText = `Critical Hit (Table ${
-                        message.system.critTableName || "Unknown"
-                    })`; // Fallback flavor
-                    if (message.system.critInlineRoll) {
-                        try {
-                            const tempDiv = $("<div>").html(
-                                message.system.critInlineRoll
-                            );
-                            const anchorTag = tempDiv.find("a.inline-roll");
-                            if (anchorTag.length && anchorTag.data("flavor")) {
-                                flavorText = anchorTag.data("flavor");
-                            }
-                        } catch (e) {
-                            console.warn(
-                                "DCC-QOL | Could not parse critInlineRoll for flavor, using fallback.",
-                                e
-                            );
-                        }
-                    }
-
-                    const roll = new Roll(
-                        message.system.critRollFormula,
-                        actor.getRollData()
-                    );
-                    await roll.evaluate({ async: true });
-
-                    roll.toMessage({
-                        speaker: ChatMessage.getSpeaker({ actor: actor }),
-                        flavor: flavorText,
-                        flags: {
-                            "dcc.RollType": "Crit", // System flag for critical hit rolls
-                            "dccqol.isCritRoll": true,
-                            "dccqol.parentId": message.id,
-                            "dccqol.actorId": actor.id,
-                            "dccqol.weaponId": weapon?.id || qolFlags.weaponId,
-                            "dccqol.critTableName":
-                                message.system.critTableName,
-                        },
-                    });
-                } catch (rollError) {
-                    console.error(
-                        "DCC-QOL | Error performing critical roll:",
-                        rollError,
-                        {
-                            formula: message.system.critRollFormula,
-                            actorData: actor.getRollData(),
-                        }
-                    );
-                    ui.notifications.error(
-                        `DCC QoL: Error performing critical roll - ${rollError.message}`
-                    );
-                }
-            });
+            .on("click", (event) =>
+                handleCritClick(event, message, actor, weapon, qolFlags)
+            );
 
         cardElement
             .find('button[data-action="fumble"]')
-            .on("click", async (event) => {
-                event.preventDefault();
-                // console.log("DCC-QOL | Fumble button clicked", { messageSystem: message.system, actor, weapon, qolFlags });
+            .on("click", (event) =>
+                handleFumbleClick(event, message, actor, weapon, qolFlags)
+            );
 
-                if (!message.system || !message.system.fumbleRollFormula) {
-                    console.error(
-                        "DCC-QOL | Fumble roll formula not found in message.system",
-                        message
-                    );
-                    ui.notifications.error(
-                        "DCC QoL: Fumble roll formula not found in the original message data!"
-                    );
-                    return;
-                }
-
-                if (!actor) {
-                    console.error(
-                        "DCC-QOL | Actor not available for fumble roll processing. Message ID:",
-                        message.id
-                    );
-                    ui.notifications.error(
-                        "DCC QoL: Actor context not found for fumble roll."
-                    );
-                    return;
-                }
-
-                try {
-                    let flavorText = "Fumble"; // Default flavor
-                    if (message.system.fumbleInlineRoll) {
-                        try {
-                            const tempDiv = $("<div>").html(
-                                message.system.fumbleInlineRoll
-                            );
-                            const anchorTag = tempDiv.find("a.inline-roll");
-                            if (anchorTag.length && anchorTag.data("flavor")) {
-                                flavorText = anchorTag.data("flavor");
-                            }
-                        } catch (e) {
-                            console.warn(
-                                "DCC-QOL | Could not parse fumbleInlineRoll for flavor, using default.",
-                                e
-                            );
-                        }
-                    }
-
-                    const roll = new Roll(
-                        message.system.fumbleRollFormula,
-                        actor.getRollData()
-                    );
-                    await roll.evaluate({ async: true });
-
-                    roll.toMessage({
-                        speaker: ChatMessage.getSpeaker({ actor: actor }),
-                        flavor: flavorText,
-                        flags: {
-                            "dcc.RollType": "Fumble", // System flag for fumble rolls
-                            "dccqol.isFumbleRoll": true,
-                            "dccqol.parentId": message.id,
-                            "dccqol.actorId": actor.id,
-                            "dccqol.weaponId": weapon?.id || qolFlags.weaponId,
-                            // If a fumble table name becomes available in message.system, add it here
-                            // "dccqol.fumbleTableName": message.system.fumbleTableName,
-                        },
-                    });
-                } catch (rollError) {
-                    console.error(
-                        "DCC-QOL | Error performing fumble roll:",
-                        rollError,
-                        {
-                            formula: message.system.fumbleRollFormula,
-                            actorData: actor.getRollData(),
-                        }
-                    );
-                    ui.notifications.error(
-                        `DCC QoL: Error performing fumble roll - ${rollError.message}`
-                    );
-                }
-            });
-
-        // cardElement.find('button[data-action="friendlyFire"]').on('click', async (event) => { /* ... handler ... */ });
+        cardElement
+            .find('button[data-action="friendlyFire"]')
+            .on("click", (event) =>
+                handleFriendlyFireClick(event, message, actor, qolFlags)
+            );
     } catch (err) {
         console.error(
             "DCC QoL | Error enhancing attack roll card:",
