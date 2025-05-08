@@ -18,34 +18,42 @@
             {{localize "DCC-QOL.AttacksWith" weapon=weapon.name}}
         </h4>
         <!-- if PC, show weapon image;  to do: if NPC, show square version/crop of token image -->
+        {{#if isPC}}
         <img
             src="{{weapon.img}}"
-            title="{{weapon.name}}"
+            title="{{weapon.name}} (Weapon)"
             width="36"
             height="36"
         />
+        {{else}} <img src="{{actor.img}}" title="{{actor.name}} (Actor)"
+        width="36" height="36" class="npc-token-image" /* For potential square
+        styling */ /> {{/if}}
     </header>
 
     <!-- <div class="card-content">{{{weapon.system.description.value}}}</div> -->
 
     {{{diceHTML}}} {{#if deedDieResult}}
-    <div class="chat-details deed-result">
-        {{localize "DCC.DeedDie"}}: {{deedDieResult}}
+    <div
+        class="roll-result {{#if deedRollSuccess}}status-success{{else}}status-failure{{/if}}"
+    >
+        {{localize "DCC.DeedDie"}}: <strong>{{deedDieResult}}</strong>
     </div>
     {{/if}} {{#if isFumble}}
     <div class="chat-details">
-        <div class="roll-result miss">{{localize "DCC.Fumble"}}</div>
+        <div class="roll-result status-failure">{{localize "DCC.Fumble"}}</div>
     </div>
     <div class="card-buttons">
         <button data-action="fumble">{{ localize "DCC.RollFumble" }}</button>
     </div>
     {{else}} {{#if hitsTarget}} {{#if isDisplayHitMiss}}
     <div class="chat-details">
-        <div class="roll-result hit">
+        <div class="roll-result status-success">
             <span
                 >{{ localize "DCC.Attack" }} {{ localize
                 "DCC-QOL.AttackRollHits"}} {{target}}</span
             >
+            {{#if deedRollSuccess}} <br />{{localize "DCC-QOL.DeedRollSuccess"}}
+            {{/if}}
         </div>
     </div>
     {{/if}}
@@ -54,13 +62,13 @@
     </div>
     {{else}} {{#if target}} {{#if isDisplayHitMiss}}
     <div class="chat-details">
-        <div class="roll-result miss">
+        <div class="roll-result status-failure">
             {{ tokenName }} {{ localize "DCC-QOL.AttackRollMisses"}} {{target}}
         </div>
     </div>
     {{/if}} {{else}}
     <div class="chat-details">
-        <div class="roll-result">
+        <div class="roll-result status-success">
             {{ tokenName }} {{localize "DCC-QOL.AttackRollHitsAC" AC=hitsAc}}
         </div>
     </div>
@@ -81,7 +89,7 @@
 
     <footer class="card-footer">
         {{#each properties}}
-        <span>{{this}}</span>
+        <span class="tag"> {{this}}</span>
         {{/each}}
     </footer>
 </div>

@@ -22,13 +22,6 @@ export async function enhanceAttackRollCard(message, html, data) {
         return;
     }
 
-    // --- Debug: Log specifically when starting to process our QoL card ---
-    // console.debug( // Keep this one commented out unless needed later
-    //     "DCC-QOL | Replacing content for message:",
-    //     message.id,
-    //     "with QoL Card"
-    // );
-
     try {
         // --- Fetch Actor ---
         let actor;
@@ -73,10 +66,6 @@ export async function enhanceAttackRollCard(message, html, data) {
             );
             return; // Stop if weapon not found on the actor
         }
-        // --- Debug: Confirm weapon found ---
-        // console.debug( // Keep this one commented out unless needed later
-        //     `DCC-QOL | Found Weapon: ${weapon.name} on Actor: ${actor.name} | Message ID: ${message.id}`
-        // );
 
         // --- Extract Original Roll HTML ---
         const originalContent = $(`<div>${message.content}</div>`); // Use message.content
@@ -91,7 +80,7 @@ export async function enhanceAttackRollCard(message, html, data) {
 
         // --- Prepare Template Data ---
         const templateData = {
-            ...qolFlags, // Includes deedDieResult from flags now
+            ...qolFlags, // Includes deedDieResult and now isPC from flags
             actor: actor,
             weapon: weapon,
             diceHTML: diceHTML, // Pass the extracted attack roll HTML

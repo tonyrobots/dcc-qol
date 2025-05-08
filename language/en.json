@@ -6,6 +6,8 @@
     "DCC-QOL.BackstabsWith": "Backstabs with {weapon}",
     "DCC-QOL.ControlAToken": "You must control a token in the scene if you want to make range-based or friendly fire checks.",
     "DCC-QOL.DamageRoll": "Damage Roll for {weapon}",
+    "DCC-QOL.DeedRollSuccess": "You may perform a mighty deed!",
+    "DCC-QOL.And": "and",
     "DCC-QOL.FriendlyFire": "Friendly Fire",
     "DCC-QOL.FriendlyFireCheck": "Friendly Fire Check",
     "DCC-QOL.FriendlyFireFail": "{weapon} may strike your ally; make a second attack roll against their AC.",

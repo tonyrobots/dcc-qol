@@ -67,6 +67,12 @@ export function prepareQoLAttackData(rolls, messageData) {
     const actorId = messageData.system.actorId;
     const weaponId = messageData.system.weaponId;
     const tokenId = messageData.speaker.token; // Attacker's token ID
+
+    // --- Fetch Actor to determine if PC ---
+    const actor = game.actors.get(actorId);
+    // Adjust 'Player Character' if DCC uses a different type string for PCs
+    const isPC = actor && actor.type === "Player";
+
     const tokenName = messageData.speaker.alias || messageData.speaker.name; // Attacker's display name
     const isCrit = messageData.flags["dcc.isCrit"] || false;
     const isFumble = messageData.flags["dcc.isFumble"] || false;
@@ -117,12 +123,14 @@ export function prepareQoLAttackData(rolls, messageData) {
         weaponId: weaponId,
         tokenId: tokenId,
         tokenName: tokenName,
+        isPC: isPC, // Add the isPC flag here
         target: targetName,
         targettokenId: targetTokenId,
         hitsTarget: hitsTarget,
         isCrit: isCrit,
         isFumble: isFumble,
         deedDieResult: messageData.system?.deedDieRollResult ?? null,
+        deedRollSuccess: messageData.system?.deedRollSuccess ?? null,
         isDisplayHitMiss: game.settings.get("dcc-qol", "DisplayHitMiss"), // Get setting value
         hitsAc: hitsAc, // Pass the raw hitsAC value for display when no target
         friendlyFire: friendlyFire,

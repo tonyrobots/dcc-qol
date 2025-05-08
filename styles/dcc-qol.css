@@ -11,8 +11,8 @@
 .dccqol.chat-card .card-header {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #782e22;
     padding: 3px 0;
+    border-bottom: none;
 }
 
 .dccqol.chat-card .card-header img {
@@ -51,7 +51,7 @@
 }
 
 .status-failure {
-    color: #aa0200;
+    color: #810c0a;
     font-weight: bold;
 }
 
@@ -76,22 +76,6 @@
     color: #18520b;
 }
 
-.dccqol.chat-card .attack-status h3.fumble {
-    color: #aa0200;
-}
-
-.dccqol.chat-card .attack-status h3.critical {
-    color: #18520b;
-}
-
-.dccqol.chat-card .attack-status h3.hit {
-    color: #18520b;
-}
-
-.dccqol.chat-card .attack-status h3.miss {
-    color: #782e22;
-}
-
 .dccqol.chat-card .attack-status h3.no-target {
     color: #666;
     font-style: italic;
@@ -109,6 +93,7 @@
     margin: 0;
     background: #d5d1c5;
     border: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: none;
     text-align: center;
     color: #555;
     font-size: 12px;
@@ -131,10 +116,6 @@
     margin: 0;
     text-align: center;
     font-size: 13px;
-}
-
-.dccqol.chat-card .deed-die.deed-success {
-    color: #18520b;
 }
 
 .dccqol.chat-card .deed-die.deed-normal {
@@ -204,23 +185,6 @@
 .dccqol.chat-card .roll-result {
     font-size: 1.1em;
     font-weight: bold;
-    color: #18520b;
-}
-
-.dccqol.chat-card .roll-result.fumble {
-    color: #aa0200;
-}
-
-.dccqol.chat-card .roll-result.critical {
-    color: #18520b;
-}
-
-.dccqol.chat-card .roll-result.hit {
-    color: #18520b;
-}
-
-.dccqol.chat-card .roll-result.miss {
-    color: #782e22;
 }
 
 .dccqol.chat-card .roll-result.warning {
@@ -269,14 +233,6 @@
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 3px;
     color: #000;
-}
-
-.dccqol.chat-card .dice-total.fumble {
-    color: #aa0200 !important;
-}
-
-.dccqol.chat-card .dice-total.critical {
-    color: #18520b !important;
 }
 
 /* Damage Applied Section */
