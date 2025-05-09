@@ -166,3 +166,75 @@ export async function prepareQoLAttackData(rolls, messageData) {
         messageData.flags.dccqol
     );
 }
+
+/**
+ * Hooks into 'dcc.modifyAttackRollTerms' to apply a penalty if firing a ranged weapon
+ * at a target engaged in melee with a friendly creature.
+ *
+ * @param {Array} terms - The array of roll terms.
+ * @param {Actor} actor - The attacking actor.
+ * @param {Item} weapon - The weapon item used.
+ * @param {object} options - The options object from the hook, containing the actual targets Set and other roll parameters.
+ */
+export function applyFiringIntoMeleePenalty(terms, actor, weapon, options) {
+    console.debug("DCC-QOL | applyFiringIntoMeleePenalty hook listener called");
+    console.debug(
+        "DCC-QOL | Options received by applyFiringIntoMeleePenalty:",
+        options
+    );
+
+    // Check if the setting is enabled
+    if (!game.settings.get("dcc-qol", "automateFiringIntoMeleePenalty")) {
+        console.debug(
+            "DCC-QOL | Firing into melee penalty automation is disabled."
+        );
+        return;
+    }
+
+    // Check if the weapon is ranged
+    if (!weapon || weapon.system.melee) {
+        console.debug(
+            "DCC-QOL | Weapon is melee or not found, skipping penalty."
+        );
+        return;
+    }
+
+    // Determine the first valid target document
+    const targetDocument = getFirstTarget(options.targets);
+    if (!targetDocument) {
+        console.debug(
+            "DCC-QOL | No valid target found for firing into melee check."
+        );
+        return;
+    }
+
+    console.debug(
+        `DCC-QOL | Checking firing into melee for target: ${targetDocument.name}`
+    );
+
+    try {
+        const isFiringIntoMelee = checkFiringIntoMelee(targetDocument);
+        if (isFiringIntoMelee) {
+            console.log(
+                `DCC-QOL | Firing into melee detected for target ${targetDocument.name}. Applying penalty.`
+            );
+            terms.push({
+                type: "Modifier",
+                label: game.i18n.localize(
+                    "DCC-QOL.FiringIntoMeleePenaltyLabel"
+                ),
+                formula: "-1", // Apply a -1 penalty
+            });
+            console.log(
+                "DCC-QOL | Terms after applying penalty:",
+                JSON.parse(JSON.stringify(terms))
+            );
+        } else {
+            console.debug(
+                `DCC-QOL | Target ${targetDocument.name} is not engaged in melee with friendlies.`
+            );
+        }
+    } catch (e) {
+        console.error("DCC-QOL | Error checking firing into melee:", e);
+    }
+}

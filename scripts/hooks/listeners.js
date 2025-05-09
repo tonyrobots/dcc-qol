@@ -1,4 +1,8 @@
-import { addTestBonus, prepareQoLAttackData } from "./attackRollHooks.js";
+import {
+    addTestBonus,
+    prepareQoLAttackData,
+    applyFiringIntoMeleePenalty,
+} from "./attackRollHooks.js";
 import { enhanceAttackRollCard } from "./chatMessageHooks.js";
 // Import other hook listeners here as they are created...
 // e.g., import { setupChatListeners } from './chatHooks.js';
@@ -11,9 +15,10 @@ export function registerHookListeners() {
 
     // Register attack roll listeners
     // Hooks.on("dcc.modifyAttackRollTerms", addTestBonus);
+    Hooks.on("dcc.modifyAttackRollTerms", applyFiringIntoMeleePenalty);
     Hooks.on("dcc.rollWeaponAttack", prepareQoLAttackData);
     console.log("DCC-QOL | Registered listener for dcc.rollWeaponAttack");
-    // console.log("DCC-QOL | Registered listener for dcc.modifyAttackRollTerms"); // Keep or remove old log?
+    console.log("DCC-QOL | Registered listener for dcc.modifyAttackRollTerms");
 
     // Register chat message listeners
     Hooks.on("renderChatMessage", enhanceAttackRollCard);

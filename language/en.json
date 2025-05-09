@@ -8,6 +8,7 @@
     "DCC-QOL.DamageRoll": "Damage Roll for {weapon}",
     "DCC-QOL.DeedRollSuccess": "You may perform a mighty deed!",
     "DCC-QOL.And": "and",
+    "DCC-QOL.FiringIntoMeleePenaltyLabel": "Firing into Melee Penalty",
     "DCC-QOL.FriendlyFire": "Friendly Fire",
     "DCC-QOL.FriendlyFireCheck": "Friendly Fire Check",
     "DCC-QOL.FriendlyFireFail": "Attack may strike your ally; make a second attack roll against their AC.",

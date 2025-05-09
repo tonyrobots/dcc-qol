@@ -39,7 +39,7 @@ export function getFirstTarget(targetsSet) {
  * @param {Object} token1D    The token.document "from"
  * @param {Object} token2D    The token.document "to"
  */
-export async function measureTokenDistance(token1D, token2D) {
+export function measureTokenDistance(token1D, token2D) {
     const gs = game.canvas.dimensions.size;
     // originate ray from center of token1 to center of token2
     const ray = new Ray(token1D.object.center, token2D.object.center);
@@ -66,7 +66,7 @@ export async function measureTokenDistance(token1D, token2D) {
  * @returns {Promise<boolean>} True if target has adjacent allies, false otherwise
  */
 
-export async function checkFiringIntoMelee(targetTokenDocument) {
+export function checkFiringIntoMelee(targetTokenDocument) {
     let firingIntoMelee = false;
     console.debug(
         `DCC-QOL Utils | checkFiringIntoMelee: Checking target ${targetTokenDocument?.name} (ID: ${targetTokenDocument?.id})`
@@ -78,7 +78,7 @@ export async function checkFiringIntoMelee(targetTokenDocument) {
         );
         if (!(token.document === targetTokenDocument)) {
             // Check if the token is an ally and in melee range
-            const distance = await measureTokenDistance(
+            const distance = measureTokenDistance(
                 targetTokenDocument,
                 token.document
             );
@@ -127,11 +127,11 @@ export async function getWeaponProperties(weapon, options) {
         properties.push("Ranged");
         properties.push(weapon.system.range + " ft.");
     }
-    if (weapon.system.equipped) {
-        properties.push("Equipped");
-    } else {
-        properties.push("Not Equipped");
-    }
+    // if (weapon.system.equipped) {
+    //     properties.push("Equipped");
+    // } else {
+    //     properties.push("Not Equipped");
+    // }
     if (weapon.system.trained) {
         properties.push("Trained");
     } else {
