@@ -34,34 +34,22 @@ export async function enhanceAttackRollCard(message, html, data) {
     try {
         // --- Fetch Actor ---
         let actor;
-        const speaker = message.speaker;
         const actorIdFromFlags = qolFlags.actorId;
 
-        if (speaker.token && speaker.scene) {
-            const scene = game.scenes.get(speaker.scene);
-            if (scene) {
-                const tokenDocument = scene.tokens.get(speaker.token);
-                if (tokenDocument) {
-                    actor = tokenDocument.actor;
-                }
-            }
-        }
-
-        // If actor wasn't found via token, or if the message wasn't from a token,
-        // fall back to using the actorId from qolFlags.
-        if (!actor && actorIdFromFlags) {
+        if (actorIdFromFlags) {
             actor = game.actors.get(actorIdFromFlags);
-            if (!actor) {
-                console.warn(
-                    `DCC-QOL | Actor not found for ID: ${actorIdFromFlags} (fallback). Message ID: ${message.id}`
-                );
-            }
+        } else {
+            // This would indicate an issue if actorIdFromFlags is expected for all attack rolls
+            console.warn(
+                `DCC-QOL | actorId missing from qolFlags. Message ID: ${message.id}. Attempting fallback to speaker.`
+            );
+            actor = message.getSpeakerActor(); // Optional: fallback if flag is missing
         }
 
         // Final check if an actor was determined
         if (!actor) {
             console.warn(
-                `DCC-QOL | Actor could not be determined. Speaker Token: ${speaker.token}, Speaker Scene: ${speaker.scene}, Flagged Actor ID: ${actorIdFromFlags}. Message ID: ${message.id}`
+                `DCC-QOL | Actor could not be determined. Speaker Token: ${message.speaker.token}, Speaker Scene: ${message.speaker.scene}, Flagged Actor ID: ${actorIdFromFlags}. Message ID: ${message.id}`
             );
             return; // Can't get weapon without actor
         }

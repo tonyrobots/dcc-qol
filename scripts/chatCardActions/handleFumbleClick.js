@@ -41,7 +41,7 @@ export async function handleFumbleClick(
     }
 
     try {
-        let flavorText = "Fumble"; // Default flavor
+        let flavorText = game.i18n.localize("DCC.Fumble"); // Default flavor
         if (message.system.fumbleInlineRoll) {
             try {
                 const tempDiv = $("<div>").html(

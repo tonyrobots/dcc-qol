@@ -154,7 +154,7 @@ export async function prepareQoLAttackData(rolls, messageData) {
         deedRollSuccess: messageData.system?.deedRollSuccess ?? null,
         isDisplayHitMiss: game.settings.get("dcc-qol", "DisplayHitMiss"), // Get setting value
         hitsAc: hitsAc, // Pass the raw hitsAC value for display when no target
-        showFriendlyFireButton: showFriendlyFireButton, // New flag
+        showFriendlyFireButton: showFriendlyFireButton,
         options: {}, // Placeholder for future options
     };
 
