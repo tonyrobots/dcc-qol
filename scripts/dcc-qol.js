@@ -9,6 +9,7 @@
 
 import { registerSettings } from "./settings.js";
 import { registerHookListeners } from "./hooks/listeners.js";
+import { checkAndCorrectEmoteRollsSetting } from "./compatibility.js";
 
 /**
  * Preloads Handlebars templates for the module.
@@ -35,6 +36,14 @@ Hooks.once("init", () => {
     registerHookListeners();
 });
 
-Hooks.once("ready", () => {
+Hooks.once("ready", async () => {
     // Any other ready-time setup
+
+    // Delay the compatibility check slightly to ensure DCC system settings are fully available
+    setTimeout(async () => {
+        await checkAndCorrectEmoteRollsSetting();
+        console.log(
+            "DCC QoL | Module ready and compatibility checks performed."
+        );
+    }, 2000);
 });
