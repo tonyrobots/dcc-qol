@@ -12,9 +12,12 @@ To do:
 
 [x] fix crit table display/crit table lookup
 
--   automatically apply damage
+[x] automatically apply damage
+
 -   clean up overly verbose logging
 -   range check/penalties
 -   clean up settings
 -   lucky weapon bonus?
 -   fix Error: The async option for Roll#evaluate has been removed. Use Roll#evaluateSync for synchronous roll evaluation.
+-   make sure all settings are respected, and various combinations work correctly
+-   implement unit testing
