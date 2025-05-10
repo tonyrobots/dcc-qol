@@ -2,6 +2,7 @@ import {
     addTestBonus,
     prepareQoLAttackData,
     applyFiringIntoMeleePenalty,
+    applyRangeChecksAndPenalties,
 } from "./attackRollHooks.js";
 import { enhanceAttackRollCard } from "./chatMessageHooks.js";
 // Import other hook listeners here as they are created...
@@ -16,6 +17,7 @@ export function registerHookListeners() {
     // Register attack roll listeners
     // Hooks.on("dcc.modifyAttackRollTerms", addTestBonus);
     Hooks.on("dcc.modifyAttackRollTerms", applyFiringIntoMeleePenalty);
+    Hooks.on("dcc.modifyAttackRollTerms", applyRangeChecksAndPenalties);
     Hooks.on("dcc.rollWeaponAttack", prepareQoLAttackData);
     console.log("DCC-QOL | Registered listener for dcc.rollWeaponAttack");
     console.log("DCC-QOL | Registered listener for dcc.modifyAttackRollTerms");

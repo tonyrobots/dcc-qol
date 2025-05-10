@@ -3,8 +3,12 @@
  * This includes modifying roll terms, preparing data before a chat message is created,
  * or reacting to events within the attack sequence itself.
  */
-import { getFirstTarget } from "../utils.js";
-import { checkFiringIntoMelee, getWeaponFromActorById } from "../utils.js";
+import {
+    getFirstTarget,
+    checkFiringIntoMelee,
+    getWeaponFromActorById,
+    measureTokenDistance,
+} from "../utils.js";
 
 /**
  * Test Listener for the dcc.modifyAttackRollTerms hook.
@@ -256,4 +260,187 @@ export function applyFiringIntoMeleePenalty(terms, actor, weapon, options) {
     } catch (e) {
         console.error("DCC-QOL | Error checking firing into melee:", e);
     }
+}
+
+/**
+ * Applies range checks and penalties based on weapon type and distance to target.
+ * Hooks into 'dcc.modifyAttackRollTerms'.
+ *
+ * @param {Array} terms - The array of roll terms.
+ * @param {Actor} actor - The attacking actor.
+ * @param {Item} weapon - The weapon item used.
+ * @param {object} options - The options object from the hook, containing targets and other roll parameters.
+ */
+export function applyRangeChecksAndPenalties(terms, actor, weapon, options) {
+    console.debug(
+        "DCC-QOL | applyRangeChecksAndPenalties hook listener called"
+    );
+
+    if (!game.settings.get("dcc-qol", "checkWeaponRange")) {
+        return; // Setting disabled
+    }
+
+    // Get attacker token
+    let attackerTokenDoc = actor.token; // This is often the case for linked actors
+    if (!attackerTokenDoc && options.token) {
+        // options.token might be the token ID for unlinked, or the TokenDocument itself
+        if (typeof options.token === "string") {
+            const tokenOnCanvas = canvas.tokens.get(options.token);
+            if (tokenOnCanvas) {
+                attackerTokenDoc = tokenOnCanvas.document;
+            }
+        } else if (options.token instanceof TokenDocument) {
+            attackerTokenDoc = options.token;
+        }
+    }
+    // If still no token, try to get the first active token for the actor
+    if (!attackerTokenDoc && actor.getActiveTokens().length > 0) {
+        attackerTokenDoc = actor.getActiveTokens()[0].document;
+    }
+
+    if (!attackerTokenDoc) {
+        ui.notifications.warn(
+            game.i18n.localize("DCC-QOL.WeaponRangeNoAttackerTokenWarn")
+        );
+        return;
+    }
+
+    // Handle targets
+    const targetTokenDoc = getFirstTarget(options.targets);
+
+    if (!targetTokenDoc) {
+        ui.notifications.warn(
+            game.i18n.localize("DCC-QOL.WeaponRangeNoTargetWarn")
+        );
+        return; // No target, so no range check to perform
+    }
+
+    if (options.targets instanceof Set && options.targets.size > 1) {
+        ui.notifications.warn(
+            game.i18n.format("DCC-QOL.WeaponRangeMultipleTargetsWarn", {
+                targetName: targetTokenDoc.name,
+            })
+        );
+    }
+
+    // Weapon and actor checks
+    if (!weapon) {
+        console.debug(
+            "DCC-QOL | applyRangeChecksAndPenalties: No weapon found."
+        );
+        return; // No weapon, no range check
+    }
+    if (!actor) {
+        console.debug(
+            "DCC-QOL | applyRangeChecksAndPenalties: No actor found."
+        );
+        return; // No actor, no range check
+    }
+
+    // Proceed with distance calculation and checks...
+    const distance = measureTokenDistance(attackerTokenDoc, targetTokenDoc);
+    const gridUnitSize = game.canvas.dimensions.distance;
+    const gridUnits = game.scenes.active?.grid.units || "ft"; // Fallback to ft if units not set
+
+    if (weapon.system.melee) {
+        // Melee Weapon Logic
+        if (distance > gridUnitSize) {
+            ui.notifications.warn(
+                game.i18n.format("DCC-QOL.WeaponMeleeWarn", {
+                    distance: Math.round(distance),
+                    units: gridUnits,
+                })
+            );
+        }
+    } else {
+        // Ranged Weapon Logic
+        const rangeString = weapon.system.range || ""; // e.g., "30/60/120" or "50"
+        const rangeParts = rangeString.split("/").map(Number);
+
+        let shortRange = 0,
+            mediumRange = 0,
+            longRange = 0;
+
+        if (rangeParts.length === 3) {
+            [shortRange, mediumRange, longRange] = rangeParts;
+        } else if (rangeParts.length === 1 && !isNaN(rangeParts[0])) {
+            // If only one number, assume it's short range, then double for medium, triple for long (common DCC convention for thrown)
+            // Or, more simply, treat it as max range and don't apply medium/long penalties unless specified
+            // For now, let's assume a single number is just the MAX range and has no distinct short/medium bands for penalties
+            // This part might need refinement based on how DCC handles single range values for penalties
+            longRange = rangeParts[0];
+            // To strictly follow the spec for a 3-part range for penalties, we'd only act if 3 parts are given.
+            // Let's only apply penalties if we have 3 distinct range bands.
+            if (distance > longRange) {
+                ui.notifications.warn(
+                    game.i18n.format("DCC-QOL.WeaponRangedWarnTooFar", {
+                        distance: Math.round(distance),
+                        units: gridUnits,
+                        maxRange: longRange,
+                    })
+                );
+            }
+            // Early return if not 3-part range, as penalties below are for 3-part ranges.
+            console.debug(
+                `DCC-QOL | Ranged weapon ${weapon.name} has range ${rangeString}. Penalties apply to 3-part ranges.`
+            );
+            return;
+        } else {
+            console.warn(
+                `DCC-QOL | Weapon ${weapon.name} has an unparsable range: ${rangeString}`
+            );
+            return; // Cannot parse range, so skip checks
+        }
+
+        if (distance > longRange) {
+            ui.notifications.warn(
+                game.i18n.format("DCC-QOL.WeaponRangedWarnTooFar", {
+                    distance: Math.round(distance),
+                    units: gridUnits,
+                    maxRange: longRange,
+                })
+            );
+        } else if (distance > mediumRange) {
+            // Target is at Long Range (mediumRange < distance <= longRange)
+            // Ensure terms[0] is the action die before modifying its formula
+            if (terms.length > 0 && terms[0] && terms[0].type === "Die") {
+                terms[0].formula = game.dcc.DiceChain.bumpDie(
+                    terms[0].formula,
+                    "-1"
+                );
+                ui.notifications.warn(
+                    game.i18n.format("DCC-QOL.WeaponRangedWarnLong", {
+                        distance: Math.round(distance),
+                        units: gridUnits,
+                        mediumRange: mediumRange,
+                        longRange: longRange,
+                    })
+                );
+            } else {
+                console.warn(
+                    "DCC-QOL | Could not find action die term to apply long range penalty."
+                );
+            }
+        } else if (distance > shortRange) {
+            // Target is at Medium Range (shortRange < distance <= mediumRange)
+            terms.push({
+                type: "Modifier",
+                label: game.i18n.localize("DCC-QOL.WeaponRangePenaltyMedium"),
+                formula: "-2",
+            });
+            ui.notifications.warn(
+                game.i18n.format("DCC-QOL.WeaponRangedWarnMedium", {
+                    distance: Math.round(distance),
+                    units: gridUnits,
+                    shortRange: shortRange,
+                    mediumRange: mediumRange,
+                })
+            );
+        }
+        // If distance <= shortRange, it's Short Range or closer, no penalty, no warning needed for this.
+    }
+
+    console.debug(
+        `DCC-QOL | Attacker: ${attackerTokenDoc.name}, Target: ${targetTokenDoc.name}, Distance: ${distance} ${gridUnits}`
+    );
 }
