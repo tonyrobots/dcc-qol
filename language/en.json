@@ -56,5 +56,18 @@
     "DCC-QOL.WeaponRangedWarnTooFar": "Range Check: Target at {distance}{units} is beyond weapon's maximum range of {maxRange}{units}.",
     "DCC-QOL.WeaponRangedWarnLong": "Range Check: Target at {distance}{units} is at Long Range ({mediumRange}-{longRange}{units}). Action die stepped down by 1.",
     "DCC-QOL.WeaponRangedWarnMedium": "Range Check: Target at {distance}{units} is at Medium Range ({shortRange}-{mediumRange}{units}). -2 to attack roll.",
-    "DCC-QOL.WeaponRangePenaltyMedium": "Medium Range"
+    "DCC-QOL.WeaponRangePenaltyMedium": "Medium Range",
+    "DCC-QOL.Cancel": "Cancel",
+    "DCC-QOL.AttackAnyway": "Attack Anyway",
+    "DCC-QOL.DialogMeleeOutOfRangeTitle": "Out of Melee Range",
+    "DCC-QOL.DialogMeleeOutOfRangeContent": "Your target is {distance}{units} away, which is beyond melee range.",
+    "DCC-QOL.DialogRangedMediumRangeTitle": "Medium Range Penalty",
+    "DCC-QOL.DialogRangedMediumRangeContent": "Your target is {distance}{units} away, but your {weaponName}'s range is {shortRange}/{mediumRange}/{longRange}{units}, incurring a -2 to-hit penalty.",
+    "DCC-QOL.DialogRangedLongRangeTitle": "Long Range Penalty",
+    "DCC-QOL.DialogRangedLongRangeContent": "Your target is {distance}{units} away, but your {weaponName}'s range is {shortRange}/{mediumRange}/{longRange}{units}, incurring a -1d to-hit penalty.",
+    "DCC-QOL.DialogRangedOutOfRangeTitle": "Out of Range",
+    "DCC-QOL.DialogRangedOutOfRangeContent": "Your target is {distance}{units} away, but your {weaponName}'s maximum range is {maxRange}{units}.",
+    "DCC-QOL.TagMediumRange": "Medium Range",
+    "DCC-QOL.TagLongRange": "Long Range",
+    "DCC-QOL.TagOutOfRange": "Out of Range"
 }
