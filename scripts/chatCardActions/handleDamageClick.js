@@ -1,4 +1,6 @@
-/* global ui, Roll, ChatMessage */
+/* global ui, Roll, ChatMessage, game, canvas, CONST */
+import { socket } from "../dcc-qol.js";
+
 /**
  * Handles the click event for the "Roll Damage" button on the QoL attack card.
  *
@@ -62,7 +64,10 @@ export async function handleDamageClick(
         //     flavor += " " + game.i18n.format("DCC-QOL.AgainstTarget", { targetName: qolFlags.target });
         // }
 
-        // --- Prepare flags for the damage roll message, including applied damage info if successful ---
+        // --- Prepare flags for the damage roll message ---
+        // The dccqol.appliedDamageValue and dccqol.appliedDamageTargetName flags are removed
+        // as the GM-side handler is responsible for the feedback of actual damage application.
+        // The original message flags are primarily for the roll itself.
         const damageMessageFlags = {
             "dcc.RollType": "Damage",
             "dccqol.isDamageRoll": true,
@@ -71,83 +76,50 @@ export async function handleDamageClick(
             "dccqol.weaponId": weapon?.id || qolFlags.weaponId,
         };
 
+        // Create the damage roll chat message with all necessary flags
+        const chatMessage = await roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor: actor }),
+            flavor: flavorText,
+            flags: damageMessageFlags,
+        });
+
         // --- BEGIN AUTOMATIC DAMAGE APPLICATION ---
-        if (game.settings.get("dcc-qol", "automateDamageApply")) {
-            if (qolFlags.targettokenId) {
-                const targetToken = canvas.tokens.get(qolFlags.targettokenId);
-                if (targetToken && targetToken.actor) {
-                    const targetActor = targetToken.actor;
-                    const damageToApply = roll.total;
+        if (
+            game.settings.get("dcc-qol", "automateDamageApply") &&
+            qolFlags.targettokenId
+        ) {
+            const damageToApply = roll.total;
+            const payload = {
+                targetTokenId: qolFlags.targettokenId,
+                damageToApply: damageToApply,
+            };
 
-                    try {
-                        // Should use the DCC system's method to apply damage, but it's currently buggy -- generates a chat message that doesn't display properly
-                        // await targetActor.applyDamage(damageToApply, 1); // multiplier of 1 for standard damage
-                        // instead, we'll manually update the HP value
-                        const currentHp =
-                            targetActor.system.attributes.hp.value;
-                        // HP can go below 0
-                        const newHp = currentHp - damageToApply;
-
-                        await targetActor.update({
-                            "system.attributes.hp.value": newHp,
-                        });
-
-                        // Show scrolling text on canvas
-                        if (canvas.interface) {
-                            // Ensure canvas.interface is available
-                            canvas.interface.createScrollingText(
-                                targetToken.center,
-                                damageToApply.toString(),
-                                {
-                                    anchor: CONST.TEXT_ANCHOR_POINTS.TOP,
-                                    fontSize: 28,
-                                    fill: "#FF0000", // Red for damage
-                                    stroke: "#000000",
-                                    strokeThickness: 4,
-                                    duration: 3000,
-                                }
-                            );
-                        }
-
-                        // Add applied damage info to flags for the render hook
-                        damageMessageFlags["dccqol.appliedDamageValue"] =
-                            damageToApply;
-                        damageMessageFlags["dccqol.appliedDamageTargetName"] =
-                            targetToken.name;
-                    } catch (applyError) {
-                        console.error(
-                            "DCC-QOL | Error applying damage or updating message:",
-                            applyError
-                        );
-                        ui.notifications.error(
-                            "DCC QoL: Error applying damage automatically."
-                        );
-                    }
-                } else {
-                    console.warn(
-                        "DCC-QOL | automateDamageApply: Target token or actor not found for ID:",
-                        qolFlags.targettokenId
+            // Function to actually apply the damage via GM
+            const applyDamage = () => {
+                socket
+                    .executeAsGM("gmApplyDamage", payload)
+                    .catch((err) =>
+                        console.error("DCC-QOL | Error applying damage:", err)
                     );
-                }
+            };
+
+            // Check if Dice So Nice is active and wait for its animation if so
+            if (game.modules.get("dice-so-nice")?.active) {
+                // Use the Dice So Nice completion hook to apply damage when dice finish rolling
+                Hooks.once("diceSoNiceRollComplete", (messageId) => {
+                    // Only trigger for our specific damage roll message
+                    if (messageId === chatMessage.id) {
+                        applyDamage();
+                    }
+                });
             } else {
-                console.debug(
-                    "DCC-QOL | automateDamageApply: No targettokenId found in qolFlags."
-                );
+                // Fallback: small delay to ensure chat message is processed
+                setTimeout(applyDamage, 300);
             }
         }
         // --- END AUTOMATIC DAMAGE APPLICATION ---
-
-        // Create the damage roll chat message with all necessary flags
-        await roll.toMessage({
-            speaker: ChatMessage.getSpeaker({ actor: actor }),
-            flavor: flavorText, // Existing flavor text
-            flags: damageMessageFlags, // Pass all accumulated flags
-        });
     } catch (rollError) {
-        console.error("DCC-QOL | Error performing damage roll:", rollError, {
-            formula: message.system.damageRollFormula,
-            actorData: actor.getRollData(),
-        });
+        console.error("DCC-QOL | Error performing damage roll:", rollError);
         ui.notifications.error(
             `DCC QoL: Error performing damage roll - ${rollError.message}`
         );
