@@ -10,6 +10,10 @@
 import { registerSettings } from "./settings.js";
 import { registerHookListeners } from "./hooks/listeners.js";
 import { checkAndCorrectEmoteRollsSetting } from "./compatibility.js";
+import { gmApplyDamage } from "./socketHandlers.js";
+
+// Declare socket variable in module scope
+export let socket;
 
 /**
  * Preloads Handlebars templates for the module.
@@ -34,6 +38,15 @@ Hooks.once("init", () => {
     registerSettings();
     preloadTemplates();
     registerHookListeners();
+});
+
+// Socketlib setup
+Hooks.once("socketlib.ready", () => {
+    socket = socketlib.registerModule("dcc-qol");
+    socket.register("gmApplyDamage", gmApplyDamage);
+    console.log(
+        "DCC QoL | Socketlib initialized and gmApplyDamage registered."
+    );
 });
 
 Hooks.once("ready", async () => {

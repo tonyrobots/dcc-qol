@@ -1,4 +1,6 @@
-/* global ui, Roll, ChatMessage */
+/* global ui, Roll, ChatMessage, game, canvas, CONST */
+import { socket } from "../../dcc-qol.js";
+
 /**
  * Handles the click event for the "Roll Damage" button on the QoL attack card.
  *
@@ -71,67 +73,45 @@ export async function handleDamageClick(
             "dccqol.weaponId": weapon?.id || qolFlags.weaponId,
         };
 
-        // --- BEGIN AUTOMATIC DAMAGE APPLICATION ---
+        // --- BEGIN AUTOMATIC DAMAGE APPLICATION (via Socket to GM) ---
         if (game.settings.get("dcc-qol", "automateDamageApply")) {
             if (qolFlags.targettokenId) {
-                const targetToken = canvas.tokens.get(qolFlags.targettokenId);
-                if (targetToken && targetToken.actor) {
-                    const targetActor = targetToken.actor;
-                    const damageToApply = roll.total;
+                const damageToApply = roll.total;
+                const payload = {
+                    targetTokenId: qolFlags.targettokenId,
+                    damageToApply: damageToApply,
+                    attackerActorId: actor.id,
+                    weaponId: weapon?.id || qolFlags.weaponId,
+                    qolFlags: qolFlags,
+                    originalMessageId: message.id,
+                    damageRollFormula: message.system.damageRollFormula,
+                    weaponName:
+                        message.system.weaponName ||
+                        weapon?.name ||
+                        "Unknown Weapon",
+                };
 
-                    try {
-                        // Should use the DCC system's method to apply damage, but it's currently buggy -- generates a chat message that doesn't display properly
-                        // await targetActor.applyDamage(damageToApply, 1); // multiplier of 1 for standard damage
-                        // instead, we'll manually update the HP value
-                        const currentHp =
-                            targetActor.system.attributes.hp.value;
-                        // HP can go below 0
-                        const newHp = currentHp - damageToApply;
+                try {
+                    // console.log("DCC-QOL | Requesting GM to apply damage with payload:", payload);
+                    await socket.executeAsGM("gmApplyDamage", payload);
+                    // Notification that the request was sent. Actual application feedback will come from GM side (e.g., scrolling text)
+                    // ui.notifications.info("DCC QoL: Damage application request sent to GM.");
 
-                        await targetActor.update({
-                            "system.attributes.hp.value": newHp,
-                        });
-
-                        // Show scrolling text on canvas
-                        if (canvas.interface) {
-                            // Ensure canvas.interface is available
-                            canvas.interface.createScrollingText(
-                                targetToken.center,
-                                damageToApply.toString(),
-                                {
-                                    anchor: CONST.TEXT_ANCHOR_POINTS.TOP,
-                                    fontSize: 28,
-                                    fill: "#FF0000", // Red for damage
-                                    stroke: "#000000",
-                                    strokeThickness: 4,
-                                    duration: 3000,
-                                }
-                            );
-                        }
-
-                        // Add applied damage info to flags for the render hook
-                        damageMessageFlags["dccqol.appliedDamageValue"] =
-                            damageToApply;
-                        damageMessageFlags["dccqol.appliedDamageTargetName"] =
-                            targetToken.name;
-                    } catch (applyError) {
-                        console.error(
-                            "DCC-QOL | Error applying damage or updating message:",
-                            applyError
-                        );
-                        ui.notifications.error(
-                            "DCC QoL: Error applying damage automatically."
-                        );
-                    }
-                } else {
-                    console.warn(
-                        "DCC-QOL | automateDamageApply: Target token or actor not found for ID:",
-                        qolFlags.targettokenId
+                    // The flags for applied damage are removed here as the GM handles the actual application
+                    // and confirmation. If the chat card needs to be updated by the player's client
+                    // after GM confirmation, that would require a more complex return value or a separate socket event.
+                } catch (socketError) {
+                    console.error(
+                        "DCC-QOL | Error sending damage application request to GM:",
+                        socketError
+                    );
+                    ui.notifications.error(
+                        "DCC QoL: Error communicating with GM to apply damage."
                     );
                 }
             } else {
                 console.debug(
-                    "DCC-QOL | automateDamageApply: No targettokenId found in qolFlags."
+                    "DCC-QOL | automateDamageApply: No targettokenId found in qolFlags. Cannot send to GM."
                 );
             }
         }
