@@ -20,9 +20,14 @@ To do:
     functional specification:
     **Range Check (Setting: `checkWeaponRange`):** (from settings.js) - Requires a controlled token and a single target. - Calculates distance between attacker and target using DCC diagonal rules and accounting for token size (`measureTokenDistance`). (from utils.js) - **Melee:** Warns if the target is further than 1 grid unit away. - **Ranged:** - Warns if the target is beyond the weapon's maximum range (e.g., > 150ft for `50/100/150`). - Applies a `-2` penalty to the attack roll if the target is at Medium range (between short and long, e.g., > 50ft and <= 100ft). - Applies a `-1D` step penalty (e.g., d20 -> d16) to the action die if the target is at Long range (between medium and max, e.g., > 100ft and <= 150ft).
 
+-   bug fixes:
+    [] fix Error: The async option for Roll#evaluate has been removed. Use Roll#evaluateSync for synchronous roll evaluation.
+    [] doesn't respect dcc system setting to roll damage, crits, fumbles at same time as attack roll.
+    [] Any crit should be a hit, regardless of AC
+    [] A backstab miss shouldn't show the "roll critical button"
+
 -   clean up settings
 -   lucky weapon bonus?
--   fix Error: The async option for Roll#evaluate has been removed. Use Roll#evaluateSync for synchronous roll evaluation.
 -   make sure all settings are respected, and various combinations work correctly
 -   clean up overly verbose logging
 -   clean up en.json, and make sure strings are represented in pt-br.json
