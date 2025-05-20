@@ -33,6 +33,10 @@ Hooks.once("init", () => {
     console.log(
         "DCC QoL | Initializing DCC Quality of Life Improvements module"
     );
+    if (!game.modules.get("socketlib")?.active) {
+        console.warn("DCC-QOL | socketlib is NOT active; exiting!");
+        return;
+    }
     // CONFIG.debug.hooks = true;
 
     registerSettings();
