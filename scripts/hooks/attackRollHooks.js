@@ -388,6 +388,14 @@ export function applyRangeChecksAndPenalties(terms, actor, weapon, options) {
         }
     } else {
         // Ranged Weapon Logic
+        // Skip range check if the weapon has no range specified
+        if (!weapon.system.range) {
+            console.debug(
+                `DCC-QOL | Weapon ${weapon.name} has no range specified, skipping range check.`
+            );
+            return;
+        }
+
         const rangeString = weapon.system.range || "";
         const rangeParts = rangeString.split("/").map(Number);
         let shortRange = 0,
