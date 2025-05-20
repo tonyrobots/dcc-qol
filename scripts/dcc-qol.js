@@ -10,7 +10,7 @@
 import { registerSettings } from "./settings.js";
 import { registerHookListeners } from "./hooks/listeners.js";
 import { checkAndCorrectEmoteRollsSetting } from "./compatibility.js";
-import { gmApplyDamage } from "./socketHandlers.js";
+import { gmApplyDamage, createDamageScrollingText } from "./socketHandlers.js";
 
 // Declare socket variable in module scope
 export let socket;
@@ -46,11 +46,23 @@ Hooks.once("init", () => {
 
 // Socketlib setup
 Hooks.once("socketlib.ready", () => {
+    // Ensure socketlib is available
+    if (typeof socketlib === "undefined") {
+        console.error(
+            "DCC QoL | socketlib is not defined when socketlib.ready hook fires!"
+        );
+        return;
+    }
     socket = socketlib.registerModule("dcc-qol");
+    if (!socket) {
+        console.error(
+            "DCC QoL | Failed to register module with socketlib or received null socket."
+        );
+        return;
+    }
     socket.register("gmApplyDamage", gmApplyDamage);
-    console.log(
-        "DCC QoL | Socketlib initialized and gmApplyDamage registered."
-    );
+    socket.register("createDamageScrollingText", createDamageScrollingText);
+    console.log("DCC QoL | Socketlib initialized and functions registered.");
 });
 
 Hooks.once("ready", async () => {
