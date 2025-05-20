@@ -297,7 +297,6 @@ export function applyRangeChecksAndPenalties(terms, actor, weapon, options) {
     if (!attackerTokenDoc && actor.getActiveTokens().length > 0) {
         attackerTokenDoc = actor.getActiveTokens()[0].document;
     }
-
     if (!attackerTokenDoc) {
         ui.notifications.warn(
             game.i18n.localize("DCC-QOL.WeaponRangeNoAttackerTokenWarn")
@@ -307,14 +306,12 @@ export function applyRangeChecksAndPenalties(terms, actor, weapon, options) {
 
     // Handle targets
     const targetTokenDoc = getFirstTarget(options.targets);
-
     if (!targetTokenDoc) {
         ui.notifications.warn(
             game.i18n.localize("DCC-QOL.WeaponRangeNoTargetWarn")
         );
         return; // No target, so no range check to perform
     }
-
     if (options.targets instanceof Set && options.targets.size > 1) {
         ui.notifications.warn(
             game.i18n.format("DCC-QOL.WeaponRangeMultipleTargetsWarn", {
@@ -322,7 +319,6 @@ export function applyRangeChecksAndPenalties(terms, actor, weapon, options) {
             })
         );
     }
-
     // Weapon and actor checks
     if (!weapon) {
         console.debug(
@@ -337,54 +333,75 @@ export function applyRangeChecksAndPenalties(terms, actor, weapon, options) {
         return; // No actor, no range check
     }
 
-    // Proceed with distance calculation and checks...
+    // Ensure properties array exists for tags
+    if (!options.properties) options.properties = [];
+
     const distance = measureTokenDistance(attackerTokenDoc, targetTokenDoc);
     const gridUnitSize = game.canvas.dimensions.distance;
     const gridUnits = game.scenes.active?.grid.units || "ft"; // Fallback to ft if units not set
 
+    // Helper for async dialog (returns a Promise)
+    // This is used to show a confirmation dialog and resolve with the user's choice
+    function confirmDialog({ title, content }) {
+        return new Promise((resolve) => {
+            new Dialog({
+                title,
+                content: `<p>${content}</p>`,
+                buttons: {
+                    cancel: {
+                        label: game.i18n.localize("DCC-QOL.Cancel"),
+                        callback: () => resolve(false),
+                    },
+                    proceed: {
+                        label: game.i18n.localize("DCC-QOL.AttackAnyway"),
+                        callback: () => resolve(true),
+                    },
+                },
+                default: "cancel",
+                close: () => resolve(false),
+            }).render(true);
+        });
+    }
+
+    // Dialog/confirmation logic
+    // These variables determine if a dialog is needed, and what penalty/tag to apply
+    let dialogNeeded = false;
+    let dialogConfig = null;
+    let tagToAdd = null;
+    let penaltyType = null;
+
     if (weapon.system.melee) {
         // Melee Weapon Logic
         if (distance > gridUnitSize) {
-            ui.notifications.warn(
-                game.i18n.format("DCC-QOL.WeaponMeleeWarn", {
-                    distance: Math.round(distance),
-                    units: gridUnits,
-                })
-            );
+            dialogNeeded = true;
+            dialogConfig = {
+                title: game.i18n.localize("DCC-QOL.DialogMeleeOutOfRangeTitle"),
+                content: game.i18n.format(
+                    "DCC-QOL.DialogMeleeOutOfRangeContent",
+                    {
+                        distance: Math.round(distance),
+                        units: gridUnits,
+                    }
+                ),
+            };
+            tagToAdd = game.i18n.localize("DCC-QOL.TagOutOfRange");
         }
     } else {
         // Ranged Weapon Logic
-        const rangeString = weapon.system.range || ""; // e.g., "30/60/120" or "50"
+        const rangeString = weapon.system.range || "";
         const rangeParts = rangeString.split("/").map(Number);
-
         let shortRange = 0,
             mediumRange = 0,
             longRange = 0;
+        let hasDefinedBands = false; // Flag to indicate if short/medium/long are explicitly defined
 
         if (rangeParts.length === 3) {
             [shortRange, mediumRange, longRange] = rangeParts;
+            hasDefinedBands = true;
         } else if (rangeParts.length === 1 && !isNaN(rangeParts[0])) {
-            // If only one number, assume it's short range, then double for medium, triple for long (common DCC convention for thrown)
-            // Or, more simply, treat it as max range and don't apply medium/long penalties unless specified
-            // For now, let's assume a single number is just the MAX range and has no distinct short/medium bands for penalties
-            // This part might need refinement based on how DCC handles single range values for penalties
-            longRange = rangeParts[0];
-            // To strictly follow the spec for a 3-part range for penalties, we'd only act if 3 parts are given.
-            // Let's only apply penalties if we have 3 distinct range bands.
-            if (distance > longRange) {
-                ui.notifications.warn(
-                    game.i18n.format("DCC-QOL.WeaponRangedWarnTooFar", {
-                        distance: Math.round(distance),
-                        units: gridUnits,
-                        maxRange: longRange,
-                    })
-                );
-            }
-            // Early return if not 3-part range, as penalties below are for 3-part ranges.
-            console.debug(
-                `DCC-QOL | Ranged weapon ${weapon.name} has range ${rangeString}. Penalties apply to 3-part ranges.`
-            );
-            return;
+            longRange = rangeParts[0]; // Treat single number as maximum range
+            // shortRange and mediumRange remain 0 (or their default), indicating no defined penalty bands for medium/long.
+            // Penalties for medium/long range will only be applied if hasDefinedBands is true.
         } else {
             console.warn(
                 `DCC-QOL | Weapon ${weapon.name} has an unparsable range: ${rangeString}`
@@ -392,54 +409,161 @@ export function applyRangeChecksAndPenalties(terms, actor, weapon, options) {
             return; // Cannot parse range, so skip checks
         }
 
+        // Check if target is beyond the maximum range of the weapon (longRange)
+        // This applies whether the range is defined by 3 parts or a single maximum value.
         if (distance > longRange) {
-            ui.notifications.warn(
-                game.i18n.format("DCC-QOL.WeaponRangedWarnTooFar", {
-                    distance: Math.round(distance),
-                    units: gridUnits,
-                    maxRange: longRange,
-                })
-            );
-        } else if (distance > mediumRange) {
-            // Target is at Long Range (mediumRange < distance <= longRange)
-            // Ensure terms[0] is the action die before modifying its formula
+            dialogNeeded = true;
+            dialogConfig = {
+                title: game.i18n.localize(
+                    "DCC-QOL.DialogRangedOutOfRangeTitle"
+                ),
+                content: game.i18n.format(
+                    "DCC-QOL.DialogRangedOutOfRangeContent",
+                    {
+                        distance: Math.round(distance),
+                        units: gridUnits,
+                        weaponName: weapon.name,
+                        maxRange: longRange, // Display the max range
+                    }
+                ),
+            };
+            tagToAdd = game.i18n.localize("DCC-QOL.TagOutOfRange");
+            // No penaltyType is set here as the roll is typically cancelled or confirmed without penalty if out of max range.
+        } else if (hasDefinedBands) {
+            // Only apply medium/long range penalties if distinct range bands are defined (3-part range)
+            if (distance > mediumRange) {
+                // Target is at Long Range (mediumRange < distance <= longRange)
+                dialogNeeded = true;
+                dialogConfig = {
+                    title: game.i18n.localize(
+                        "DCC-QOL.DialogRangedLongRangeTitle"
+                    ),
+                    content: game.i18n.format(
+                        "DCC-QOL.DialogRangedLongRangeContent",
+                        {
+                            distance: Math.round(distance),
+                            units: gridUnits,
+                            weaponName: weapon.name,
+                            shortRange: shortRange,
+                            mediumRange: mediumRange,
+                            longRange: longRange,
+                        }
+                    ),
+                };
+                tagToAdd = game.i18n.localize("DCC-QOL.TagLongRange");
+                penaltyType = "long";
+            } else if (distance > shortRange) {
+                // Target is at Medium Range (shortRange < distance <= mediumRange)
+                dialogNeeded = true;
+                dialogConfig = {
+                    title: game.i18n.localize(
+                        "DCC-QOL.DialogRangedMediumRangeTitle"
+                    ),
+                    content: game.i18n.format(
+                        "DCC-QOL.DialogRangedMediumRangeContent",
+                        {
+                            distance: Math.round(distance),
+                            units: gridUnits,
+                            weaponName: weapon.name,
+                            shortRange: shortRange,
+                            mediumRange: mediumRange,
+                            longRange: longRange,
+                        }
+                    ),
+                };
+                tagToAdd = game.i18n.localize("DCC-QOL.TagMediumRange");
+                penaltyType = "medium";
+            }
+            // If distance <= shortRange (and hasDefinedBands is true), it's Short Range or closer,
+            // no penalty, no warning needed for this specific band.
+        }
+        // If !hasDefinedBands and distance <= longRange, the target is within the weapon's single maximum range,
+        // and no specific medium/long band penalties apply.
+    }
+
+    // If a dialog is needed and not yet confirmed, show the dialog and cancel the roll
+    if (dialogNeeded && !options._rangeDialogConfirmed) {
+        confirmDialog(dialogConfig).then(async (confirmed) => {
+            if (confirmed) {
+                // Re-invoke the attack roll with the confirmation flag
+                const newOptions = { ...options, _rangeDialogConfirmed: true };
+                // Add the tag to properties for the re-invoked roll
+                if (tagToAdd) {
+                    if (!newOptions.properties) newOptions.properties = [];
+                    newOptions.properties.push(tagToAdd);
+                }
+                // Set range penalty info for the re-invoked roll
+                if (penaltyType === "long" || penaltyType === "medium") {
+                    newOptions._rangePenalty = penaltyType;
+                }
+                // Re-invoke the attack roll
+                if (typeof actor.rollWeaponAttack === "function") {
+                    await actor.rollWeaponAttack(weapon.id, newOptions);
+                } else if (
+                    actor.sheet &&
+                    typeof actor.sheet._onRollWeaponAttack === "function"
+                ) {
+                    await actor.sheet._onRollWeaponAttack(
+                        weapon.id,
+                        newOptions
+                    );
+                } else {
+                    ui.notifications.error(
+                        "DCC-QOL: Unable to re-invoke attack roll after range confirmation."
+                    );
+                }
+            }
+        });
+        return false;
+    }
+
+    // Apply penalties and tags if dialog was confirmed OR if no dialog was needed.
+    // 'tagToAdd' and 'penaltyType' here refer to the values calculated in the current pass of this function.
+    // 'options._rangePenalty' and tags already in 'options.properties' are from a previous pass if dialog was confirmed.
+    if (options._rangeDialogConfirmed || !dialogNeeded) {
+        let effectivePenaltyToApply = null;
+
+        if (options._rangeDialogConfirmed) {
+            // SCENARIO A: Dialog was confirmed.
+            // The tag was already added to options.properties by the dialog callback.
+            // Use the penalty information passed via options._rangePenalty.
+            effectivePenaltyToApply = options._rangePenalty;
+        } else {
+            // SCENARIO B: No dialog was needed for this roll attempt.
+            // Use penaltyType and tagToAdd calculated in this current execution.
+            effectivePenaltyToApply = penaltyType;
+            if (tagToAdd) {
+                // Ensure properties array exists and add the tag if not already present
+                if (!options.properties) options.properties = [];
+                if (!options.properties.includes(tagToAdd)) {
+                    options.properties.push(tagToAdd);
+                }
+            }
+        }
+
+        // Apply penalties based on the determined effectivePenaltyToApply
+        if (effectivePenaltyToApply === "long") {
             if (terms.length > 0 && terms[0] && terms[0].type === "Die") {
                 terms[0].formula = game.dcc.DiceChain.bumpDie(
                     terms[0].formula,
-                    "-1"
+                    "-1" // DCC system uses "-1" for one step down the chain
                 );
-                ui.notifications.warn(
-                    game.i18n.format("DCC-QOL.WeaponRangedWarnLong", {
-                        distance: Math.round(distance),
-                        units: gridUnits,
-                        mediumRange: mediumRange,
-                        longRange: longRange,
-                    })
-                );
-            } else {
-                console.warn(
-                    "DCC-QOL | Could not find action die term to apply long range penalty."
+                console.debug(
+                    `DCC-QOL | Applied long range penalty. Die formula: ${terms[0].formula}`
                 );
             }
-        } else if (distance > shortRange) {
-            // Target is at Medium Range (shortRange < distance <= mediumRange)
+        } else if (effectivePenaltyToApply === "medium") {
             terms.push({
                 type: "Modifier",
                 label: game.i18n.localize("DCC-QOL.WeaponRangePenaltyMedium"),
                 formula: "-2",
             });
-            ui.notifications.warn(
-                game.i18n.format("DCC-QOL.WeaponRangedWarnMedium", {
-                    distance: Math.round(distance),
-                    units: gridUnits,
-                    shortRange: shortRange,
-                    mediumRange: mediumRange,
-                })
-            );
+            console.debug("DCC-QOL | Applied medium range penalty (-2).");
         }
-        // If distance <= shortRange, it's Short Range or closer, no penalty, no warning needed for this.
     }
 
+    // If distance <= shortRange (and hasDefinedBands is true), or if within max range for single-value ranges without defined bands,
+    // it's considered within effective range, no penalty, no tag, no dialog needed for range reasons.
     console.debug(
         `DCC-QOL | Attacker: ${attackerTokenDoc.name}, Target: ${targetTokenDoc.name}, Distance: ${distance} ${gridUnits}`
     );

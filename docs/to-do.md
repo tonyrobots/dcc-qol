@@ -26,6 +26,9 @@ To do:
     [] Any crit should be a hit, regardless of AC
     [] A backstab miss shouldn't show the "roll critical button"
 
+Note/bug to fix: Properties set in range check aren't making it through to prepareQolData, check flow of data. Look at adding logical data, e.g. range value, penalty applied, and then adding conditional logic on the attackroll hook to figure out how to present that (logically separating the two parts)
+
+-   Apply players Luck score against monsters' crit roll
 -   clean up settings
 -   lucky weapon bonus?
 -   make sure all settings are respected, and various combinations work correctly
@@ -33,3 +36,7 @@ To do:
 -   clean up en.json, and make sure strings are represented in pt-br.json
 -   create es.json, fr.json, de.json?
 -   implement unit testing
+
+non-core
+
+-   with character sheet in focus, if clipboard contains an image, on paste action, open a dialog asking if the user wants to set the character portrait and/or the token image to the pasted image

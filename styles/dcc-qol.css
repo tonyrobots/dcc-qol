@@ -25,6 +25,8 @@
     line-height: 36px;
     font-size: 14px;
     color: #4b1810;
+    /* override default underline */
+    border-bottom: 0px;
 }
 
 .dccqol.chat-card .card-content {
