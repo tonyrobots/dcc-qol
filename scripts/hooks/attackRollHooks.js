@@ -160,6 +160,21 @@ export async function prepareQoLAttackData(rolls, messageData) {
         }
     }
 
+    // --- Check for DCC System Automated Rolls ---
+    const damageWasAutomated = !!messageData.system.damageRoll;
+    const critWasAutomated = !!messageData.system.critRoll;
+    const fumbleWasAutomated = !!messageData.system.fumbleRoll;
+
+    const automatedDamageTotal = messageData.system.damageRoll?.total;
+    const automatedCritTotal = messageData.system.critRoll?.total;
+    const automatedFumbleTotal = messageData.system.fumbleRoll?.total;
+    // critText and fumbleText are already enriched HTML by the DCC system if automated
+    const automatedCritDetails = messageData.system.critText || "";
+    const automatedFumbleDetails = messageData.system.fumbleText || "";
+    // The DCC system uses critInlineRoll and fumbleInlineRoll for the full display string when automated
+    const automatedCritDisplay = messageData.system.critInlineRoll || "";
+    const automatedFumbleDisplay = messageData.system.fumbleInlineRoll || "";
+
     // --- Prepare QoL Data ---
     const qolData = {
         isAttackRoll: true, // Flag for the render hook
@@ -179,6 +194,17 @@ export async function prepareQoLAttackData(rolls, messageData) {
         hitsAc: hitsAc, // Pass the raw hitsAC value for display when no target
         showFriendlyFireButton: showFriendlyFireButton,
         options: {}, // Placeholder for future options
+        // Add automation flags and results
+        damageWasAutomated: damageWasAutomated,
+        automatedDamageTotal: automatedDamageTotal,
+        critWasAutomated: critWasAutomated,
+        automatedCritTotal: automatedCritTotal,
+        automatedCritDetails: automatedCritDetails,
+        automatedCritDisplay: automatedCritDisplay, // Store the pre-rendered display string
+        fumbleWasAutomated: fumbleWasAutomated,
+        automatedFumbleTotal: automatedFumbleTotal,
+        automatedFumbleDetails: automatedFumbleDetails,
+        automatedFumbleDisplay: automatedFumbleDisplay, // Store the pre-rendered display string
     };
 
     // Attach QoL data to message flags

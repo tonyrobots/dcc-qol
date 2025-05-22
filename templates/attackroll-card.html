@@ -42,10 +42,15 @@
     <div class="chat-details">
         <div class="roll-result status-failure">{{localize "DCC.Fumble"}}</div>
     </div>
+    {{#unless fumbleWasAutomated}}
     <div class="card-buttons">
         <button data-action="fumble">{{ localize "DCC.RollFumble" }}</button>
     </div>
-    {{else}} {{#if hitsTarget}} {{#if isDisplayHitMiss}}
+    {{else}}
+    <div class="chat-details">
+        <div class="roll-result status-info">{{{automatedFumbleDisplay}}}</div>
+    </div>
+    {{/unless}} {{else}} {{#if hitsTarget}} {{#if isDisplayHitMiss}}
     <div class="chat-details">
         <div class="roll-result status-success">
             <span
@@ -56,11 +61,17 @@
             {{/if}}
         </div>
     </div>
-    {{/if}}
+    {{/if}} {{#unless damageWasAutomated}}
     <div class="card-buttons">
         <button data-action="damage">{{ localize "DCC.RollDamage" }}</button>
     </div>
-    {{else}} {{#if target}} {{#if isDisplayHitMiss}}
+    {{else}}
+    <div class="chat-details">
+        <div class="roll-result">
+            {{localize "DCC.Damage"}}: <strong>{{automatedDamageTotal}}</strong>
+        </div>
+    </div>
+    {{/unless}} {{else}} {{#if target}} {{#if isDisplayHitMiss}}
     <div class="chat-details">
         <div class="roll-result status-failure">
             {{ tokenName }} {{ localize "DCC-QOL.AttackRollMisses"}} {{target}}
@@ -72,14 +83,26 @@
             {{ tokenName }} {{localize "DCC-QOL.AttackRollHitsAC" AC=hitsAc}}
         </div>
     </div>
+    {{#unless damageWasAutomated}}
     <div class="card-buttons">
         <button data-action="damage">{{ localize "DCC.RollDamage" }}</button>
     </div>
-    {{/if}} {{/if}} {{/if}} {{#if isCrit}}
+    {{else}}
+    <div class="chat-details">
+        <div class="roll-result">
+            {{localize "DCC.Damage"}}: <strong>{{automatedDamageTotal}}</strong>
+        </div>
+    </div>
+    {{/unless}} {{/if}} {{/if}} {{/if}} {{#if isCrit}} {{#unless
+    critWasAutomated}}
     <div class="card-buttons">
         <button data-action="crit">{{ localize "DCC.RollCritical" }}</button>
     </div>
-    {{/if}} {{#if showFriendlyFireButton}}
+    {{else}}
+    <div class="chat-details">
+        <div class="roll-result status-info">{{{automatedCritDisplay}}}</div>
+    </div>
+    {{/unless}} {{/if}} {{#if showFriendlyFireButton}}
     <div class="card-buttons">
         <button data-action="friendlyFire">
             {{ localize "DCC-QOL.FriendlyFireCheck" }}
