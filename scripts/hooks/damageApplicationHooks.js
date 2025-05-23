@@ -1,6 +1,8 @@
 /* global game, Hooks, canvas, console, setTimeout, ui */
 import { socket } from "../dcc-qol.js"; // Import the socket
 
+const autoDamageInitiatedForMessageIds = new Set();
+
 /**
  * Handles the automatic application of damage if the roll was automated by the DCC system
  * and the relevant QoL setting is enabled.
@@ -11,8 +13,18 @@ import { socket } from "../dcc-qol.js"; // Import the socket
  * @param {object} data - The data object provided to the hook. (Unused in this function but part of the hook signature)
  */
 export async function handleAutomatedDamageApplication(message, html, data) {
+    // Ignore messages that are already DCC damage application confirmations
+    if (message.flags?.dcc?.isApplyDamage) {
+        return;
+    }
+
     if (!game.settings.get("dcc-qol", "automateDamageApply")) {
         return; // Master QoL setting for this feature is off
+    }
+
+    // If we've already initiated the auto damage process for this message ID, stop.
+    if (autoDamageInitiatedForMessageIds.has(message.id)) {
+        return;
     }
 
     const qolFlags = message.flags?.dccqol;
@@ -37,52 +49,53 @@ export async function handleAutomatedDamageApplication(message, html, data) {
         message.rolls &&
         message.rolls.length > 0 &&
         message.flavor &&
-        message.flavor.toLowerCase().includes("damage")
+        message.flavor.toLowerCase().includes("damage") &&
+        message.speaker?.actor // Ensure the message has an actor speaker
     ) {
         const rollTotal = message.rolls[0]?.total;
         if (rollTotal !== undefined && rollTotal > 0) {
-            // For generic damage rolls, we rely on the user having targeted tokens.
             const targets = Array.from(game.user.targets);
             if (targets.length > 0) {
                 damageToApply = rollTotal;
-                targetTokenId = targets[0].id; // Apply to the first selected target
+                targetTokenId = targets[0].id;
                 sourceOfAutomation = "generic_roll";
                 if (targets.length > 1) {
                     ui.notifications.info(
                         `DCC-QOL: Auto-applied damage to the first of ${targets.length} selected targets. For applying to multiple targets, please do so manually for now.`
                     );
                 }
-            } else {
-                // console.log(`DCC-QOL | handleAutomatedDamageApplication: Generic damage roll for message ${message.id}, but no target selected.`);
             }
-        } else {
-            // console.log(`DCC-QOL | handleAutomatedDamageApplication: Generic damage roll for message ${message.id} has no valid roll total.`);
         }
     }
 
     if (
         !sourceOfAutomation ||
         damageToApply === undefined ||
-        damageToApply <= 0 || // Don't apply if no damage or healing
+        damageToApply <= 0 ||
         targetTokenId === undefined
     ) {
-        // console.log(`DCC-QOL | handleAutomatedDamageApplication: Conditions not met or no damage to apply for message ${message.id}. Source: ${sourceOfAutomation}, Damage: ${damageToApply}, Target: ${targetTokenId}`);
         return;
     }
 
-    // --- Proceed with damage application ---
-    console.log(
+    // Mark that we are initiating auto damage for this message ID.
+    autoDamageInitiatedForMessageIds.add(message.id);
+    // Schedule removal from the set to prevent memory leaks.
+    setTimeout(() => {
+        autoDamageInitiatedForMessageIds.delete(message.id);
+    }, 5000); // 5 seconds should be ample time.
+
+    console.debug(
         `DCC-QOL | handleAutomatedDamageApplication: Attempting to apply ${damageToApply} to ${targetTokenId} (Source: ${sourceOfAutomation}). Message ID: ${message.id}`
     );
 
     const payload = {
         targetTokenId: targetTokenId,
         damageToApply: damageToApply,
-        originalAttackMessageId: message.id,
+        originalAttackMessageId: message.id, // Retain this for potential future use/logging on GM side
     };
 
     const applyAutomatedDamage = () => {
-        console.log(
+        console.debug(
             `DCC-QOL | Executing applyAutomatedDamage for ${damageToApply} to ${targetTokenId}. Message ID: ${message.id}, QoL Flags (if any):`,
             qolFlags ? JSON.parse(JSON.stringify(qolFlags)) : "No QoL Flags"
         );
@@ -98,14 +111,13 @@ export async function handleAutomatedDamageApplication(message, html, data) {
 
     if (game.modules.get("dice-so-nice")?.active) {
         if (!message._dccQolDsnDamageApplied) {
-            // Check the message-specific flag
             Hooks.once("diceSoNiceRollComplete", (completedMessageId) => {
                 if (
                     completedMessageId === message.id &&
-                    !message._dccQolDsnDamageApplied // Double-check before applying
+                    !message._dccQolDsnDamageApplied
                 ) {
-                    message._dccQolDsnDamageApplied = true; // Set the flag
-                    console.log(
+                    message._dccQolDsnDamageApplied = true;
+                    console.debug(
                         `DCC-QOL | DSN Hook for applyAutomatedDamage (Source: ${sourceOfAutomation}). Message ID: ${message.id}, Completed ID: ${completedMessageId}`
                     );
                     applyAutomatedDamage();
@@ -114,9 +126,8 @@ export async function handleAutomatedDamageApplication(message, html, data) {
         }
     } else {
         if (!message._dccQolTimeoutDamageApplied) {
-            // Check the message-specific flag
-            message._dccQolTimeoutDamageApplied = true; // Set the flag
-            console.log(
+            message._dccQolTimeoutDamageApplied = true;
+            console.debug(
                 `DCC-QOL | setTimeout for applyAutomatedDamage (Source: ${sourceOfAutomation}). Message ID: ${message.id}`
             );
             setTimeout(applyAutomatedDamage, 100);
@@ -149,7 +160,6 @@ export function appendAppliedDamageInfoToCard(message, html, data) {
         if (messageContent.length > 0) {
             messageContent.append(appliedDamageHtml);
         } else {
-            // Fallback if .message-content isn't found, append to the root message element
             html.append(appliedDamageHtml);
         }
     }

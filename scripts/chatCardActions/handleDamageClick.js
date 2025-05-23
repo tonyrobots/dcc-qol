@@ -82,42 +82,6 @@ export async function handleDamageClick(
             flavor: flavorText,
             flags: damageMessageFlags,
         });
-
-        // --- BEGIN AUTOMATIC DAMAGE APPLICATION ---
-        if (
-            game.settings.get("dcc-qol", "automateDamageApply") &&
-            qolFlags.targettokenId
-        ) {
-            const damageToApply = roll.total;
-            const payload = {
-                targetTokenId: qolFlags.targettokenId,
-                damageToApply: damageToApply,
-            };
-
-            // Function to actually apply the damage via GM
-            const applyDamage = () => {
-                socket
-                    .executeAsGM("gmApplyDamage", payload)
-                    .catch((err) =>
-                        console.error("DCC-QOL | Error applying damage:", err)
-                    );
-            };
-
-            // Check if Dice So Nice is active and wait for its animation if so
-            if (game.modules.get("dice-so-nice")?.active) {
-                // Use the Dice So Nice completion hook to apply damage when dice finish rolling
-                Hooks.once("diceSoNiceRollComplete", (messageId) => {
-                    // Only trigger for our specific damage roll message
-                    if (messageId === chatMessage.id) {
-                        applyDamage();
-                    }
-                });
-            } else {
-                // Fallback: small delay to ensure chat message is processed
-                setTimeout(applyDamage, 300);
-            }
-        }
-        // --- END AUTOMATIC DAMAGE APPLICATION ---
     } catch (rollError) {
         console.error("DCC-QOL | Error performing damage roll:", rollError);
         ui.notifications.error(
