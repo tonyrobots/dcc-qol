@@ -65,11 +65,6 @@ export function addTestBonus(terms, actor, weapon, targets, options) {
  * @param {object} messageData - The chat message data object before creation.
  */
 export async function prepareQoLAttackData(rolls, messageData) {
-    const useQoLAttackCard = game.settings.get("dcc-qol", "useQoLAttackCard");
-    if (!useQoLAttackCard) {
-        return; // Do nothing if the setting is disabled
-    }
-
     console.debug("DCC-QOL | prepareQoLAttackData hook listener called");
     console.debug("DCC-QOL | Received messageData:", messageData);
 
@@ -190,7 +185,6 @@ export async function prepareQoLAttackData(rolls, messageData) {
         isFumble: isFumble,
         deedDieResult: messageData.system?.deedDieRollResult ?? null,
         deedRollSuccess: messageData.system?.deedRollSuccess ?? null,
-        isDisplayHitMiss: game.settings.get("dcc-qol", "DisplayHitMiss"), // Get setting value
         hitsAc: hitsAc, // Pass the raw hitsAC value for display when no target
         showFriendlyFireButton: showFriendlyFireButton,
         options: {}, // Placeholder for future options

@@ -5,6 +5,10 @@ import {
     applyRangeChecksAndPenalties,
 } from "./attackRollHooks.js";
 import { enhanceAttackRollCard } from "./chatMessageHooks.js";
+import {
+    handleAutomatedDamageApplication,
+    appendAppliedDamageInfoToCard,
+} from "./damageApplicationHooks.js";
 // Import other hook listeners here as they are created...
 // e.g., import { setupChatListeners } from './chatHooks.js';
 
@@ -23,7 +27,11 @@ export function registerHookListeners() {
     console.log("DCC-QOL | Registered listener for dcc.modifyAttackRollTerms");
 
     // Register chat message listeners
-    Hooks.on("renderChatMessage", enhanceAttackRollCard);
+    Hooks.on("renderChatMessage", (message, html, data) => {
+        enhanceAttackRollCard(message, html, data);
+        handleAutomatedDamageApplication(message, html, data);
+        appendAppliedDamageInfoToCard(message, html, data);
+    });
     console.log("DCC-QOL | Registered listener for renderChatMessage");
 
     // Register chat listeners (example)

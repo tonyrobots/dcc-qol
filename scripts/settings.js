@@ -1,33 +1,23 @@
 /* global game */
 export const registerSettings = async function () {
     /**
+     * Use QoL Attack Card
+     * Use the QoL Attack Card for attack rolls
+     */
+    game.settings.register("dcc-qol", "useQoLAttackCard", {
+        name: "DCC-QOL.SettingUseQoLAttackCard",
+        hint: "DCC-QOL.SettingUseQoLAttackCardHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: true,
+    });
+    /**
      * Automate damage apply
      */
     game.settings.register("dcc-qol", "automateDamageApply", {
         name: "DCC-QOL.SettingAutomateDamageApply",
         hint: "DCC-QOL.SettingAutomateDamageApplyHint",
-        scope: "world",
-        type: Boolean,
-        default: false,
-        config: true,
-    });
-    // /**
-    //  * Manual damage apply hint
-    //  */
-    // game.settings.register("dcc-qol", "manualDamageApplyHint", {
-    //     name: "DCC-QOL.SettingTakeDamageManual",
-    //     hint: "DCC-QOL.SettingTakeDamageManualHint",
-    //     scope: "world",
-    //     type: Boolean,
-    //     default: true,
-    //     config: true,
-    // });
-    /**
-     * Automate Deed Die Roll for warrior/dwarf attacks
-     */
-    game.settings.register("dcc-qol", "automateDeedDieRoll", {
-        name: "DCC-QOL.SettingAutomateDeedDieRoll",
-        hint: "DCC-QOL.SettingAutomateDeedDieRollHint",
         scope: "world",
         type: Boolean,
         default: false,
@@ -73,15 +63,6 @@ export const registerSettings = async function () {
         config: true,
     });
 
-    game.settings.register("dcc-qol", "DisplayHitMiss", {
-        name: "DCC-QOL.SettingDisplayHitMiss",
-        hint: "DCC-QOL.SettingDisplayHitMissHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: true,
-    });
-
     /**
      * Automatically apply lucky weapon modifier
      * For classes with lucky weapons (e.g. Warriors & Dwarves, set in config.js), automatically apply the lucky weapon modifier (as specified) to the attack roll.
@@ -112,17 +93,8 @@ export const registerSettings = async function () {
         },
     });
 
-    game.settings.register("dcc-qol", "DisplayHitMiss", {
-        name: "DCC-QOL.SettingDisplayHitMiss",
-        hint: "DCC-QOL.SettingDisplayHitMissHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: true,
-    });
-
     /**
-     * Check weapon's range and if target is beyond UI warning diplay appears and prevent rolls
+     * Check weapon's range and if target is out of range, or would incur a penalty, UI warning/confirmation dialog appears
      * Applies penalty for ranged weapons based on range
      */
     game.settings.register("dcc-qol", "checkWeaponRange", {
@@ -131,31 +103,6 @@ export const registerSettings = async function () {
         scope: "world",
         type: Boolean,
         default: false,
-        config: true,
-    });
-
-    /**
-     * Logging to console.log
-     */
-    game.settings.register("dcc-qol", "log", {
-        name: "DCC-QOL.SettingLog",
-        hint: "DCC-QOL.SettingLogHint",
-        scope: "world",
-        type: Boolean,
-        default: false,
-        config: true,
-    });
-
-    /**
-     * Use QoL Attack Card
-     * Use the QoL Attack Card for attack rolls
-     */
-    game.settings.register("dcc-qol", "useQoLAttackCard", {
-        name: "DCC-QOL.SettingUseQoLAttackCard",
-        hint: "DCC-QOL.SettingUseQoLAttackCardHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
         config: true,
     });
 };
