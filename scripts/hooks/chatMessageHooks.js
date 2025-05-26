@@ -163,3 +163,25 @@ export async function enhanceAttackRollCard(message, html, data) {
     // Handle Appending "Applied Damage" info to QoL Damage Rolls
     // This section was moved to damageApplicationHooks.js
 }
+
+/**
+ * Adds a specific CSS class to non-QoL chat messages if the 'useQoLAttackCard' setting is enabled.
+ * This allows for applying a consistent base font style to system messages.
+ * @param {ChatMessage} message - The ChatMessage document.
+ * @param {jQuery} html - The jQuery object for the message's HTML.
+ * @param {object} data - Additional data related to the message.
+ */
+export const styleSystemChatCard = (message, html, data) => {
+    if (game.settings.get("dcc-qol", "useQoLAttackCard")) {
+        // html is the jQuery object for the outer .chat-message element.
+        // QoL cards have .dccqol.chat-card class usually on a direct child of .message-content or similar.
+        // We check if such a card exists within the current message's HTML.
+        const qolCard = html.find(".dccqol.chat-card");
+
+        if (qolCard.length === 0) {
+            // If no .dccqol.chat-card is found, it's not a QoL card,
+            // so we add our class to the main message element for font styling.
+            html.addClass("dccqol-system-card-font");
+        }
+    }
+};

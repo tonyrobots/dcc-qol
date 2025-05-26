@@ -120,7 +120,8 @@ export async function prepareQoLAttackData(rolls, messageData) {
             const targetAC = targetActor.system?.attributes?.ac?.value;
             if (targetAC !== undefined && hitsAc !== undefined) {
                 hitsTarget =
-                    !isFumble && parseInt(hitsAc) >= parseInt(targetAC); // Hit if not a fumble and roll >= AC
+                    !isFumble &&
+                    (parseInt(hitsAc) >= parseInt(targetAC) || isCrit); // Hit if not a fumble, and roll >= AC or a crit
                 console.debug(
                     `DCC-QOL | Target AC: ${targetAC}, Hits AC: ${hitsAc}, Hits Target: ${hitsTarget}`
                 );
@@ -327,9 +328,7 @@ export function applyRangeChecksAndPenalties(terms, actor, weapon, options) {
     // Handle targets
     const targetTokenDoc = getFirstTarget(options.targets);
     if (!targetTokenDoc) {
-        ui.notifications.warn(
-            game.i18n.localize("DCC-QOL.WeaponRangeNoTargetWarn")
-        );
+        console.warn(game.i18n.localize("DCC-QOL.WeaponRangeNoTargetWarn"));
         return; // No target, so no range check to perform
     }
     if (options.targets instanceof Set && options.targets.size > 1) {

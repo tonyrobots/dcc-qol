@@ -4,7 +4,10 @@ import {
     applyFiringIntoMeleePenalty,
     applyRangeChecksAndPenalties,
 } from "./attackRollHooks.js";
-import { enhanceAttackRollCard } from "./chatMessageHooks.js";
+import {
+    enhanceAttackRollCard,
+    styleSystemChatCard,
+} from "./chatMessageHooks.js";
 import {
     handleAutomatedDamageApplication,
     appendAppliedDamageInfoToCard,
@@ -29,6 +32,7 @@ export function registerHookListeners() {
     // Register chat message listeners
     Hooks.on("renderChatMessage", (message, html, data) => {
         enhanceAttackRollCard(message, html, data);
+        styleSystemChatCard(message, html, data);
         handleAutomatedDamageApplication(message, html, data);
         appendAppliedDamageInfoToCard(message, html, data);
     });

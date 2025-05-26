@@ -53,10 +53,11 @@
     {{/unless}} {{else}} {{#if hitsTarget}}
     <div class="chat-details">
         <div class="roll-result status-success">
-            <span
-                >{{ localize "DCC.Attack" }} {{ localize
-                "DCC-QOL.AttackRollHits"}} {{target}}</span
-            >
+            <span>
+                {{ localize "DCC.Attack" }} {{#if isCrit}} {{localize
+                "DCC-QOL.AttackRollHitsCrit"}} {{else}} {{ localize
+                "DCC-QOL.AttackRollHits"}} {{/if}}{{target}}!
+            </span>
             {{#if deedRollSuccess}} <br />{{localize "DCC-QOL.DeedRollSuccess"}}
             {{/if}}
         </div>
@@ -80,7 +81,9 @@
     {{else}}
     <div class="chat-details">
         <div class="roll-result status-success">
-            {{ tokenName }} {{localize "DCC-QOL.AttackRollHitsAC" AC=hitsAc}}
+            {{ tokenName }} {{#if isCrit }} {{localize
+            "DCC-QOL.AttackRollHitsCrit"}}! {{ else }} {{localize
+            "DCC-QOL.AttackRollHitsAC" AC=hitsAc}} {{/if}}
         </div>
     </div>
     {{#unless damageWasAutomated}}
