@@ -353,7 +353,7 @@
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-top: none; /* Keep this to make the total distinct when formula is above it */
     text-align: center;
-    font-size: 20px !important;
+    font-size: 24px !important;
     font-weight: bold !important;
 }
 
