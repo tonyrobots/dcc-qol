@@ -34,7 +34,7 @@
 }
 
 .dccqol.chat-card footer {
-    text-align: center;
+    /* text-align: center; User will add .centered class in HTML if needed */
     border-top: 1px solid #782e22;
     padding: 5px 0;
 }
@@ -43,21 +43,25 @@
 .dccqol.chat-card .roll-result {
     text-align: center;
     margin: 5px 0;
-    font-size: 14px;
+    font-size: 1.1em;
+    font-weight: bold;
 }
 
 /* Status Colors */
-.status-success {
+.dccqol.chat-card .status-success,
+.dccqol-system-card-font .status-success {
     color: #18520b;
     font-weight: bold;
 }
 
-.status-failure {
+.dccqol.chat-card .status-failure,
+.dccqol-system-card-font .status-failure {
     color: #810c0a;
     font-weight: bold;
 }
 
-.status-warning {
+.dccqol.chat-card .status-warning,
+.dccqol-system-card-font .status-warning {
     color: #aa5502;
     font-weight: bold;
 }
@@ -67,15 +71,15 @@
     text-align: center;
     margin: 0;
     padding: 5px 3px;
-    color: #18520b;
-    font-weight: bold;
+    /* color: #18520b; Will be handled by adding .status-success class in HTML */
+    /* font-weight: bold; Will be handled by adding .status-success class in HTML */
 }
 
 .dccqol.chat-card .attack-status h3 {
     margin: 0;
     font-size: 14px;
-    font-weight: bold;
-    color: #18520b;
+    /* color: #18520b; Will be handled by adding .status-success class in HTML */
+    /* font-weight: bold; Will be handled by adding .status-success class in HTML */
 }
 
 .dccqol.chat-card .attack-status h3.no-target {
@@ -90,6 +94,7 @@
     margin: 0;
     text-align: center;
     font-size: 13px;
+    color: inherit;
 }
 
 .dccqol.chat-card .deed-die.deed-normal {
@@ -120,7 +125,7 @@
     padding: 5px;
     background: rgba(255, 165, 0, 0.1);
     border: 1px solid rgba(255, 165, 0, 0.3);
-    text-align: center;
+    /* text-align: center; User will add .centered class in HTML if needed */
 }
 
 .dccqol.chat-card .friendly-fire-warning p.warning {
@@ -153,12 +158,7 @@
 
 .dccqol.chat-card .chat-details {
     padding: 3px;
-    text-align: center;
-}
-
-.dccqol.chat-card .roll-result {
-    font-size: 1.1em;
-    font-weight: bold;
+    /* text-align: center; User will add .centered class in HTML if needed */
 }
 
 .dccqol.chat-card .roll-result.warning {
@@ -168,26 +168,86 @@
 .dccqol.chat-card .card-buttons {
     padding: 5px;
     margin: 5px 0;
-    text-align: center;
+    /* text-align: center; User will add .centered class in HTML if needed */
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .dccqol.chat-card .card-buttons button {
-    background: #d5d1c5;
-    color: #000;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0;
-    padding: 5px 8px;
-    margin: 0;
+    background: linear-gradient(to bottom, #f5f1e8, #e8e0d0);
+    color: #2c1810;
+    border: 2px solid #8b4513;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin: 2px;
     font-size: 12px;
+    font-weight: bold;
     line-height: 16px;
     cursor: pointer;
-    width: 100%;
+    width: calc(100% - 4px);
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.2s ease;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .dccqol.chat-card .card-buttons button:hover {
-    background: #c5c1b5;
+    background: linear-gradient(to bottom, #f8f4eb, #eae2d2);
+    border-color: #a0522d;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+.dccqol.chat-card .card-buttons button:active {
+    background: linear-gradient(to bottom, #e0d8c8, #d5cdb8);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+}
+
+/* Special styling for different button types */
+.dccqol.chat-card .card-buttons button[data-action="damage"] {
+    background: linear-gradient(to bottom, #f0e8e0, #e0d0c0);
+    border-color: #8b4513;
+    color: #4b1810;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="damage"]:hover {
+    background: linear-gradient(to bottom, #f3ebe3, #e3d3c3);
+    border-color: #a0522d;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="crit"] {
+    background: linear-gradient(to bottom, #e8f0e8, #d0e0d0);
+    border-color: #228b22;
+    color: #0f4f0f;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="crit"]:hover {
+    background: linear-gradient(to bottom, #ebf3eb, #d3e3d3);
+    border-color: #32cd32;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="fumble"] {
+    background: linear-gradient(to bottom, #f0e8e8, #e0d0d0);
+    border-color: #dc143c;
+    color: #8b0000;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="fumble"]:hover {
+    background: linear-gradient(to bottom, #f3ebeb, #e3d3d3);
+    border-color: #ff1493;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="friendlyFire"] {
+    background: linear-gradient(to bottom, #f0f0e8, #e0e0d0);
+    border-color: #ff8c00;
+    color: #8b4500;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="friendlyFire"]:hover {
+    background: linear-gradient(to bottom, #f3f3eb, #e3e3d3);
+    border-color: #ffa500;
 }
 
 .dccqol.chat-card .card-footer {
@@ -210,7 +270,7 @@
 }
 
 /* Damage Applied Section */
-.dcc-qol-damage-applied {
+.dccqol.chat-card .dcc-qol-damage-applied {
     margin-top: 5px;
     padding: 3px;
     font-style: italic;
@@ -219,14 +279,9 @@
     border-top: 1px dotted rgba(120, 46, 34, 0.3);
 }
 
-/* Fix for the deed die style parsing error */
-.deed-die {
-    color: inherit;
-}
-
 /* Fumble and Crit Results */
-.fumble-result,
-.crit-result {
+.dccqol.chat-card .fumble-result,
+.dccqol.chat-card .crit-result {
     margin-top: 8px;
     padding: 5px;
     background: #d5d1c5;
@@ -234,31 +289,31 @@
     border-radius: 0;
 }
 
-.fumble-result {
+.dccqol.chat-card .fumble-result {
     border-left: 3px solid #aa0200;
 }
 
-.crit-result {
+.dccqol.chat-card .crit-result {
     border-left: 3px solid #18520b;
 }
 
-.fumble-result em,
-.crit-result em {
+.dccqol.chat-card .fumble-result em,
+.dccqol.chat-card .crit-result em {
     font-style: italic;
     color: #666;
 }
 
 /* Table cell styling for crit/fumble results */
-.fumble-result table,
-.crit-result table {
+.dccqol.chat-card .fumble-result table,
+.dccqol.chat-card .crit-result table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.fumble-result td,
-.crit-result td,
-.fumble-result th,
-.crit-result th {
+.dccqol.chat-card .fumble-result td,
+.dccqol.chat-card .crit-result td,
+.dccqol.chat-card .fumble-result th,
+.dccqol.chat-card .crit-result th {
     padding: 3px 5px;
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -300,4 +355,13 @@
     text-align: center;
     font-size: 20px !important;
     font-weight: bold !important;
+}
+
+/* DCC QoL Dice Roll Status Colors */
+.dccqol.chat-card .dice-roll .dice-total.critical {
+    color: #18520b !important; /* QoL Success Color */
+}
+
+.dccqol.chat-card .dice-roll .dice-total.fumble {
+    color: #810c0a !important; /* QoL Failure Color */
 }

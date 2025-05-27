@@ -25,11 +25,6 @@ export async function enhanceAttackRollCard(message, html, data) {
     if (!qolFlags) {
         return;
     }
-
-    // --- BEGIN AUTOMATIC DAMAGE APPLICATION IF DAMAGE WAS AUTOMATED BY DCC SYSTEM ---
-    // This section was moved to damageApplicationHooks.js
-    // --- END AUTOMATIC DAMAGE APPLICATION IF DAMAGE WAS AUTOMATED BY DCC SYSTEM ---
-
     // Handle QoL Attack Card enhancement
     if (
         qolFlags.isAttackRoll &&
@@ -150,6 +145,26 @@ export async function enhanceAttackRollCard(message, html, data) {
                 .on("click", (event) =>
                     handleFriendlyFireClick(event, message, actor, qolFlags)
                 );
+
+            // --- Apply Dice Roll Status Coloring for Hits/Misses/Crits/Fumbles ---
+            const diceTotalElement = cardElement.find(".dice-roll .dice-total");
+            if (diceTotalElement.length > 0) {
+                if (qolFlags.isCrit) {
+                    diceTotalElement.addClass("critical");
+                } else if (qolFlags.isFumble) {
+                    diceTotalElement.addClass("fumble");
+                } else if (qolFlags.target) {
+                    // Only apply hit/miss if it's a targeted roll and not a crit/fumble
+                    if (qolFlags.hitsTarget) {
+                        diceTotalElement.addClass("status-success");
+                    } else {
+                        diceTotalElement.addClass("status-failure");
+                    }
+                }
+            }
+            // Note: .critical and .fumble classes are expected to be added by Foundry's core roll rendering
+            // or by the diceHTML content itself if it comes from a Roll object that was evaluated.
+            // Our CSS handles .dccqol.chat-card .dice-roll .dice-total.critical and .fumble directly.
         } catch (err) {
             console.error(
                 "DCC QoL | Error enhancing attack roll card:",

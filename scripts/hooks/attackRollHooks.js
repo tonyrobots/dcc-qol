@@ -94,7 +94,6 @@ export async function prepareQoLAttackData(rolls, messageData) {
         // For now, will proceed, and getWeaponFromActorById will likely warn if actor is null/undefined
     }
 
-    // Adjust 'Player Character' if DCC uses a different type string for PCs
     const isPC = actor && actor.type === "Player";
 
     const tokenName = messageData.speaker.alias || messageData.speaker.name; // Attacker's display name
