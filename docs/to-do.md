@@ -14,7 +14,7 @@ Project Structure is in @docs/project_structure.md
 
 -   [ ] Apply players Luck score against monsters' crit roll. If an actor targeting a Player gets a critical hit, subtract the players luck modifier from the attacker's crit roll.
 -   [x] Backstab improvements/fixes. Add appropriate "backstab" messaging for backstabs in attack roll cards. no crit on misses.
--   [ ] Clean up settings
+-   [ x] Clean up settings
 -   [ ] Lucky weapon bonus? - hold for subsequent release?
 -   [ ] Clean up overly verbose logging
 -   [ ] Clean up `en.json`, and make sure strings are represented in `pt-br.json`
