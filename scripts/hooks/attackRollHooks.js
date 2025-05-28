@@ -99,6 +99,7 @@ export async function prepareQoLAttackData(rolls, messageData) {
     const tokenName = messageData.speaker.alias || messageData.speaker.name; // Attacker's display name
     const isCrit = messageData.flags["dcc.isCrit"] || false;
     const isFumble = messageData.flags["dcc.isFumble"] || false;
+    const isBackstab = messageData.flags["dcc.isBackstab"] || false;
     const hitsAc = messageData.system.hitsAc; // What AC value the roll hits
     const weapon = getWeaponFromActorById(actor, weaponId);
 
@@ -183,6 +184,7 @@ export async function prepareQoLAttackData(rolls, messageData) {
         hitsTarget: hitsTarget,
         isCrit: isCrit,
         isFumble: isFumble,
+        isBackstab: isBackstab,
         deedDieResult: messageData.system?.deedDieRollResult ?? null,
         deedRollSuccess: messageData.system?.deedRollSuccess ?? null,
         hitsAc: hitsAc, // Pass the raw hitsAC value for display when no target
