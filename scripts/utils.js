@@ -72,38 +72,68 @@ export function checkFiringIntoMelee(targetTokenDocument) {
         `DCC-QOL Utils | checkFiringIntoMelee: Checking target ${targetTokenDocument?.name} (ID: ${targetTokenDocument?.id})`
     );
 
-    for (const token of game.canvas.tokens.placeables) {
-        console.debug(
-            `DCC-QOL Utils |   - Iterating token: ${token.document?.name} (ID: ${token.document?.id})`
-        );
-        if (!(token.document === targetTokenDocument)) {
-            // Check if the token is an ally and in melee range
-            const distance = measureTokenDistance(
-                targetTokenDocument,
-                token.document
-            );
-            const disposition = token.document.disposition;
-            console.debug(
-                `DCC-QOL Utils |     - Distance to ${token.document?.name}: ${distance}`
-            );
-            console.debug(
-                `DCC-QOL Utils |     - Disposition of ${token.document?.name}: ${disposition} (Friendly is 1)`
-            );
+    const targetTokenPlaceable = game.canvas.tokens.get(targetTokenDocument.id);
 
-            if (
-                distance <= game.canvas.dimensions.distance &&
-                disposition === 1 // CONST.TOKEN_DISPOSITIONS.FRIENDLY is 1
-            ) {
-                console.debug(
-                    `DCC-QOL Utils |     - Ally ${token.document?.name} is in melee range!`
-                );
-                firingIntoMelee = true; // Set to true and break, as we found one
-                break;
-            }
-        } else {
+    if (!targetTokenPlaceable) {
+        console.warn(
+            `DCC-QOL Utils | checkFiringIntoMelee: Target token placeable not found on canvas for document ID: ${targetTokenDocument?.id}. Cannot accurately determine melee situation.`
+        );
+        return false;
+    }
+
+    // Define a search area around the target token
+    // Buffer by one grid unit, as that's the typical melee engagement range.
+    const meleePixelBuffer = game.canvas.dimensions.size;
+    const searchRect = new PIXI.Rectangle(
+        targetTokenPlaceable.bounds.x - meleePixelBuffer,
+        targetTokenPlaceable.bounds.y - meleePixelBuffer,
+        targetTokenPlaceable.bounds.width + 2 * meleePixelBuffer,
+        targetTokenPlaceable.bounds.height + 2 * meleePixelBuffer
+    );
+
+    // Get tokens within the search rectangle using the quadtree
+    const nearbyTokenPlaceables =
+        game.canvas.tokens.quadtree.getObjects(searchRect);
+
+    console.debug(
+        `DCC-QOL Utils | checkFiringIntoMelee: Found ${nearbyTokenPlaceables.size} tokens near target using quadtree.`
+    );
+
+    for (const tokenPlaceable of nearbyTokenPlaceables) {
+        const otherTokenDocument = tokenPlaceable.document;
+        console.debug(
+            `DCC-QOL Utils |   - Iterating nearby token: ${otherTokenDocument?.name} (ID: ${otherTokenDocument?.id})`
+        );
+
+        if (otherTokenDocument.id === targetTokenDocument.id) {
             console.debug(
-                `DCC-QOL Utils |   - Skipping target token itself: ${token.document?.name}`
+                `DCC-QOL Utils |   - Skipping target token itself: ${otherTokenDocument?.name}`
             );
+            continue; // Skip the target token itself
+        }
+
+        // Check if the token is an ally and in melee range
+        const distance = measureTokenDistance(
+            targetTokenDocument,
+            otherTokenDocument
+        );
+        const disposition = otherTokenDocument.disposition;
+        console.debug(
+            `DCC-QOL Utils |     - Distance to ${otherTokenDocument?.name}: ${distance}`
+        );
+        console.debug(
+            `DCC-QOL Utils |     - Disposition of ${otherTokenDocument?.name}: ${disposition} (Friendly is ${CONST.TOKEN_DISPOSITIONS.FRIENDLY})`
+        );
+
+        if (
+            distance <= game.canvas.dimensions.distance &&
+            disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY
+        ) {
+            console.debug(
+                `DCC-QOL Utils |     - Ally ${otherTokenDocument?.name} is in melee range!`
+            );
+            firingIntoMelee = true; // Set to true and break, as we found one
+            break;
         }
     }
     console.debug(
