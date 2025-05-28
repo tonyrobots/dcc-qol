@@ -57,7 +57,7 @@ export async function handleCritClick(event, message, actor, weapon, qolFlags) {
             message.system.critRollFormula,
             actor.getRollData()
         );
-        await roll.evaluate({ async: true });
+        await roll.evaluate();
 
         roll.toMessage({
             speaker: ChatMessage.getSpeaker({ actor: actor }),

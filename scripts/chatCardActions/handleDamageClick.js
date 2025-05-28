@@ -49,7 +49,7 @@ export async function handleDamageClick(
             message.system.damageRollFormula,
             actor.getRollData()
         );
-        await roll.evaluate({ async: true });
+        await roll.evaluate();
 
         let flavorText = `Rolling Damage for ${
             message.system.weaponName || weapon?.name || "weapon"

@@ -13,7 +13,7 @@ Project Structure is in @docs/project_structure.md
 ### Core Features & Enhancements
 
 -   [ ] Apply players Luck score against monsters' crit roll. If an actor targeting a Player gets a critical hit, subtract the players luck modifier from the attacker's crit roll.
--   [] Backstab improvements/fixes. Add appropriate "backstab" messaging for backstabs in attack roll cards. no crit on misses.
+-   [x] Backstab improvements/fixes. Add appropriate "backstab" messaging for backstabs in attack roll cards. no crit on misses.
 -   [ ] Clean up settings
 -   [ ] Lucky weapon bonus? - hold for subsequent release?
 -   [ ] Clean up overly verbose logging
@@ -27,7 +27,7 @@ Project Structure is in @docs/project_structure.md
 
 ### Bugs to Fix
 
--   [ ] Fix Error: The async option for Roll#evaluate has been removed. Use Roll#evaluateSync for synchronous roll evaluation.
+-   [x] Fix Error: The async option for Roll#evaluate has been removed. Use Roll#evaluateSync for synchronous roll evaluation.
 -   [ ] Properties set in range check aren't making it through to `prepareQolData`, check flow of data. Look at adding logical data, e.g. range value, penalty applied, and then adding conditional logic on the `attackroll` hook to figure out how to present that (logically separating the two parts).
 -   [ ] Check rolltable (fumbles/crits) on tempo PC main install
 

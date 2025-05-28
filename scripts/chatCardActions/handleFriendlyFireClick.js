@@ -23,8 +23,8 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
     }
 
     try {
-        const roll = new Roll("1d100");
-        await roll.evaluate({ async: true });
+        const roll = new Roll("1d100", actor.getRollData());
+        await roll.evaluate();
 
         let resultText;
         let resultClass;

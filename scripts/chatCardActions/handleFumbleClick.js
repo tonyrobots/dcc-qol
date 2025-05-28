@@ -63,7 +63,7 @@ export async function handleFumbleClick(
             message.system.fumbleRollFormula,
             actor.getRollData()
         );
-        await roll.evaluate({ async: true });
+        await roll.evaluate();
 
         roll.toMessage({
             speaker: ChatMessage.getSpeaker({ actor: actor }),
