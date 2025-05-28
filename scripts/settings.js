@@ -67,31 +67,31 @@ export const registerSettings = async function () {
      * Automatically apply lucky weapon modifier
      * For classes with lucky weapons (e.g. Warriors & Dwarves, set in config.js), automatically apply the lucky weapon modifier (as specified) to the attack roll.
      */
-    game.settings.register("dcc-qol", "automateLuckyWeaponModifier", {
-        name: "DCC-QOL.SettingAutomateLuckyWeaponModifier",
-        hint: "DCC-QOL.SettingAutomateLuckyWeaponModifierHint",
-        scope: "world",
-        type: String,
-        default: "standard",
-        choices: {
-            // none: "DCC-QOL.SettingAutomateLuckyWeaponModifierNone",
-            standard: "DCC-QOL.SettingAutomateLuckyWeaponModifierStandard",
-            plus1: "DCC-QOL.SettingAutomateLuckyWeaponModifierPlus1",
-            positive: "DCC-QOL.SettingAutomateLuckyWeaponModifierPositive",
-        },
-        config: true,
-        onChange: (value) => {
-            // value is the new value of the setting
-            // warn if dcc automate lucky is not enabled
-            if (!game.settings.get("dcc", "automateLuckyWeaponAttack")) {
-                ui.notifications.warn(
-                    game.i18n.localize(
-                        "DCC-QOL.AutomateLuckyWeaponsNotEnabledWarning"
-                    )
-                );
-            }
-        },
-    });
+    // game.settings.register("dcc-qol", "automateLuckyWeaponModifier", {
+    //     name: "DCC-QOL.SettingAutomateLuckyWeaponModifier",
+    //     hint: "DCC-QOL.SettingAutomateLuckyWeaponModifierHint",
+    //     scope: "world",
+    //     type: String,
+    //     default: "standard",
+    //     choices: {
+    //         none: "DCC-QOL.SettingAutomateLuckyWeaponModifierNone",
+    //         standard: "DCC-QOL.SettingAutomateLuckyWeaponModifierStandard",
+    //         plus1: "DCC-QOL.SettingAutomateLuckyWeaponModifierPlus1",
+    //         positive: "DCC-QOL.SettingAutomateLuckyWeaponModifierPositive",
+    //     },
+    //     config: true,
+    //     onChange: (value) => {
+    //         // value is the new value of the setting
+    //         // warn if dcc automate lucky is not enabled
+    //         if (!game.settings.get("dcc", "automateLuckyWeaponAttack")) {
+    //             ui.notifications.warn(
+    //                 game.i18n.localize(
+    //                     "DCC-QOL.AutomateLuckyWeaponsNotEnabledWarning"
+    //                 )
+    //             );
+    //         }
+    //     },
+    // });
 
     /**
      * Check weapon's range and if target is out of range, or would incur a penalty, UI warning/confirmation dialog appears
