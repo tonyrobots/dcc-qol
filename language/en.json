@@ -1,5 +1,6 @@
 {
-    "DCC-QOL.AttackRollHitsAC": "Hits AC {AC} or below",
+    "DCC-QOL.AttackRollHitsAC": "hits AC {AC} or below",
+    "DCC-QOL.BackstabHitsAC": "backstabs AC {AC} or below",
     "DCC-QOL.AttackRollHits": "hits",
     "DCC-QOL.AttackRollHitsCrit": "critically hits",
     "DCC-QOL.AttackRollMisses": "misses",

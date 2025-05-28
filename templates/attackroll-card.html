@@ -17,6 +17,7 @@
         /> -->
         <h3 class="flavor-text">
             {{#if isBackstab}}
+                <img src="/systems/dcc/styles/images/backstab.png" title="Backstab" width="20" height="20" style="vertical-align: middle; margin-right: 5px; border: none;" />
                 {{localize "DCC-QOL.BackstabsWith" weapon=weapon.name}}
             {{else}}
                 {{localize "DCC-QOL.AttacksWith" weapon=weapon.name}}
@@ -89,9 +90,13 @@
     {{else}}
     <div class="chat-details centered">
         <div class="roll-result status-success">
-            {{ tokenName }} {{#if isCrit }} {{localize
-            "DCC-QOL.AttackRollHitsCrit"}}! {{ else }} {{localize
-            "DCC-QOL.AttackRollHitsAC" AC=hitsAc}} {{/if}}
+            {{#if isBackstab}}
+                {{ tokenName }} {{localize "DCC-QOL.BackstabHitsAC" AC=hitsAc}}
+            {{else}}
+                {{ tokenName }} {{#if isCrit }} {{localize
+                "DCC-QOL.AttackRollHitsCrit"}}! {{ else }} {{localize
+                "DCC-QOL.AttackRollHitsAC" AC=hitsAc}} {{/if}}
+            {{/if}}
         </div>
     </div>
     {{#unless damageWasAutomated}}
@@ -104,11 +109,12 @@
             {{localize "DCC.Damage"}}: <strong>{{automatedDamageTotal}}</strong>
         </div>
     </div>
-    {{/unless}} {{/if}} {{/if}} {{/if}} {{#if isCrit}} {{#unless
-    critWasAutomated}}
+    {{/unless}} {{/if}} {{/if}} {{/if}} {{#if isCrit}} {{#unless critWasAutomated}}
+    {{#unless (and isBackstab target (not hitsTarget))}}
     <div class="card-buttons centered">
         <button data-action="crit">{{ localize "DCC.RollCritical" }}</button>
     </div>
+    {{/unless}}
     {{else}}
     <div class="chat-details centered">
         <div class="roll-result status-info">{{{automatedCritDisplay}}}</div>

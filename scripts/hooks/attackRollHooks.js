@@ -121,7 +121,8 @@ export async function prepareQoLAttackData(rolls, messageData) {
             if (targetAC !== undefined && hitsAc !== undefined) {
                 hitsTarget =
                     !isFumble &&
-                    (parseInt(hitsAc) >= parseInt(targetAC) || isCrit); // Hit if not a fumble, and roll >= AC or a crit
+                    (parseInt(hitsAc) >= parseInt(targetAC) ||
+                        (isCrit && !isBackstab)); // Hit if not a fumble, and roll >= AC or a crit (but not a backstab crit)
                 console.debug(
                     `DCC-QOL | Target AC: ${targetAC}, Hits AC: ${hitsAc}, Hits Target: ${hitsTarget}`
                 );
