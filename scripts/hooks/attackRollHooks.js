@@ -58,6 +58,43 @@ export function addTestBonus(terms, actor, weapon, targets, options) {
 }
 
 /**
+ * Modifies the fumbleRollFormula and fumbleInlineRoll in messageData if a fumble occurs
+ * against a Player Character, based on the target PC's Luck modifier.
+ *
+ * @param {object} messageData - The chat message data object.
+ * @param {boolean} isFumble - Whether the current attack is a fumble.
+ * @param {Actor} targetActor - The actor being targeted.
+ */
+function _modifyFumbleDieForTargetPCLuck(messageData, isFumble, targetActor) {
+    if (isFumble && targetActor && targetActor.type === "Player") {
+        const targetLuckMod = targetActor.system.abilities?.lck?.mod;
+        if (typeof targetLuckMod === "number") {
+            const baseFumbleDie = "1d10"; // Per requirement: 0 luck mod = 1d10 base for this mechanic
+            const newFumbleDie = game.dcc.DiceChain.bumpDie(
+                baseFumbleDie,
+                targetLuckMod.toString()
+            );
+
+            if (newFumbleDie) {
+                messageData.system.fumbleRollFormula = newFumbleDie;
+                console.debug(
+                    `DCC-QOL | _modifyFumbleDieForTargetPCLuck: Set messageData.system.fumbleRollFormula to ${newFumbleDie} for target PC ${targetActor.name} (Luck Mod: ${targetLuckMod}).`
+                );
+                // Removed modification of messageData.system.fumbleInlineRoll as per user feedback
+            } else {
+                console.debug(
+                    `DCC-QOL | _modifyFumbleDieForTargetPCLuck: newFumbleDie was not generated for target PC ${targetActor.name}.`
+                );
+            }
+        } else {
+            console.debug(
+                `DCC-QOL | _modifyFumbleDieForTargetPCLuck: Target PC ${targetActor.name} luck mod is not a number.`
+            );
+        }
+    }
+}
+
+/**
  * Hooks into 'dcc.rollWeaponAttack' to prepare data for the QoL Attack Card.
  * Augments the messageData object with flags needed by the renderChatMessage hook.
  *
@@ -106,6 +143,7 @@ export async function prepareQoLAttackData(rolls, messageData) {
     // Process Targets using utility function
     const targetsSet = messageData.system.targets; // This is a Set<Token>
     const targetDocument = getFirstTarget(targetsSet); // Get the TokenDocument object
+    let targetActor; // Declare targetActor
 
     let targetName = "";
     let targetTokenId = null;
@@ -114,7 +152,7 @@ export async function prepareQoLAttackData(rolls, messageData) {
     if (targetDocument) {
         targetName = targetDocument.name || "target"; // Get name directly
         targetTokenId = targetDocument.id; // Get ID directly
-        const targetActor = targetDocument.actor; // Get actor from document
+        targetActor = targetDocument.actor; // Get actor from document
 
         if (targetActor) {
             const targetAC = targetActor.system?.attributes?.ac?.value;
@@ -137,6 +175,13 @@ export async function prepareQoLAttackData(rolls, messageData) {
             "DCC-QOL | No valid targets found by getFirstTarget utility."
         );
     }
+
+    // Modify fumble die based on target PC's luck
+    _modifyFumbleDieForTargetPCLuck(messageData, isFumble, targetActor);
+    console.debug(
+        "DCC-QOL | prepareQoLAttackData: After _modifyFumbleDieForTargetPCLuck, messageData.system.fumbleRollFormula is:",
+        messageData.system.fumbleRollFormula
+    );
 
     // --- Friendly Fire Check ---
     let showFriendlyFireButton = false;
