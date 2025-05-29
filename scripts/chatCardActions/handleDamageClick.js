@@ -82,6 +82,21 @@ export async function handleDamageClick(
             flavor: flavorText,
             flags: damageMessageFlags,
         });
+
+        // Update the original message to mark that damage button was clicked
+        // This will cause all clients to re-render with the button hidden
+        // Use socket to have GM update the flag since players can't modify message flags
+        try {
+            await socket.executeAsGM("gmUpdateMessageFlag", {
+                messageId: message.id,
+                flagScope: "dcc-qol",
+                flagKey: "damageButtonClicked",
+                flagValue: true,
+            });
+        } catch (flagError) {
+            console.warn("DCC-QOL | Could not update message flag:", flagError);
+            // Don't throw here - the damage roll was successful even if flag update failed
+        }
     } catch (rollError) {
         console.error("DCC-QOL | Error performing damage roll:", rollError);
         ui.notifications.error(

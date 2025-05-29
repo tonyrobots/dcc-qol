@@ -52,9 +52,17 @@
         <div class="roll-result status-failure">{{localize "DCC.Fumble"}}!</div>
     </div>
     {{#unless fumbleWasAutomated}}
+    {{#if canUserModify}}
     <div class="card-buttons centered">
         <button data-action="fumble">{{ localize "DCC.RollFumble" }}</button>
     </div>
+    {{else}}
+    {{#if isGM}}
+    <div class="card-buttons centered">
+        <button data-action="fumble">{{ localize "DCC.RollFumble" }}</button>
+    </div>
+    {{/if}}
+    {{/if}}
     {{else}}
     <div class="chat-details centered">
         <div class="roll-result status-info">{{{automatedFumbleDisplay}}}</div>
@@ -72,9 +80,21 @@
         </div>
     </div>
     {{#unless damageWasAutomated}}
+    {{#if canUserModify}}
+    {{#unless damageButtonClicked}}
     <div class="card-buttons centered">
-        <button data-action="damage">{{ localize "DCC.RollDamage" }}</button>
+        <button data-action="damage" class="damage-button">{{ localize "DCC.RollDamage" }}</button>
     </div>
+    {{/unless}}
+    {{else}}
+    {{#if isGM}}
+    {{#unless damageButtonClicked}}
+    <div class="card-buttons centered">
+        <button data-action="damage" class="damage-button">{{ localize "DCC.RollDamage" }}</button>
+    </div>
+    {{/unless}}
+    {{/if}}
+    {{/if}}
     {{else}}
     <div class="chat-details centered">
         <div class="roll-result">
@@ -100,9 +120,21 @@
         </div>
     </div>
     {{#unless damageWasAutomated}}
+    {{#if canUserModify}}
+    {{#unless damageButtonClicked}}
     <div class="card-buttons centered">
-        <button data-action="damage">{{ localize "DCC.RollDamage" }}</button>
+        <button data-action="damage" class="damage-button">{{ localize "DCC.RollDamage" }}</button>
     </div>
+    {{/unless}}
+    {{else}}
+    {{#if isGM}}
+    {{#unless damageButtonClicked}}
+    <div class="card-buttons centered">
+        <button data-action="damage" class="damage-button">{{ localize "DCC.RollDamage" }}</button>
+    </div>
+    {{/unless}}
+    {{/if}}
+    {{/if}}
     {{else}}
     <div class="chat-details centered">
         <div class="roll-result">
@@ -111,9 +143,17 @@
     </div>
     {{/unless}} {{/if}} {{/if}} {{/if}} {{#if isCrit}} {{#unless critWasAutomated}}
     {{#unless (and isBackstab target (not hitsTarget))}}
+    {{#if canUserModify}}
     <div class="card-buttons centered">
         <button data-action="crit">{{ localize "DCC.RollCritical" }}</button>
     </div>
+    {{else}}
+    {{#if isGM}}
+    <div class="card-buttons centered">
+        <button data-action="crit">{{ localize "DCC.RollCritical" }}</button>
+    </div>
+    {{/if}}
+    {{/if}}
     {{/unless}}
     {{else}}
     <div class="chat-details centered">

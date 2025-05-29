@@ -18,6 +18,13 @@ export async function handleAutomatedDamageApplication(message, html, data) {
         return;
     }
 
+    // Only allow the GM to initiate automated damage application to prevent
+    // multiple clients from triggering duplicate damage application messages
+    if (!game.user.isGM) {
+        return;
+    }
+
+    // Check the global QoL setting for this feature (GM-controlled)
     if (!game.settings.get("dcc-qol", "automateDamageApply")) {
         return; // Master QoL setting for this feature is off
     }

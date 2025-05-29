@@ -10,7 +10,11 @@
 import { registerSettings } from "./settings.js";
 import { registerHookListeners } from "./hooks/listeners.js";
 import { checkAndCorrectEmoteRollsSetting } from "./compatibility.js";
-import { gmApplyDamage, createDamageScrollingText } from "./socketHandlers.js";
+import {
+    gmApplyDamage,
+    createDamageScrollingText,
+    gmUpdateMessageFlag,
+} from "./socketHandlers.js";
 
 // Declare socket variable in module scope
 export let socket;
@@ -62,6 +66,7 @@ Hooks.once("socketlib.ready", () => {
     }
     socket.register("gmApplyDamage", gmApplyDamage);
     socket.register("createDamageScrollingText", createDamageScrollingText);
+    socket.register("gmUpdateMessageFlag", gmUpdateMessageFlag);
     console.log("DCC QoL | Socketlib initialized and functions registered.");
 });
 

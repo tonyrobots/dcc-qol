@@ -61,3 +61,34 @@ export async function gmApplyDamage(payload) {
         return { success: false };
     }
 }
+
+/**
+ * Handles the request to update a message flag, executed on the GM's client via socketlib.
+ * This is needed because only the GM has permission to update chat message flags.
+ *
+ * @param {object} payload - The data payload from the client.
+ * @param {string} payload.messageId - The ID of the message to update.
+ * @param {string} payload.flagScope - The flag scope (module ID).
+ * @param {string} payload.flagKey - The flag key to update.
+ * @param {any} payload.flagValue - The value to set for the flag.
+ */
+export async function gmUpdateMessageFlag(payload) {
+    const { messageId, flagScope, flagKey, flagValue } = payload;
+
+    if (!game.user.isGM) {
+        return { success: false, reason: "not-gm" };
+    }
+
+    try {
+        const message = game.messages.get(messageId);
+        if (!message) {
+            return { success: false, reason: "message-not-found" };
+        }
+
+        await message.setFlag(flagScope, flagKey, flagValue);
+        return { success: true };
+    } catch (error) {
+        console.error("DCC-QOL | Error updating message flag:", error);
+        return { success: false, reason: error.message };
+    }
+}

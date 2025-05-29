@@ -85,6 +85,11 @@ export async function enhanceAttackRollCard(message, html, data) {
                 diceHTML: diceHTML, // Pass the extracted attack roll HTML
                 properties: properties,
                 messageId: message.id,
+                // Add permission checking per-client
+                canUserModify: actor.canUserModify(game.user, "update"),
+                isGM: game.user.isGM,
+                damageButtonClicked:
+                    message.getFlag("dcc-qol", "damageButtonClicked") || false,
             };
 
             // --- Render the Custom Template ---
