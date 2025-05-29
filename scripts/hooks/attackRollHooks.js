@@ -95,6 +95,44 @@ function _modifyFumbleDieForTargetPCLuck(messageData, isFumble, targetActor) {
 }
 
 /**
+ * Modifies the critRollFormula in messageData if a critical hit occurs
+ * against a Player Character, applying the target PC's Luck modifier as a penalty.
+ *
+ * @param {object} messageData - The chat message data object.
+ * @param {boolean} isCrit - Whether the current attack is a critical hit.
+ * @param {Actor} targetActor - The actor being targeted.
+ */
+function _modifyCritRollForTargetPCLuck(messageData, isCrit, targetActor) {
+    if (isCrit && targetActor && targetActor.type === "Player") {
+        const targetLuckMod = targetActor.system.abilities?.lck?.mod;
+        if (typeof targetLuckMod === "number" && targetLuckMod !== 0) {
+            const currentCritFormula = messageData.system.critRollFormula || "";
+
+            if (currentCritFormula) {
+                // Apply the inverse of the target's luck modifier as a penalty
+                const luckPenalty = -targetLuckMod;
+                const newCritFormula =
+                    currentCritFormula +
+                    (luckPenalty >= 0 ? `+${luckPenalty}` : `${luckPenalty}`);
+
+                messageData.system.critRollFormula = newCritFormula;
+                console.debug(
+                    `DCC-QOL | _modifyCritRollForTargetPCLuck: Modified critRollFormula from "${currentCritFormula}" to "${newCritFormula}" for target PC ${targetActor.name} (Luck Mod: ${targetLuckMod}, Applied Penalty: ${luckPenalty}).`
+                );
+            } else {
+                console.debug(
+                    `DCC-QOL | _modifyCritRollForTargetPCLuck: No critRollFormula found to modify for target PC ${targetActor.name}.`
+                );
+            }
+        } else {
+            console.debug(
+                `DCC-QOL | _modifyCritRollForTargetPCLuck: Target PC ${targetActor.name} luck mod is not a number or is zero.`
+            );
+        }
+    }
+}
+
+/**
  * Hooks into 'dcc.rollWeaponAttack' to prepare data for the QoL Attack Card.
  * Augments the messageData object with flags needed by the renderChatMessage hook.
  *
@@ -178,10 +216,9 @@ export async function prepareQoLAttackData(rolls, messageData) {
 
     // Modify fumble die based on target PC's luck
     _modifyFumbleDieForTargetPCLuck(messageData, isFumble, targetActor);
-    console.debug(
-        "DCC-QOL | prepareQoLAttackData: After _modifyFumbleDieForTargetPCLuck, messageData.system.fumbleRollFormula is:",
-        messageData.system.fumbleRollFormula
-    );
+
+    // Modify crit roll based on target PC's luck
+    _modifyCritRollForTargetPCLuck(messageData, isCrit, targetActor);
 
     // --- Friendly Fire Check ---
     let showFriendlyFireButton = false;
