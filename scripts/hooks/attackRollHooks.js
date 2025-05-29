@@ -263,7 +263,7 @@ export async function prepareQoLAttackData(rolls, messageData) {
         tokenName: tokenName,
         isPC: isPC, // Add the isPC flag here
         target: targetName,
-        targettokenId: targetTokenId,
+        targetTokenId: targetTokenId, // Ensure consistent casing
         hitsTarget: hitsTarget,
         isCrit: isCrit,
         isFumble: isFumble,

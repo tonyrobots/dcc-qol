@@ -65,15 +65,18 @@ export async function handleDamageClick(
         // }
 
         // --- Prepare flags for the damage roll message ---
-        // The dccqol.appliedDamageValue and dccqol.appliedDamageTargetName flags are removed
-        // as the GM-side handler is responsible for the feedback of actual damage application.
-        // The original message flags are primarily for the roll itself.
+        // Include target information from the original attack for automated damage application
         const damageMessageFlags = {
             "dcc.RollType": "Damage",
             "dccqol.isDamageRoll": true,
             "dccqol.parentId": message.id,
             "dccqol.actorId": actor.id,
             "dccqol.weaponId": weapon?.id || qolFlags.weaponId,
+            // Include target info for automated damage application
+            "dccqol.targetTokenId": qolFlags.targetTokenId,
+            "dccqol.targetName": qolFlags.target,
+            // Add the rolled damage total to be picked up by handleAutomatedDamageApplication
+            "dccqol.automatedDamageTotal": roll.total,
         };
 
         // Create the damage roll chat message with all necessary flags
