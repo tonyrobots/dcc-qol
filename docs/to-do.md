@@ -34,6 +34,7 @@ Project Structure is in @docs/project_structure.md
 ## Non-Core Future Tasks
 
 -   [ ] With character sheet in focus, if clipboard contains an image, on paste action, open a dialog asking if the user wants to set the character portrait and/or the token image to the pasted image
+        [] autotarget nearest enemy?
 
 ## Completed Tasks
 

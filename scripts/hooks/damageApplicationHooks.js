@@ -1,8 +1,6 @@
 /* global game, Hooks, canvas, console, setTimeout, ui */
 import { socket } from "../dcc-qol.js"; // Import the socket
 
-const autoDamageInitiatedForMessageIds = new Set();
-
 /**
  * Handles the automatic application of damage if the roll was automated by the DCC system
  * and the relevant QoL setting is enabled.
@@ -29,6 +27,15 @@ export async function handleAutomatedDamageApplication(message, html, data) {
         return;
     }
 
+    // Check if QoL damage has already been processed for this message
+    if (message.flags?.dccqol?.automatedDamageProcessed) {
+        console.debug(
+            "DCC-QOL | automatedDamageProcessed flag is true. Skipping.",
+            message.id
+        );
+        return;
+    }
+
     // Only allow the GM to initiate automated damage application
     if (!game.user.isGM) {
         // console.debug("DCC-QOL | Not on GM client. Skipping automated damage application."); // Too noisy for players
@@ -39,15 +46,6 @@ export async function handleAutomatedDamageApplication(message, html, data) {
     if (!game.settings.get("dcc-qol", "automateDamageApply")) {
         console.debug(
             "DCC-QOL | automateDamageApply setting is OFF. Skipping.",
-            message.id
-        );
-        return;
-    }
-
-    // If we've already initiated the auto damage process for this message ID, stop.
-    if (autoDamageInitiatedForMessageIds.has(message.id)) {
-        console.debug(
-            "DCC-QOL | Auto damage already initiated for this message ID. Skipping.",
             message.id
         );
         return;
@@ -132,30 +130,50 @@ export async function handleAutomatedDamageApplication(message, html, data) {
         `Source: ${sourceOfAutomation}, Damage: ${damageToApply}, Target: ${targetTokenId}`
     );
 
-    // Mark that we are initiating auto damage for this message ID.
-    autoDamageInitiatedForMessageIds.add(message.id);
-    setTimeout(() => {
-        autoDamageInitiatedForMessageIds.delete(message.id);
-    }, 5000);
-
     const payload = {
         targetTokenId: targetTokenId,
         damageToApply: damageToApply,
         originalAttackMessageId: message.id,
     };
 
-    const applyAutomatedDamage = () => {
+    const applyAutomatedDamage = async () => {
         console.debug(
             `DCC-QOL | Executing applyAutomatedDamage via socket for ${damageToApply} to ${targetTokenId}. Message ID: ${message.id}`
         );
-        socket
-            .executeAsGM("gmApplyDamage", payload)
-            .catch((err) =>
-                console.error(
-                    `DCC-QOL | Error in socket call for gmApplyDamage (Source: ${sourceOfAutomation}):`,
-                    err
-                )
+        try {
+            // Set the flag and update the message BEFORE sending the socket request
+            await message.update({
+                "flags.dccqol.automatedDamageProcessed": true,
+            });
+            console.debug(
+                "DCC-QOL | automatedDamageProcessed flag set and message updated for message:",
+                message.id
             );
+
+            socket
+                .executeAsGM("gmApplyDamage", payload)
+                .catch((err) =>
+                    console.error(
+                        `DCC-QOL | Error in socket call for gmApplyDamage (Source: ${sourceOfAutomation}):`,
+                        err
+                    )
+                );
+        } catch (updateError) {
+            console.error(
+                `DCC-QOL | Error updating message ${message.id} with automatedDamageProcessed flag:`,
+                updateError
+            );
+            // Optionally, decide if you still want to attempt damage application if the flag update fails.
+            // For now, we'll proceed, but this could be a point of failure to reconsider.
+            socket
+                .executeAsGM("gmApplyDamage", payload)
+                .catch((err) =>
+                    console.error(
+                        `DCC-QOL | Error in socket call for gmApplyDamage (Source: ${sourceOfAutomation}) after message update failure:`,
+                        err
+                    )
+                );
+        }
     };
 
     if (game.modules.get("dice-so-nice")?.active) {
