@@ -80,21 +80,7 @@
         </div>
     </div>
     {{#unless damageWasAutomated}}
-    {{#if canUserModify}}
-    {{#unless damageButtonClicked}}
-    <div class="card-buttons centered">
-        <button data-action="damage" class="damage-button">{{ localize "DCC.RollDamage" }}</button>
-    </div>
-    {{/unless}}
-    {{else}}
-    {{#if isGM}}
-    {{#unless damageButtonClicked}}
-    <div class="card-buttons centered">
-        <button data-action="damage" class="damage-button">{{ localize "DCC.RollDamage" }}</button>
-    </div>
-    {{/unless}}
-    {{/if}}
-    {{/if}}
+    {{> "modules/dcc-qol/templates/partials/_damage-button.html"}}
     {{else}}
     <div class="chat-details centered">
         <div class="roll-result">
@@ -120,21 +106,7 @@
         </div>
     </div>
     {{#unless damageWasAutomated}}
-    {{#if canUserModify}}
-    {{#unless damageButtonClicked}}
-    <div class="card-buttons centered">
-        <button data-action="damage" class="damage-button">{{ localize "DCC.RollDamage" }}</button>
-    </div>
-    {{/unless}}
-    {{else}}
-    {{#if isGM}}
-    {{#unless damageButtonClicked}}
-    <div class="card-buttons centered">
-        <button data-action="damage" class="damage-button">{{ localize "DCC.RollDamage" }}</button>
-    </div>
-    {{/unless}}
-    {{/if}}
-    {{/if}}
+    {{> "modules/dcc-qol/templates/partials/_damage-button.html"}}
     {{else}}
     <div class="chat-details centered">
         <div class="roll-result">

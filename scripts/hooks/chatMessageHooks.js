@@ -90,6 +90,7 @@ export async function enhanceAttackRollCard(message, html, data) {
                 isGM: game.user.isGM,
                 damageButtonClicked:
                     message.getFlag("dcc-qol", "damageButtonClicked") || false,
+                damageTotal: message.getFlag("dcc-qol", "damageTotal") || null,
             };
 
             // --- Render the Custom Template ---

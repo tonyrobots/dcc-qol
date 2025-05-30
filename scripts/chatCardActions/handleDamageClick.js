@@ -96,6 +96,13 @@ export async function handleDamageClick(
                 flagKey: "damageButtonClicked",
                 flagValue: true,
             });
+            // Also store the damage total for display in the template
+            await socket.executeAsGM("gmUpdateMessageFlag", {
+                messageId: message.id,
+                flagScope: "dcc-qol",
+                flagKey: "damageTotal",
+                flagValue: roll.total,
+            });
         } catch (flagError) {
             console.warn("DCC-QOL | Could not update message flag:", flagError);
             // Don't throw here - the damage roll was successful even if flag update failed

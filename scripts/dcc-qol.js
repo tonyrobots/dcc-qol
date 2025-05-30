@@ -26,6 +26,7 @@ export let socket;
 async function preloadTemplates() {
     const templatePaths = [
         "modules/dcc-qol/templates/attackroll-card.html",
+        "modules/dcc-qol/templates/partials/_damage-button.html",
         // Add other template paths here if needed
     ];
     return loadTemplates(templatePaths);
