@@ -63,37 +63,6 @@ export async function gmApplyDamage(payload) {
 }
 
 /**
- * Handles the request to update a message flag, executed on the GM's client via socketlib.
- * This is needed because only the GM has permission to update chat message flags.
- *
- * @param {object} payload - The data payload from the client.
- * @param {string} payload.messageId - The ID of the message to update.
- * @param {string} payload.flagScope - The flag scope (module ID).
- * @param {string} payload.flagKey - The flag key to update.
- * @param {any} payload.flagValue - The value to set for the flag.
- */
-export async function gmUpdateMessageFlag(payload) {
-    const { messageId, flagScope, flagKey, flagValue } = payload;
-
-    if (!game.user.isGM) {
-        return { success: false, reason: "not-gm" };
-    }
-
-    try {
-        const message = game.messages.get(messageId);
-        if (!message) {
-            return { success: false, reason: "message-not-found" };
-        }
-
-        await message.setFlag(flagScope, flagKey, flagValue);
-        return { success: true };
-    } catch (error) {
-        console.error("DCC-QOL | Error updating message flag:", error);
-        return { success: false, reason: error.message };
-    }
-}
-
-/**
  * Handles the request to update multiple message flags at once, executed on the GM's client via socketlib.
  * This ensures atomic updates and proper re-rendering on all clients.
  *
@@ -121,40 +90,12 @@ export async function gmUpdateMessageFlags(payload) {
             updateData[`flags.${flagScope}.${key}`] = value;
         }
 
+        // Foundry will automatically re-render the message on all clients when updated
         await message.update(updateData);
-
-        // Trigger re-render on all clients by emitting a socket message
-        socket.executeForEveryone("triggerMessageRerender", { messageId });
 
         return { success: true };
     } catch (error) {
         console.error("DCC-QOL | Error updating message flags:", error);
         return { success: false, reason: error.message };
-    }
-}
-
-/**
- * Triggers a re-render of a specific chat message on the client.
- * This is called on all clients to ensure the updated flags are reflected.
- *
- * @param {object} payload - The data payload.
- * @param {string} payload.messageId - The ID of the message to re-render.
- */
-export function triggerMessageRerender(payload) {
-    const { messageId } = payload;
-
-    try {
-        const message = game.messages.get(messageId);
-        if (message) {
-            // Force a re-render by triggering the renderChatMessage hook
-            const html = $(`.chat-message[data-message-id="${messageId}"]`);
-            if (html.length > 0) {
-                // Get the message data and trigger a re-render
-                const data = message.getFlag("core", "export") || {};
-                Hooks.call("renderChatMessage", message, html, data);
-            }
-        }
-    } catch (error) {
-        console.error("DCC-QOL | Error re-rendering message:", error);
     }
 }
