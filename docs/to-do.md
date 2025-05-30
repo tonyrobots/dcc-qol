@@ -30,6 +30,7 @@ Project Structure is in @docs/project_structure.md
 -   [x] Fix Error: The async option for Roll#evaluate has been removed. Use Roll#evaluateSync for synchronous roll evaluation.
 -   [ ] Properties set in range check aren't making it through to `prepareQolData`, check flow of data. Look at adding logical data, e.g. range value, penalty applied, and then adding conditional logic on the `attackroll` hook to figure out how to present that (logically separating the two parts).
 -   [ ] Check rolltable (fumbles/crits) on tempo PC main install
+-   [] Some issues: crit button doesn't disappear when clicked. damage total is empty if player clicks. Replacement with damage: {{damage total}} only seems to happen on GM view
 
 ## Non-Core Future Tasks
 

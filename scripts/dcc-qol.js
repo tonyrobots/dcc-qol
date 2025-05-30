@@ -14,6 +14,8 @@ import {
     gmApplyDamage,
     createDamageScrollingText,
     gmUpdateMessageFlag,
+    gmUpdateMessageFlags,
+    triggerMessageRerender,
 } from "./socketHandlers.js";
 
 // Declare socket variable in module scope
@@ -67,6 +69,8 @@ Hooks.once("socketlib.ready", () => {
     socket.register("gmApplyDamage", gmApplyDamage);
     socket.register("createDamageScrollingText", createDamageScrollingText);
     socket.register("gmUpdateMessageFlag", gmUpdateMessageFlag);
+    socket.register("gmUpdateMessageFlags", gmUpdateMessageFlags);
+    socket.register("triggerMessageRerender", triggerMessageRerender);
     console.log("DCC QoL | Socketlib initialized and functions registered.");
 });
 
