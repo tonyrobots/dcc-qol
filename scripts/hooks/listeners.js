@@ -12,6 +12,7 @@ import {
     handleAutomatedDamageApplication,
     appendAppliedDamageInfoToCard,
 } from "./damageApplicationHooks.js";
+import { enrichDccWeaponAttackMessage } from "./enrichmentHooks.js";
 // Import other hook listeners here as they are created...
 // e.g., import { setupChatListeners } from './chatHooks.js';
 
@@ -19,15 +20,12 @@ import {
  * Initializes and registers all hook listeners for the module.
  */
 export function registerHookListeners() {
-    console.log("DCC-QOL | Initializing hook listeners...");
-
     // Register attack roll listeners
     // Hooks.on("dcc.modifyAttackRollTerms", addTestBonus);
     Hooks.on("dcc.modifyAttackRollTerms", applyFiringIntoMeleePenalty);
     Hooks.on("dcc.modifyAttackRollTerms", applyRangeChecksAndPenalties);
     Hooks.on("dcc.rollWeaponAttack", prepareQoLAttackData);
-    console.log("DCC-QOL | Registered listener for dcc.rollWeaponAttack");
-    console.log("DCC-QOL | Registered listener for dcc.modifyAttackRollTerms");
+    // Hooks.on("dcc.rollWeaponAttack", enrichDccWeaponAttackMessage);
 
     // Register chat message listeners
     Hooks.on("renderChatMessage", (message, html, data) => {
@@ -36,12 +34,6 @@ export function registerHookListeners() {
         handleAutomatedDamageApplication(message, html, data);
         appendAppliedDamageInfoToCard(message, html, data);
     });
-    console.log("DCC-QOL | Registered listener for renderChatMessage");
-
-    // Register chat listeners (example)
-    // Hooks.on('renderChatMessage', setupChatListeners);
-
-    // Register other hooks...
 
     console.log("DCC-QOL | Hook listeners initialized.");
 }

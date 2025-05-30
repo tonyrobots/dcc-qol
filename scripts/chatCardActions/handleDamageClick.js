@@ -94,7 +94,7 @@ export async function handleDamageClick(
                 messageId: message.id,
                 flagScope: "dcc-qol",
                 flagKey: "damageButtonClicked",
-                flagValue: true,
+                flagValue: { clicked: true, total: roll.total },
             });
         } catch (flagError) {
             console.warn("DCC-QOL | Could not update message flag:", flagError);

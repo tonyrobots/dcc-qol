@@ -81,18 +81,34 @@
     </div>
     {{#unless damageWasAutomated}}
     {{#if canUserModify}}
-    {{#unless damageButtonClicked}}
+    {{#if flags.dcc-qol.damageButtonClicked.clicked}}
+    <div class="chat-details centered">
+        <div class="roll-result">
+            {{localize "DCC.Damage"}}: <strong>{{flags.dcc-qol.damageButtonClicked.total}}</strong>
+        </div>
+    </div>
+    {{else}}
+    {{#unless flags.dcc-qol.damageButtonClicked}}
     <div class="card-buttons centered">
         <button data-action="damage" class="damage-button">{{ localize "DCC.RollDamage" }}</button>
     </div>
     {{/unless}}
+    {{/if}}
     {{else}}
     {{#if isGM}}
-    {{#unless damageButtonClicked}}
+    {{#if flags.dcc-qol.damageButtonClicked.clicked}}
+    <div class="chat-details centered">
+        <div class="roll-result">
+            {{localize "DCC.Damage"}}: <strong>{{flags.dcc-qol.damageButtonClicked.total}}</strong>
+        </div>
+    </div>
+    {{else}}
+    {{#unless flags.dcc-qol.damageButtonClicked}}
     <div class="card-buttons centered">
         <button data-action="damage" class="damage-button">{{ localize "DCC.RollDamage" }}</button>
     </div>
     {{/unless}}
+    {{/if}}
     {{/if}}
     {{/if}}
     {{else}}
@@ -121,18 +137,34 @@
     </div>
     {{#unless damageWasAutomated}}
     {{#if canUserModify}}
-    {{#unless damageButtonClicked}}
+    {{#if flags.dcc-qol.damageButtonClicked.clicked}}
+    <div class="chat-details centered">
+        <div class="roll-result">
+            {{localize "DCC.Damage"}}: <strong>{{flags.dcc-qol.damageButtonClicked.total}}</strong>
+        </div>
+    </div>
+    {{else}}
+    {{#unless flags.dcc-qol.damageButtonClicked}}
     <div class="card-buttons centered">
         <button data-action="damage" class="damage-button">{{ localize "DCC.RollDamage" }}</button>
     </div>
     {{/unless}}
+    {{/if}}
     {{else}}
     {{#if isGM}}
-    {{#unless damageButtonClicked}}
+    {{#if flags.dcc-qol.damageButtonClicked.clicked}}
+    <div class="chat-details centered">
+        <div class="roll-result">
+            {{localize "DCC.Damage"}}: <strong>{{flags.dcc-qol.damageButtonClicked.total}}</strong>
+        </div>
+    </div>
+    {{else}}
+    {{#unless flags.dcc-qol.damageButtonClicked}}
     <div class="card-buttons centered">
         <button data-action="damage" class="damage-button">{{ localize "DCC.RollDamage" }}</button>
     </div>
     {{/unless}}
+    {{/if}}
     {{/if}}
     {{/if}}
     {{else}}

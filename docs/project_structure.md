@@ -16,10 +16,10 @@ This document outlines the file structure and architectural approach for the `dc
         -   `*.js` (e.g., `handleDamageClick.js`): Individual files for specific card actions.
     -   `settings.js`: Registers module settings and menus using Foundry VTT's Settings API.
     -   `config.js`: Contains module-level configuration constants or flags.
-    -   **`scripts/legacy/`:** Contains legacy JavaScript files retained for reference during the migration to the hook-based system. **These files are deprecated and will be removed** once their functionality is fully reimplemented using hooks. **Do not add new code or modify files here.**
-        -   `dcc-qol.js`: Legacy main module entry point.
-        -   `patch.js`: Legacy file containing function overrides (monkey-patching).
-        -   `chat.js`: Legacy file for chat message manipulation and listeners.
+    -   `dcc-qol.js`: Main module entry point.
+    -   `socketHandlers.js`: Handles real-time communication via sockets.
+    -   `utils.js`: Contains utility functions used across the module.
+    -   `compatibility.js`: Manages compatibility with other modules or system versions.
 -   **`styles/`:** CSS or SCSS files for module styling (e.g., `dcc-qol.css`).
 -   **`templates/`:** Handlebars (`.hbs`) templates used for rendering UI elements, such as chat messages or dialogs. Note that legacy templates might exist and need updating or replacing as features are refactored.
 
@@ -32,8 +32,6 @@ The module **must** operate based on listening to hooks provided by Foundry VTT 
 3.  **Implement Handler:** Create the function that will execute when the hook fires. This function should reside in a logically named file within `scripts/hooks/` (e.g., `attackRollHooks.js`).
 4.  **Import and Connect:** Import the handler function into `listeners.js` and pass it as the callback when registering the hook.
 
-**Avoid Overrides:** Direct modification or replacement (monkey-patching) of core Foundry or DCC system functions (like methods previously targeted in `patch.js`) is strictly forbidden in the new architecture. Rely solely on the available hooks. If a necessary hook doesn't exist, the preferred approach is to request its addition to the core DCC system.
+**Avoid Overrides:** Direct modification or replacement (monkey-patching) of core Foundry or DCC system functions is strictly forbidden in the new architecture. Rely solely on the available hooks. If a necessary hook doesn't exist, the preferred approach is to request its addition to the core DCC system.
 
 **Modularity:** Keep hook handler files focused on specific features or hook types. This promotes maintainability and testability.
-
-**Reference Legacy Code:** The legacy files (`legacy/patch.js`, `legacy/chat.js`, `legacy/dcc-qol.js`) can be consulted to understand previous functionality but should not be directly copied or modified. The goal is to reimplement their features using the hook-based pattern. These files will be deleted once their functionality is fully migrated.

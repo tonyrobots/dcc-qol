@@ -24,7 +24,7 @@ export async function checkAndCorrectEmoteRollsSetting() {
                 new Dialog({
                     title: "DCC QoL Compatibility Check",
                     content:
-                        "<p>The 'Narrative Emote Rolls' setting in the DCC system is currently <strong>enabled</strong>.</p><p>This setting is known to be incompatible with some DCC QoL features and may cause unexpected behavior or errors. We strongly recommend disabling it for optimal compatibility.</p><p><strong>Would you like to disable this setting now?</strong></p>",
+                        "<p>The 'Narrative Emote Rolls' setting in the DCC system is currently <strong>enabled</strong>.</p><p>This setting can conflict with DCC-QoL, and we recommend disabling it for optimal compatibility.</p><p><strong>Would you like to disable this setting now?</strong></p>",
                     buttons: {
                         yes: {
                             icon: '<i class="fas fa-check"></i>',

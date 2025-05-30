@@ -77,6 +77,7 @@ export async function handleAutomatedDamageApplication(message, html, data) {
                 "DCC-QOL | DCC System Automated damage from attack roll SKIPPED due to MISS for message:",
                 message.id
             );
+            // sourceOfAutomation remains null, allowing potential fallback if conditions met (though unlikely for attack rolls)
         } else {
             damageToApply = qolFlags.automatedDamageTotal;
             targetTokenId = qolFlags.targetTokenId;
@@ -89,24 +90,41 @@ export async function handleAutomatedDamageApplication(message, html, data) {
             );
         }
     }
-    // If the primary QoL path didn't set a source, and it's a damage roll, log it for debugging.
+    // Fallback for DCC system messages (e.g., generic "Damage" rolls)
     else if (
-        !sourceOfAutomation &&
+        !sourceOfAutomation && // Ensure primary logic didn't set a source
+        message.flavor?.toLowerCase() === "damage" &&
         message.rolls &&
         message.rolls.length > 0 &&
-        message.flavor?.toLowerCase().includes("damage") &&
-        message.speaker?.actor
+        message.content &&
+        !isNaN(Number(message.content)) &&
+        Number(message.content) > 0 &&
+        game.user.targets.size === 1 // GM must have exactly one token targeted
     ) {
-        console.warn(
-            "DCC-QOL | Damage Application Fallback would have been triggered (logging only) for message:",
-            message.id,
-            message
+        const targetTokenDoc = game.user.targets.first(); // Will be valid due to size === 1 check
+        damageToApply = Number(message.content);
+        targetTokenId = targetTokenDoc.id;
+        sourceOfAutomation = "dcc_system_fallback_damage";
+        console.debug(
+            `DCC-QOL | Fallback damage triggered: damage=${damageToApply}, target=${targetTokenId} (Actor: ${
+                targetTokenDoc.actor?.name ?? "N/A"
+            }), source=${sourceOfAutomation} for message: ${message.id}`
         );
     } else {
-        console.debug(
-            "DCC-QOL | Message did not qualify for primary QoL damage or fallback logging for message:",
-            message.id
-        );
+        // This block executes if neither the primary QoL logic nor the fallback logic set a sourceOfAutomation.
+        // It's important to check !sourceOfAutomation here, as the primary logic might have decided not to act (e.g., a miss)
+        // in which case sourceOfAutomation would be null, but we wouldn't want to log "did not qualify" if it was simply a miss.
+        // However, the current structure (if -> else if -> else) means this 'else' is only hit if the preceding 'if' and 'else if' were false.
+        // If the primary 'if' was false, sourceOfAutomation is null.
+        // If the fallback 'else if' was false, sourceOfAutomation is still null.
+        // So, sourceOfAutomation will be null here if no action was taken by either block.
+        if (!sourceOfAutomation) {
+            // This check is slightly redundant due to the if/else if structure but makes intent clear.
+            console.debug(
+                "DCC-QOL | Message did not qualify for QoL (primary or fallback) automated damage for message:",
+                message.id
+            );
+        }
     }
 
     // Safety Check & Exit if no valid automation was determined

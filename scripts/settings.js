@@ -10,7 +10,7 @@ export const registerSettings = async function () {
         scope: "world",
         type: Boolean,
         default: true,
-        config: true,
+        config: false, // change to true when we're ready to make the qol attack card optional
     });
     /**
      * Automate damage apply
