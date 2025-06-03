@@ -365,3 +365,63 @@
 .dccqol.chat-card .dice-roll .dice-total.fumble {
     color: #810c0a !important; /* QoL Failure Color */
 }
+
+/* Friendly Fire Result Styling */
+.dccqol-friendlyfire-result {
+    margin: 8px 0;
+    padding: 6px;
+    border-radius: 3px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.dccqol-attack-roll-section {
+    margin: 8px 0;
+    padding: 5px;
+    background: rgba(213, 209, 197, 0.3);
+    border-radius: 3px;
+}
+
+.dccqol-attack-roll-section .attack-roll-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: center;
+    color: #2c1810;
+    font-size: 13px;
+}
+
+.dccqol-attack-result {
+    margin: 5px 0;
+    padding: 4px;
+    border-radius: 3px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.dccqol-damage-result {
+    margin: 5px 0;
+    padding: 4px;
+    border-radius: 3px;
+    text-align: center;
+    font-weight: bold;
+    color: #aa0200;
+}
+
+/* Friendly Fire Damage Button Styling */
+button[data-action="friendlyFireDamage"] {
+    background: linear-gradient(to bottom, #f0e8e0, #e0d0c0) !important;
+    border-color: #8b4513 !important;
+    color: #4b1810 !important;
+}
+
+button[data-action="friendlyFireDamage"]:hover {
+    background: linear-gradient(to bottom, #f3ebe3, #e3d3c3) !important;
+    border-color: #a0522d !important;
+}
+
+button[data-action="friendlyFireDamage"]:disabled {
+    background: linear-gradient(to bottom, #e0d8d0, #d0c8c0) !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+}

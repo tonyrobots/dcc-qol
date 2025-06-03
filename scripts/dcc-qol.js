@@ -27,6 +27,7 @@ async function preloadTemplates() {
     const templatePaths = [
         "modules/dcc-qol/templates/attackroll-card.html",
         "modules/dcc-qol/templates/partials/_damage-button.html",
+        "modules/dcc-qol/templates/friendly-fire-card.html",
         // Add other template paths here if needed
     ];
     return loadTemplates(templatePaths);

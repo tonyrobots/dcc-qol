@@ -6,6 +6,7 @@
 import {
     getFirstTarget,
     checkFiringIntoMelee,
+    getTokensInMeleeRange,
     getWeaponFromActorById,
     measureTokenDistance,
 } from "../utils.js";
@@ -222,6 +223,8 @@ export async function prepareQoLAttackData(rolls, messageData) {
 
     // --- Friendly Fire Check ---
     let showFriendlyFireButton = false;
+    let friendliesInMelee = [];
+
     if (
         game.settings.get("dcc-qol", "automateFriendlyFire") && // if setting is enabled
         isPC &&
@@ -230,12 +233,25 @@ export async function prepareQoLAttackData(rolls, messageData) {
         !hitsTarget &&
         targetDocument
     ) {
-        // Missed a specific target
+        // Missed a specific target with ranged weapon
         try {
-            showFriendlyFireButton = await checkFiringIntoMelee(targetDocument);
+            const friendlyTokenDocs = getTokensInMeleeRange(
+                targetDocument,
+                "friendly"
+            );
+            showFriendlyFireButton = friendlyTokenDocs.length > 0;
+
+            // Store simplified token data instead of full TokenDocument objects
+            // since message flags are serialized as JSON and lose object methods
+            friendliesInMelee = friendlyTokenDocs.map((tokenDoc) => ({
+                id: tokenDoc.id,
+                name: tokenDoc.name,
+                actorId: tokenDoc.actorId,
+            }));
         } catch (e) {
-            console.error("DCC-QOL | Error calling checkFiringIntoMelee:", e);
+            console.error("DCC-QOL | Error calling getTokensInMeleeRange:", e);
             showFriendlyFireButton = false; // Default to false on error
+            friendliesInMelee = [];
         }
     }
 
@@ -272,6 +288,7 @@ export async function prepareQoLAttackData(rolls, messageData) {
         deedRollSuccess: messageData.system?.deedRollSuccess ?? null,
         hitsAc: hitsAc, // Pass the raw hitsAC value for display when no target
         showFriendlyFireButton: showFriendlyFireButton,
+        friendliesInMelee: friendliesInMelee, // Store the array of friendly tokens in melee range
         options: {}, // Placeholder for future options
         // Add automation flags and results
         damageWasAutomated: damageWasAutomated,

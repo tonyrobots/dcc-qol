@@ -61,24 +61,24 @@ export function measureTokenDistance(token1D, token2D) {
 }
 
 /**
- * Checks if a target token has any adjacent allied tokens
- * @param {TokenDocument} targetTokenDocument - The token document to check for adjacent allies
- * @returns {Promise<boolean>} True if target has adjacent allies, false otherwise
+ * Gets all tokens within melee range of a target token, optionally filtered by disposition.
+ * @param {TokenDocument} targetTokenDocument - The token document to check for adjacent tokens
+ * @param {string} scope - Filter scope: "all", "enemy", "friendly", "neutral"
+ * @returns {TokenDocument[]} Array of token documents matching the criteria
  */
-
-export function checkFiringIntoMelee(targetTokenDocument) {
-    let firingIntoMelee = false;
+export function getTokensInMeleeRange(targetTokenDocument, scope = "all") {
+    const tokensInMelee = [];
     console.debug(
-        `DCC-QOL Utils | checkFiringIntoMelee: Checking target ${targetTokenDocument?.name} (ID: ${targetTokenDocument?.id})`
+        `DCC-QOL Utils | getTokensInMeleeRange: Checking target ${targetTokenDocument?.name} (ID: ${targetTokenDocument?.id}) for ${scope} tokens`
     );
 
     const targetTokenPlaceable = game.canvas.tokens.get(targetTokenDocument.id);
 
     if (!targetTokenPlaceable) {
         console.warn(
-            `DCC-QOL Utils | checkFiringIntoMelee: Target token placeable not found on canvas for document ID: ${targetTokenDocument?.id}. Cannot accurately determine melee situation.`
+            `DCC-QOL Utils | getTokensInMeleeRange: Target token placeable not found on canvas for document ID: ${targetTokenDocument?.id}. Cannot determine melee situation.`
         );
-        return false;
+        return tokensInMelee;
     }
 
     // Define a search area around the target token
@@ -96,7 +96,7 @@ export function checkFiringIntoMelee(targetTokenDocument) {
         game.canvas.tokens.quadtree.getObjects(searchRect);
 
     console.debug(
-        `DCC-QOL Utils | checkFiringIntoMelee: Found ${nearbyTokenPlaceables.size} tokens near target using quadtree.`
+        `DCC-QOL Utils | getTokensInMeleeRange: Found ${nearbyTokenPlaceables.size} tokens near target using quadtree.`
     );
 
     for (const tokenPlaceable of nearbyTokenPlaceables) {
@@ -112,32 +112,78 @@ export function checkFiringIntoMelee(targetTokenDocument) {
             continue; // Skip the target token itself
         }
 
-        // Check if the token is an ally and in melee range
+        // Check if the token is in melee range
         const distance = measureTokenDistance(
             targetTokenDocument,
             otherTokenDocument
         );
         const disposition = otherTokenDocument.disposition;
+
         console.debug(
             `DCC-QOL Utils |     - Distance to ${otherTokenDocument?.name}: ${distance}`
         );
         console.debug(
-            `DCC-QOL Utils |     - Disposition of ${otherTokenDocument?.name}: ${disposition} (Friendly is ${CONST.TOKEN_DISPOSITIONS.FRIENDLY})`
+            `DCC-QOL Utils |     - Disposition of ${otherTokenDocument?.name}: ${disposition}`
         );
 
-        if (
-            distance <= game.canvas.dimensions.distance &&
-            disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY
-        ) {
-            console.debug(
-                `DCC-QOL Utils |     - Ally ${otherTokenDocument?.name} is in melee range!`
-            );
-            firingIntoMelee = true; // Set to true and break, as we found one
-            break;
+        if (distance <= game.canvas.dimensions.distance) {
+            // Token is in melee range, now check if it matches the scope filter
+            const includeToken = _matchesDispositionScope(disposition, scope);
+
+            if (includeToken) {
+                console.debug(
+                    `DCC-QOL Utils |     - Token ${otherTokenDocument?.name} matches scope '${scope}' and is in melee range!`
+                );
+                tokensInMelee.push(otherTokenDocument);
+            }
         }
     }
+
     console.debug(
-        `DCC-QOL Utils | checkFiringIntoMelee: Returning ${firingIntoMelee}`
+        `DCC-QOL Utils | getTokensInMeleeRange: Returning ${tokensInMelee.length} tokens for scope '${scope}'`
+    );
+    return tokensInMelee;
+}
+
+/**
+ * Helper function to check if a token's disposition matches the requested scope
+ * @param {number} disposition - The token's disposition value
+ * @param {string} scope - The requested scope filter
+ * @returns {boolean} True if the disposition matches the scope
+ * @private
+ */
+function _matchesDispositionScope(disposition, scope) {
+    switch (scope) {
+        case "all":
+            return true;
+        case "friendly":
+            return disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY;
+        case "neutral":
+            return disposition === CONST.TOKEN_DISPOSITIONS.NEUTRAL;
+        case "enemy":
+            return disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
+        default:
+            console.warn(
+                `DCC-QOL Utils | _matchesDispositionScope: Unknown scope '${scope}', defaulting to 'all'`
+            );
+            return true;
+    }
+}
+
+/**
+ * Checks if a target token has any adjacent allied tokens (wrapper function for backward compatibility)
+ * @param {TokenDocument} targetTokenDocument - The token document to check for adjacent allies
+ * @returns {boolean} True if target has adjacent allies, false otherwise
+ */
+export function checkFiringIntoMelee(targetTokenDocument) {
+    const friendlyTokens = getTokensInMeleeRange(
+        targetTokenDocument,
+        "friendly"
+    );
+    const firingIntoMelee = friendlyTokens.length > 0;
+
+    console.debug(
+        `DCC-QOL Utils | checkFiringIntoMelee: Returning ${firingIntoMelee} (found ${friendlyTokens.length} friendly tokens)`
     );
     return firingIntoMelee;
 }

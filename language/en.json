@@ -14,11 +14,12 @@
     "DCC-QOL.FriendlyFire": "Friendly Fire",
     "DCC-QOL.FriendlyFireCheck": "Friendly Fire Check",
     "DCC-QOL.FriendlyFireFail": "Attack may strike your ally; make a second attack roll against their AC.",
+    "DCC-QOL.FriendlyFireFailWithTarget": "Your attack misses {originalTarget} and instead flies towards {targetName}!",
     "DCC-QOL.FriendlyFireSuccess": "The attack misses everyone, enemies and allies alike.",
     "DCC-QOL.SettingAutomateDamageApply": "Auto-apply damage",
     "DCC-QOL.SettingAutomateDamageApplyHint": "Automatically subtract rolled damage from target. (Requires a target, obviously.)",
-    "DCC-QOL.SettingAutomateFriendlyFire": "Semi-automate 'Friendly Fire' determination",
-    "DCC-QOL.SettingAutomateFriendlyFireHint": "When firing into melee and missile attack misses, request an additional d100 roll .",
+    "DCC-QOL.SettingAutomateFriendlyFire": "Automate 'Friendly Fire' determination",
+    "DCC-QOL.SettingAutomateFriendlyFireHint": "When firing into melee and missile attack misses, automatically determine friendly fire target and make attack roll.",
     "DCC-QOL.SettingFiringIntoMeleePenalty": "Automate penalty when firing into melee",
     "DCC-QOL.SettingFiringIntoMeleePenaltyHint": "When firing a missile attack into melee, apply a -1 penalty to the attack roll.",
     "DCC-QOL.SettingAutomateMonsterCritLuck": "Automate PC's Luck modifier against monster's critical hit.",
@@ -62,5 +63,11 @@
     "DCC-QOL.DialogRangedOutOfRangeContent": "Your target is {distance}{units} away, but your {weaponName}'s maximum range is {maxRange}{units}.",
     "DCC-QOL.TagMediumRange": "Medium Range",
     "DCC-QOL.TagLongRange": "Long Range",
-    "DCC-QOL.TagOutOfRange": "Out of Range"
+    "DCC-QOL.TagOutOfRange": "Out of Range",
+    "DCC-QOL.FriendlyFireAttackRoll": "Attack Roll",
+    "DCC-QOL.FriendlyFireAttackHits": "Attack hits {targetName} (rolled {total} vs AC {ac})!",
+    "DCC-QOL.FriendlyFireAttackMisses": "Attack bounces off {targetName} harmlessly (rolled {total} vs AC {ac})",
+    "DCC-QOL.FriendlyFireDamageRoll": "Friendly Fire Damage with {weapon}",
+    "DCC-QOL.FriendlyFireDamageResult": "{targetName} takes {damage} damage from friendly fire!",
+    "DCC-QOL.DamageRolled": "Damage Rolled"
 }

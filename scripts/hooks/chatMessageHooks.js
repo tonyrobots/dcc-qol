@@ -181,6 +181,71 @@ export async function enhanceAttackRollCard(message, html, data) {
         }
     } // End of Attack Roll specific enhancements
 
+    // Handle QoL Friendly Fire Cards
+    if (qolFlags.isFriendlyFireCheck) {
+        try {
+            // For friendly fire cards that have a hit and use our full template,
+            // we need to add damage button event listeners
+            if (qolFlags.friendlyFireHit) {
+                // Get actor and weapon for the friendly fire damage
+                let actor;
+                const speaker = message.speaker;
+
+                // Try to get actor from the token speaker first
+                if (speaker.token && speaker.scene) {
+                    const tokenDocument = game.scenes
+                        .get(speaker.scene)
+                        ?.tokens.get(speaker.token);
+                    if (tokenDocument) {
+                        actor = tokenDocument.actor;
+                    }
+                }
+
+                // If no actor from token speaker, fallback to general speaker actor resolution
+                if (!actor) {
+                    actor = message.getSpeakerActor();
+                }
+
+                // Final fallback to qolFlags.actorId
+                if (!actor && qolFlags.actorId) {
+                    actor = game.actors.get(qolFlags.actorId);
+                }
+
+                if (!actor) {
+                    console.warn(
+                        `DCC-QOL | Actor could not be determined for friendly fire message ${message.id}`
+                    );
+                    return;
+                }
+
+                // Get weapon from actor
+                const weapon = getWeaponFromActorById(actor, qolFlags.weaponId);
+                if (!weapon) {
+                    console.warn(
+                        `DCC-QOL | Weapon could not be found for friendly fire message ${message.id}`
+                    );
+                    return;
+                }
+
+                // Add event listener for the damage button on friendly fire cards
+                html.find('button[data-action="damage"]').on("click", (event) =>
+                    handleDamageClick(event, message, actor, weapon, qolFlags)
+                );
+
+                console.debug(
+                    "DCC-QOL | Added damage button listener for friendly fire message",
+                    message.id
+                );
+            }
+        } catch (err) {
+            console.error(
+                "DCC QoL | Error setting up friendly fire damage button:",
+                err,
+                message.id
+            );
+        }
+    }
+
     // Handle Appending "Applied Damage" info to QoL Damage Rolls
     // This section was moved to damageApplicationHooks.js
 }
