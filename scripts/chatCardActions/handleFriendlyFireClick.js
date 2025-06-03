@@ -1,9 +1,8 @@
 /* global ui, Roll, ChatMessage, game, renderTemplate */
 /**
  * Handles the click event for the "Friendly Fire Check" button on the QoL attack card.
- * Performs a d100 friendly fire check, and if it fails (<=50), automatically makes a
- * simplified attack roll against a randomly selected friendly target, showing the result
- * inline with a damage button if it hits.
+ * Performs a d100 friendly fire check. Regardless of outcome (hit ally or miss all),
+ * it uses the friendly-fire-card.html template to display the result.
  *
  * @param {Event} event - The click event.
  * @param {ChatMessage} message - The chat message document associated with the card.
@@ -28,21 +27,24 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
         return;
     }
 
-    // Validate that we have friendly tokens to potentially target
     const friendliesInMelee = qolFlags.friendliesInMelee || [];
     if (!Array.isArray(friendliesInMelee) || friendliesInMelee.length === 0) {
         console.error(
             "DCC-QOL | No friendly tokens found in melee for friendly fire check"
         );
-        ui.notifications.error(
-            "DCC QoL: No friendly targets available for friendly fire."
-        );
-        return;
+        // Still proceed to roll, but the outcome will always be "missed everyone"
+        // as there are no valid targets for actual friendly fire.
+        // The template will handle this gracefully if no target is selected.
     }
 
-    // Get weapon for attack calculations
     const weapon = actor.items.get(qolFlags.weaponId);
-    if (!weapon) {
+    if (
+        !weapon &&
+        Array.isArray(friendliesInMelee) &&
+        friendliesInMelee.length > 0
+    ) {
+        // Weapon is only strictly necessary if there are friendlies to potentially hit.
+        // If no friendlies, we can proceed to the "missed everyone" outcome without a weapon.
         console.error("DCC-QOL | Weapon not found for friendly fire attack");
         ui.notifications.error(
             "DCC QoL: Weapon not found for friendly fire check."
@@ -51,127 +53,179 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
     }
 
     try {
-        // Step 1: Roll d100 to determine if friendly fire occurs
         const d100Roll = new Roll("1d100", actor.getRollData());
         await d100Roll.evaluate();
+        if (game.dice3d) {
+            // Check if DSN is active
+            await game.dice3d.showForRoll(d100Roll);
+        }
 
-        const d100HTML = await d100Roll.render();
-        let friendlyFireOccurs = d100Roll.total <= 50;
+        const friendlyFireAttemptOccurs = d100Roll.total <= 50;
+        let noFriendlyFireActuallyOccurred = true; // True if d100 > 50 OR no valid targets/weapon
+        let templateData;
+        let messageSystemData = {}; // For damage button related data
+        let messageFlags = {}; // For qol flags specific to this FF event
 
-        if (!friendlyFireOccurs) {
-            // Success - missed everyone, use simple message
-            const resultText = game.i18n.localize(
-                "DCC-QOL.FriendlyFireSuccess"
+        if (
+            friendlyFireAttemptOccurs &&
+            weapon &&
+            friendliesInMelee.length > 0
+        ) {
+            // Friendly fire roll failed (<=50), and there are potential targets and a weapon
+            noFriendlyFireActuallyOccurred = false;
+
+            const randomIndex = Math.floor(
+                Math.random() * friendliesInMelee.length
             );
-            const finalContent = `<div class="dccqol-friendlyfire-result status-success">${
-                d100Roll.toAnchor().outerHTML
-            } - ${resultText}</div>`;
+            const selectedFriendlyData = friendliesInMelee[randomIndex];
+            const friendlyTokenPlaceable = game.canvas.tokens.get(
+                selectedFriendlyData.id
+            );
 
-            d100Roll.toMessage({
-                speaker: ChatMessage.getSpeaker({ actor: actor }),
-                flavor: game.i18n.localize("DCC-QOL.FriendlyFireCheck"),
-                content: finalContent,
-                flags: {
-                    dccqol: {
-                        isFriendlyFireCheck: true,
-                        parentId: message.id,
+            if (!friendlyTokenPlaceable) {
+                console.error(
+                    `DCC-QOL | Selected friendly token ${selectedFriendlyData.id} no longer exists on canvas`
+                );
+                ui.notifications.error(
+                    "DCC QoL: Selected friendly target is no longer available."
+                );
+                // Fallback to "missed everyone" scenario by setting noFriendlyFireActuallyOccurred to true
+                noFriendlyFireActuallyOccurred = true;
+                templateData = await _prepareFriendlyFireTemplateData(
+                    d100Roll,
+                    actor,
+                    qolFlags,
+                    true, // noFriendlyFireOccurred
+                    null,
+                    null,
+                    null,
+                    null,
+                    null // No target, no attack, no weapon context needed
+                );
+            } else {
+                const selectedFriendlyTokenDoc =
+                    friendlyTokenPlaceable.document;
+                const friendlyActor = selectedFriendlyTokenDoc.actor;
+
+                if (!friendlyActor) {
+                    console.error(
+                        `DCC-QOL | No actor found for friendly token ${selectedFriendlyData.id}`
+                    );
+                    ui.notifications.error(
+                        "DCC QoL: Friendly target has no associated actor."
+                    );
+                    noFriendlyFireActuallyOccurred = true; // Fallback
+                    templateData = await _prepareFriendlyFireTemplateData(
+                        d100Roll,
+                        actor,
+                        qolFlags,
+                        true, // noFriendlyFireOccurred
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    );
+                } else {
+                    const attackRollResult = await _makeFriendlyFireAttackRoll(
+                        actor,
+                        weapon,
+                        friendlyActor
+                    );
+                    // Show DSN for the attack roll
+                    // if (
+                    //     game.dice3d &&
+                    //     attackRollResult &&
+                    //     attackRollResult.attackRoll
+                    // ) {
+                    //     await game.dice3d.showForRoll(
+                    //         attackRollResult.attackRoll
+                    //     );
+                    // }
+
+                    templateData = await _prepareFriendlyFireTemplateData(
+                        d100Roll,
+                        actor,
+                        qolFlags,
+                        false, // noFriendlyFireOccurred = false (FF happened)
+                        selectedFriendlyData.name,
+                        attackRollResult,
+                        weapon,
+                        friendlyActor,
+                        selectedFriendlyData.id // token doc id
+                    );
+
+                    // Prepare system data and flags for when FF occurs and might hit
+                    messageSystemData = {
                         actorId: actor.id,
-                    },
-                },
-            });
-            return;
+                        weaponId: weapon.id,
+                        weaponName: weapon.name,
+                        damageRollFormula: weapon.system.damage || "1d4",
+                    };
+                    messageFlags = {
+                        selectedFriendlyTarget: selectedFriendlyData.id,
+                        friendlyFireHit: attackRollResult.hit,
+                        targetActorId: friendlyActor.id,
+                        targetTokenId: selectedFriendlyData.id,
+                        target: selectedFriendlyData.name,
+                        weaponId: weapon.id,
+                    };
+                }
+            }
+        } else {
+            // Friendly fire roll succeeded (d100 > 50), or no weapon/targets for FF
+            noFriendlyFireActuallyOccurred = true;
+            templateData = await _prepareFriendlyFireTemplateData(
+                d100Roll,
+                actor,
+                qolFlags,
+                true, // noFriendlyFireOccurred = true
+                null, // targetName
+                null, // attackResult
+                weapon, // Pass weapon if available, might be used for properties footer
+                null, // targetActor
+                null // selectedFriendlyTokenDocId
+            );
+            // If weapon is available, try to get properties for the footer
+            // This was implicitly handled by _prepareFriendlyFireTemplateData if weapon was null there.
+            // Let's ensure `properties` is populated in templateData if weapon exists.
+            if (weapon && templateData) {
+                // templateData should exist here
+                const { getWeaponProperties } = await import("../utils.js");
+                templateData.properties = await getWeaponProperties(
+                    weapon,
+                    qolFlags.options || {}
+                );
+            }
         }
 
-        // Step 2: Friendly fire occurs - select random friendly target
-        const randomIndex = Math.floor(
-            Math.random() * friendliesInMelee.length
-        );
-        const selectedFriendlyData = friendliesInMelee[randomIndex];
-
-        // Validate the selected token still exists on the canvas
-        const friendlyTokenPlaceable = game.canvas.tokens.get(
-            selectedFriendlyData.id
-        );
-        if (!friendlyTokenPlaceable) {
-            console.error(
-                `DCC-QOL | Selected friendly token ${selectedFriendlyData.id} no longer exists on canvas`
-            );
-            ui.notifications.error(
-                "DCC QoL: Selected friendly target is no longer available."
-            );
-            return;
-        }
-
-        // Get the TokenDocument and Actor from the placeable
-        const selectedFriendlyTokenDoc = friendlyTokenPlaceable.document;
-        const friendlyActor = selectedFriendlyTokenDoc.actor;
-
-        if (!friendlyActor) {
-            console.error(
-                `DCC-QOL | No actor found for friendly token ${selectedFriendlyData.id}`
-            );
-            ui.notifications.error(
-                "DCC QoL: Friendly target has no associated actor."
-            );
-            return;
-        }
-
-        // Step 3: Make attack roll against the friendly target
-        const attackRollResult = await _makeFriendlyFireAttackRoll(
-            actor,
-            weapon,
-            friendlyActor
-        );
-
-        // Step 4: Prepare template data and render using the template
-        const templateData = await _prepareFriendlyFireTemplateData(
-            d100Roll,
-            selectedFriendlyData.name,
-            attackRollResult,
-            actor,
-            weapon,
-            friendlyActor,
-            qolFlags
-        );
-
-        // Step 5: Render the friendly fire card using the template
         const friendlyFireContent = await renderTemplate(
             "modules/dcc-qol/templates/friendly-fire-card.html",
             templateData
         );
 
-        // Step 6: Create the message data structure
-        const messageData = {
+        const finalMessageData = {
             speaker: ChatMessage.getSpeaker({ actor: actor }),
             flavor: game.i18n.localize("DCC-QOL.FriendlyFireCheck"),
             content: friendlyFireContent,
-            // Add system data that handleDamageClick expects
-            system: {
-                actorId: actor.id,
-                weaponId: weapon.id,
-                weaponName: weapon.name,
-                damageRollFormula: weapon.system.damage || "1d4",
-            },
+            system: noFriendlyFireActuallyOccurred ? {} : messageSystemData,
             flags: {
                 dccqol: {
                     isFriendlyFireCheck: true,
                     parentId: message.id,
                     actorId: actor.id,
-                    weaponId: weapon.id,
-                    selectedFriendlyTarget: selectedFriendlyData.id,
-                    friendlyFireHit: attackRollResult.hit,
-                    targetActorId: friendlyActor.id,
-                    targetTokenId: selectedFriendlyData.id,
-                    target: selectedFriendlyData.name, // For handleDamageClick
+                    noFriendlyFireActuallyOccurred:
+                        noFriendlyFireActuallyOccurred,
+                    ...messageFlags, // Spread flags for FF hit scenario
                 },
             },
         };
 
-        // Send the friendly fire message
-        await d100Roll.toMessage(messageData);
+        await ChatMessage.create(finalMessageData);
+        // d100Roll.toMessage(finalMessageData); // Using ChatMessage.create for consistency
 
         console.debug(
-            "DCC-QOL | Friendly fire check completed. If attack hit, damage button will use standard damage handling."
+            "DCC-QOL | Friendly fire check completed using unified template."
         );
     } catch (rollError) {
         console.error(
@@ -223,72 +277,100 @@ async function _makeFriendlyFireAttackRoll(attacker, weapon, target) {
 /**
  * Prepares template data for the friendly fire card template
  * @param {Roll} d100Roll - The rolled d100 object
- * @param {string} targetName - Name of the friendly target
- * @param {object} attackResult - Result of the attack roll
  * @param {Actor} attacker - The attacking actor
- * @param {Item} weapon - The weapon used
- * @param {Actor} target - The target actor
- * @param {object} qolFlags - Original QoL flags
+ * @param {object} qolFlags - Original QoL flags from the message
+ * @param {boolean} noFriendlyFireOccurred - True if the d100 roll means no FF
+ * @param {string | null} targetName - Name of the friendly target (if FF occurred)
+ * @param {object | null} attackResult - Result of the attack roll (if FF occurred)
+ * @param {Item | null} weapon - The weapon used (if FF occurred, otherwise null)
+ * @param {Actor | null} targetActor - The target actor (if FF occurred)
+ * @param {string | null} selectedFriendlyTokenDocId - Token document ID of the friendly target (if FF occurred)
  * @returns {Promise<object>} The template data object
  * @private
  */
 async function _prepareFriendlyFireTemplateData(
     d100Roll,
+    attacker,
+    qolFlags,
+    noFriendlyFireOccurred,
     targetName,
     attackResult,
-    attacker,
     weapon,
-    target,
-    qolFlags
+    targetActor,
+    selectedFriendlyTokenDocId
 ) {
-    const attackRollHTML = await attackResult.attackRoll.render();
+    const d100RollHTML = d100Roll.toAnchor().outerHTML;
 
-    // Prepare text content for hit/miss
-    let hitText = "";
-    let missText = "";
-
-    if (attackResult.hit) {
-        hitText = game.i18n.format("DCC-QOL.FriendlyFireAttackHits", {
-            total: attackResult.attackTotal,
-            ac: attackResult.targetAC,
-            targetName: targetName,
-        });
-    } else {
-        missText = game.i18n.format("DCC-QOL.FriendlyFireAttackMisses", {
-            total: attackResult.attackTotal,
-            ac: attackResult.targetAC,
-            targetName: targetName,
-        });
-    }
-
-    // Get weapon properties (reusing existing utility)
-    const { getWeaponProperties } = await import("../utils.js");
-    const properties = await getWeaponProperties(
-        weapon,
-        qolFlags.options || {}
-    );
-
-    return {
+    let templateData = {
         actor: attacker,
-        weapon: weapon,
-        target: targetName,
-        targetTokenId: qolFlags.targetTokenId,
-        tokenId: qolFlags.tokenId,
+        tokenId: qolFlags.tokenId, // Attacker's token ID
         d100Roll: d100Roll,
-        d100RollHTML: d100Roll.toAnchor().outerHTML,
-        attackRollHTML: attackRollHTML,
-        hit: attackResult.hit,
-        hitText: hitText,
-        missText: missText,
-        struckAllyText: game.i18n.format("DCC-QOL.FriendlyFireFailWithTarget", {
-            originalTarget: qolFlags.target || "the intended target",
-            targetName: targetName,
-        }),
-        properties: properties,
-        // Add permission checking per-client (same as attack cards)
+        d100RollHTML: d100RollHTML,
+        noFriendlyFireOccurred: noFriendlyFireOccurred,
         canUserModify: attacker.canUserModify(game.user, "update"),
         isGM: game.user.isGM,
-        damageButtonClicked: false, // Always false for new friendly fire cards
+        damageButtonClicked: false, // Always false for new cards
         damageTotal: null, // No damage rolled yet
+        // Initialize fields that are conditional
+        weapon: null,
+        target: null, // Name of the target hit
+        targetTokenId: null, // Token ID of the target hit
+        attackRollHTML: null,
+        hit: false,
+        hitText: "",
+        missText: "",
+        struckAllyText: "",
+        friendlyFireSafeText: "",
+        properties: [],
     };
+
+    if (noFriendlyFireOccurred) {
+        templateData.friendlyFireSafeText = game.i18n.localize(
+            "DCC-QOL.FriendlyFireSuccess"
+        );
+        // weapon, target, targetTokenId, attack details, properties remain null/empty
+    } else {
+        // Friendly fire occurred, populate all relevant fields
+        const attackRollHTML = await attackResult.attackRoll.render();
+        let hitText = "";
+        let missText = "";
+
+        if (attackResult.hit) {
+            hitText = game.i18n.format("DCC-QOL.FriendlyFireAttackHits", {
+                total: attackResult.attackTotal,
+                ac: attackResult.targetAC,
+                targetName: targetName,
+            });
+        } else {
+            missText = game.i18n.format("DCC-QOL.FriendlyFireAttackMisses", {
+                total: attackResult.attackTotal,
+                ac: attackResult.targetAC,
+                targetName: targetName,
+            });
+        }
+
+        const { getWeaponProperties } = await import("../utils.js");
+        const properties = await getWeaponProperties(
+            weapon,
+            qolFlags.options || {}
+        );
+
+        templateData.weapon = weapon;
+        templateData.target = targetName; // Friendly target's name
+        templateData.targetTokenId = selectedFriendlyTokenDocId; // Friendly target's token document ID
+        templateData.attackRollHTML = attackRollHTML;
+        templateData.hit = attackResult.hit;
+        templateData.hitText = hitText;
+        templateData.missText = missText;
+        templateData.struckAllyText = game.i18n.format(
+            "DCC-QOL.FriendlyFireFailWithTarget",
+            {
+                originalTarget: qolFlags.target || "the intended target",
+                targetName: targetName,
+            }
+        );
+        templateData.properties = properties;
+    }
+
+    return templateData;
 }

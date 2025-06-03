@@ -2,12 +2,17 @@
 <div
     class="dccqol chat-card friendly-fire-card"
     data-actor-id="{{actor._id}}"
-    data-weapon-id="{{weapon._id}}"
+    {{#if weapon}}data-weapon-id="{{weapon._id}}"{{/if}}
     data-token-id="{{tokenId}}"
-    data-target="{{target}}"
-    data-targettoken-id="{{targetTokenId}}"
+    {{#if target}}data-target="{{target}}"{{/if}}
+    {{#if targetTokenId}}data-targettoken-id="{{targetTokenId}}"{{/if}}
 >
 
+    {{#if noFriendlyFireOccurred}}
+    <div class="dccqol-friendlyfire-result status-success">
+        {{{d100RollHTML}}} - {{friendlyFireSafeText}}
+    </div>
+    {{else}}
     <!-- Compact Friendly Fire Message -->
     <div class="dccqol-friendlyfire-result status-failure">
         {{{d100RollHTML}}} - {{struckAllyText}}
@@ -27,6 +32,7 @@
         <div class="dccqol-attack-result status-failure">{{missText}}</div>
         {{/if}}
     </div>
+    {{/if}}
 
     <footer class="card-footer centered">
         <span class="tag">{{localize "DCC-QOL.FriendlyFire"}}</span>
