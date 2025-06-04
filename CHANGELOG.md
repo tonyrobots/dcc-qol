@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.0.2 - 2025-06-04
+
+### Version 1.0.2 is finally here!
+
+At long last, dcc-qol has been rewritten from the ground up to support the excellent new version of the DCC RPG system. (v0.51.60+ required.) All of the major functionality has been restored (or improved upon,) including:
+
++ Redesigned Attack Cards, with automatic Hit/Miss determination, extra attack metadata and weapon info, and addition of buttons to roll damage, crits, and fumbles
++ Automatic damage application
++ Range penalty auto-application, with a warning/confirmation when attacks are out of range or will be penalized
++ Incoming crits and fumbles are adjusted based on PCs luck modifier, per DCC rules
++ Fully automatic friendly fire determination
+
+Most importantly, this new rewrite "plays nice" with the DCC system in a way the previous version didn't, so it will be more robust, and development of new features will be a lot easier. I'm looking forward to getting back to a quick release cadence, and adding lots of new features!
+
+That said, as a major new release, there will probably be bugs!  Please report anything you see on the Foundry discord #DCC channel, and/or the [github issues page.](https://github.com/tonyrobots/dcc-qol/issues)
+
 ## 0.1.28 - 2024-12-06
 
 #### DCC-QOL is incompatible with the (very cool) new DCC system update
