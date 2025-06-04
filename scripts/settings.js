@@ -20,7 +20,7 @@ export const registerSettings = async function () {
         hint: "DCC-QOL.SettingAutomateDamageApplyHint",
         scope: "world",
         type: Boolean,
-        default: false,
+        default: true,
         config: true,
     });
 
@@ -33,7 +33,7 @@ export const registerSettings = async function () {
         hint: "DCC-QOL.SettingAutomateFriendlyFireHint",
         scope: "world",
         type: Boolean,
-        default: false,
+        default: true,
         config: true,
     });
 
@@ -46,7 +46,7 @@ export const registerSettings = async function () {
         hint: "DCC-QOL.SettingFiringIntoMeleePenaltyHint",
         scope: "world",
         type: Boolean,
-        default: false,
+        default: true,
         config: true,
     });
 
@@ -59,7 +59,7 @@ export const registerSettings = async function () {
         hint: "DCC-QOL.SettingAutomateMonsterCritLuckHint",
         scope: "world",
         type: Boolean,
-        default: false,
+        default: true,
         config: true,
     });
 
@@ -102,7 +102,7 @@ export const registerSettings = async function () {
         hint: "DCC-QOL.SettingWeaponRangeCheckHint",
         scope: "world",
         type: Boolean,
-        default: false,
+        default: true,
         config: true,
     });
 };

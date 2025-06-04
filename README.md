@@ -1,64 +1,154 @@
-# DCC Quality of Life Improvements
-<img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/tonyrobots/dcc-qol?style=flat-square"> <img alt="GitHub" src="https://img.shields.io/github/license/tonyrobots/dcc-qol?style=flat-square"> <img alt="GitHub Releases" src="https://img.shields.io/github/downloads/tonyrobots/dcc-qol/total?style=flat-square">  <img alt="GitHub Releases" src="https://img.shields.io/github/downloads/tonyrobots/dcc-qol/latest/total?style=flat-square">  
+# DCC Quality of Life (dcc-qol)
 
-(Originally based on https://github.com/sasquach45932/dcc-qol)
+A comprehensive quality of life and automation module for the Dungeon Crawl Classics RPG system in Foundry VTT. This module enhances gameplay by automating common mechanics, improving combat flow, and providing additional visual feedback for DCC-specific rules. This version has been re-written from the ground up to support the 0.50+ version of the DCC RPG system, and Foundry VTT v12+.
 
-The DCC-QoL module aims to bring some convenience & automation functions that are not present in the core Dungeon Crawl Classics system. 
+## Overview
 
-Some highlights:
-* Auto-applies damage to target (targeting can be done before attack roll or before damage roll)
-* Separates attack/damage/crit and fumble rolls for weapon attacks
-* Displays on attack chat-card information about the weapon/actor (type, equipped, range, (un)trained, two-handed)
-* Displays weapon description (weapon.system.description.value) in attack chat card
-* Automates deed die roll for warriors and dwarves (in manual roll mode)
-* Subtracts PC's Luck score from monsters' crit roll
-* Checks the weapon range (requires token targeting)
-  * Applies medium/long range penalty to attack roll depending on target distance
-  * Checks for friendly fire when firing into melee ("Friendly Fire" button displays when ally is near)
-* Allows "house rule" modifiers to lucky weapon bonus
-  
-![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/de00db42-eab4-491f-afca-244f742be62a)
-![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/786a457a-31a2-4733-b3e7-ba2d75e1c2f9)
+The DCC Quality of Life module transforms the DCC RPG experience in Foundry VTT by:
 
-Auto roll deed die:
+-   **Automating tedious calculations** - Let the system handle range penalties, luck modifiers, and damage application
+-   **Enforcing DCC rules** - Automatic friendly fire checks, firing into melee penalties, and critical hit mechanics
+-   **Improving visual feedback** - Enhanced chat cards, clearer button interactions, and better attack roll presentations
+-   **Streamlining combat** - Faster resolution of attacks, criticals, fumbles, and damage application
 
-![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/46296610-6d7d-45e5-b7ad-52a167b64f3f)
+[screenshot: showing enhanced attack chat card with colorful buttons and comprehensive information]
 
-Applying Luck score on monsters' crit roll
+## Key Features
 
-![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/2b8601cd-c823-4f22-b9ab-e7ecdbfb2af6)
+### Combat Automation
 
-![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/e1475ec2-f5d3-467d-a02a-dcac9e565d70)
+#### **Enhanced Attack Cards**
 
+-   **Hit/Miss Display**: Automatically shows whether an attack hits or misses when a target is selected
+-   Redesigned attack roll chat cards with improved visual presentation
+-   Color-coded damage, crit, and fumble buttons for better player "feel"
 
-Range penalty application:
+[screenshot: showing comparison between default DCC attack card and enhanced QoL attack card]
 
-![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/e7961451-b345-4942-ba20-c310cac1a0f5)
-![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/a1fc425b-f3b5-4868-8804-6a80675ef583)
+#### **Automatic Damage Application**
 
-![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/d2a8fd9b-416a-4d9d-a76e-2bff4710d926)
-![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/29d17718-d728-4f5f-be8c-dd95567edf43)
+-   Automatic damage application to targeted tokens
+-   Respects token permissions and ownership -- only the attacking player or GM can roll damage
+-   Visual confirmation of damage dealt - red animated text in the scene shows the damage amount applied to target
 
-Friendly fire check results:
+#### **Range Checking & Penalties**
 
-![image](https://github.com/sasquach45932/dcc-qol/assets/92884040/3e1afbc4-5274-4fa6-b43f-2ac7c6269d50)
+-   Automatic distance calculation using DCC diagonal movement rules
+-   **Melee weapons**: Warning when target is beyond adjacent range
+-   **Ranged weapons**: Automatic application of range penalties
+    -   Medium range: -2 penalty to attack roll
+    -   Long range: -1 die step penalty to action die (d20→d16)
+    -   Out of range: Warning and confirmation dialog
 
+[screenshot: showing range penalty dialog with distance calculation and penalty explanation]
 
+#### **Friendly Fire System**
 
-# Manual installation
+-   Automatic friendly fire checks when firing into melee (per DCC rules, page 96)
+-   50% chance (d100 ≤ 50) of hitting an ally when attack misses in melee
+-   Random target selection from available friendlies
+-   Full attack resolution against friendly targets
+-   Damage application workflow for friendly fire hits
 
-- Requires [libWrapper](https://foundryvtt.com/packages/lib-wrapper)
-- Requires [socketlib](https://foundryvtt.com/packages/socketlib)
-- Requires [Dungeon Crawl Classics](https://foundryvtt.com/packages/dcc)
+[screenshot: showing friendly fire check result with d100 roll and selected target]
 
+#### **Firing Into Melee Penalties**
 
-Paste the following link in the Install Module interface of your Foundry VTT instance:
+-   Automatic -1 penalty when using ranged weapons against targets engaged in melee
+-   Smart detection of melee engagement based on token positioning and disposition (friendly/neutral/enemy)
 
-`https://github.com/tonyrobots/dcc-qol/releases/latest/download/module.json`
+#### **PC Luck Adjustments to Incoming Crits and Fumbles**
 
-This module replaces the following dcc system functions:
+-   **Monster Crits vs Player Luck**: When a monster scores a critical hit against a PC, the PC's luck modifier is applied as a penalty to the monster's critical hit roll, reducing the severity of the critical
+-   **Monster Fumbles vs Player Luck**: When a monster fumbles an attack against a PC, the PC's luck modifier affects the fumble die used for the fumble table roll
 
-* `applyDamage`
-* `rollCritical`
-* `rollWeaponAttack`
-* `rollToHit`
+## Installation
+
+1. **From Foundry's Module Browser:**
+
+    - Search for "DCC Quality of Life" or "dcc-qol"
+    - Click Install
+
+2. **Manual Installation:**
+
+    - Download the latest release from [GitHub releases](https://github.com/tonyrobots/dcc-qol/releases)
+    - Extract to your Foundry `Data/modules/` directory
+    - Enable in Foundry's Module Management interface
+
+3. **Enable the Module:**
+    - In your DCC world, go to Settings → Manage Modules
+    - Check the box next to "DCC Quality of Life"
+    - Save Module Settings
+
+## Configuration
+
+Access module settings through **Settings → Module Settings → DCC Quality of Life**.
+
+[screenshot: showing module settings panel with all configuration options]
+
+### Available Settings
+
+| Setting                             | Description                                                           | Default |
+| ----------------------------------- | --------------------------------------------------------------------- | ------- |
+| **Automate Damage Apply**           | Automatically apply damage to targeted tokens when damage is rolled   | Enabled |
+| **Automatic Friendly Fire**         | Perform friendly fire checks when firing into melee and attack misses | Enabled |
+| **Firing Into Melee Penalty**       | Automatically apply -1 penalty when firing ranged weapons into melee  | Enabled |
+| **Monster Critical vs Player Luck** | Apply player luck modifiers to reduce monster critical hit rolls      | Enabled |
+| **Weapon Range Checking**           | Check weapon range and apply appropriate penalties automatically      | Enabled |
+
+### Recommended Configuration
+
+For the full DCC QoL experience, we recommend enabling all DCC QoL settings (enabled by default).
+
+In addition, while dcc-qol will work with and respect all DCC system settings, we recommend **disabling** the following DCC RPG system settings for the optimal experience:
+
+-   ❌ Automate Damage/Crits/Fumbles
+-   ❌ Show rolls as emotes
+
+## Technical Architecture
+
+This module is transitioning from a legacy override-based system to a modern **hook-based architecture**:
+
+-   **Event-Driven**: Responds to Foundry VTT and DCC system hooks, and only changes what's necessary
+-   **Non-Intrusive**: No monkey-patching or function overrides means a far less brittle relationship to DCC system updates
+-   **Modular**: Clean separation of concerns across feature files
+-   **Extensible**: Easy to add new features without affecting existing functionality
+
+### File Structure
+
+```
+scripts/
+├── hooks/              # Hook-based event handlers
+├── chatCardActions/    # Chat card button handlers
+├── settings.js         # Module configuration
+├── utils.js           # Utility functions
+└── dcc-qol.js         # Main entry point
+```
+
+## Compatibility
+
+-   **Foundry VTT**: v11+ (v12 recommended)
+-   **DCC RPG System**: Latest version required
+-   **Other Modules**: Compatible with most popular DCC modules
+-   **Dice So Nice**: Full integration for 3D dice rolling
+
+## Contributing
+
+This module is open source and welcomes contributions:
+
+-   **Bug Reports**: Use [GitHub Issues](https://github.com/tonyrobots/dcc-qol/issues)
+-   **Feature Requests**: Discussion on [GitHub](https://github.com/tonyrobots/dcc-qol/discussions)
+-   **Code Contributions**: [Pull requests](https://github.com/tonyrobots/dcc-qol/pulls) welcome
+-   **Translations**: Help expand language support
+
+## License
+
+This module is licensed under the [MIT License](https://github.com/tonyrobots/dcc-qol/blob/main/LICENSE).
+
+## Changelog
+
+See [CHANGELOG.md](https://github.com/tonyrobots/dcc-qol/blob/main/CHANGELOG.md) for detailed version history.
+
+---
+
+_DCC Quality of Life is an independent module and is not affiliated with or endorsed by Goodman Games or the creators of the Dungeon Crawl Classics RPG._
