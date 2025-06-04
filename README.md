@@ -20,16 +20,16 @@ The DCC Quality of Life module transforms the DCC RPG experience in Foundry VTT 
 #### **Enhanced Attack Cards**
 
 -   **Hit/Miss Display**: Automatically shows whether an attack hits or misses when a target is selected
--   Redesigned attack roll chat cards with improved visual presentation
--   Color-coded damage, crit, and fumble buttons for better player "feel"
+-   **Redesigned attack roll chat cards** with improved visual presentation and added information
+-   Color-coded **roll damage, crit, and fumble buttons** for better feeling of player control
 
 [screenshot: showing comparison between default DCC attack card and enhanced QoL attack card]
 
 #### **Automatic Damage Application**
 
--   Automatic damage application to targeted tokens
+-   Automatic damage application to targeted tokens when damage is rolled
 -   Respects token permissions and ownership -- only the attacking player or GM can roll damage
--   Visual confirmation of damage dealt - red animated text in the scene shows the damage amount applied to target
+-   Visual confirmation of damage dealt - red animated text floating from the target shows the damage amount applied
 
 #### **Range Checking & Penalties**
 
@@ -102,8 +102,8 @@ For the full DCC QoL experience, we recommend enabling all DCC QoL settings (ena
 
 In addition, while dcc-qol will work with and respect all DCC system settings, we recommend **disabling** the following DCC RPG system settings for the optimal experience:
 
--   ❌ Automate Damage/Crits/Fumbles
--   ❌ Show rolls as emotes
+    ❌ Automate Damage/Crits/Fumbles
+    ❌ Show rolls as emotes
 
 ## Technical Architecture
 
@@ -127,10 +127,10 @@ scripts/
 
 ## Compatibility
 
--   **Foundry VTT**: v11+ (v12 recommended)
--   **DCC RPG System**: Latest version required
--   **Other Modules**: Compatible with most popular DCC modules
+-   **Foundry VTT**: v12 required (no v13 support yet, pending v13 support from DCC system)
+-   **DCC RPG System**: Requires version 0.51.59
 -   **Dice So Nice**: Full integration for 3D dice rolling
+-   **Other Modules**: Should be fully compatible with any other modules, except those that modify the attack roll card
 
 ## Contributing
 
