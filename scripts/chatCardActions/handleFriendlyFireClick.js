@@ -66,6 +66,9 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
         let messageSystemData = {}; // For damage button related data
         let messageFlags = {}; // For qol flags specific to this FF event
 
+        // Store the d100 roll HTML for reliable re-rendering
+        const d100RollHTML = d100Roll.toAnchor().outerHTML;
+
         if (
             friendlyFireAttemptOccurs &&
             weapon &&
@@ -91,17 +94,12 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
                 );
                 // Fallback to "missed everyone" scenario by setting noFriendlyFireActuallyOccurred to true
                 noFriendlyFireActuallyOccurred = true;
-                templateData = await _prepareFriendlyFireTemplateData(
+                templateData = await _prepareFriendlyFireTemplateData({
                     d100Roll,
-                    actor,
+                    attacker: actor,
                     qolFlags,
-                    true, // noFriendlyFireOccurred
-                    null,
-                    null,
-                    null,
-                    null,
-                    null // No target, no attack, no weapon context needed
-                );
+                    noFriendlyFireOccurred: true,
+                });
             } else {
                 const selectedFriendlyTokenDoc =
                     friendlyTokenPlaceable.document;
@@ -115,17 +113,12 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
                         "DCC QoL: Friendly target has no associated actor."
                     );
                     noFriendlyFireActuallyOccurred = true; // Fallback
-                    templateData = await _prepareFriendlyFireTemplateData(
+                    templateData = await _prepareFriendlyFireTemplateData({
                         d100Roll,
-                        actor,
+                        attacker: actor,
                         qolFlags,
-                        true, // noFriendlyFireOccurred
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                    );
+                        noFriendlyFireOccurred: true,
+                    });
                 } else {
                     const attackRollResult = await _makeFriendlyFireAttackRoll(
                         actor,
@@ -143,17 +136,17 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
                     //     );
                     // }
 
-                    templateData = await _prepareFriendlyFireTemplateData(
+                    templateData = await _prepareFriendlyFireTemplateData({
                         d100Roll,
-                        actor,
+                        attacker: actor,
                         qolFlags,
-                        false, // noFriendlyFireOccurred = false (FF happened)
-                        selectedFriendlyData.name,
-                        attackRollResult,
+                        noFriendlyFireOccurred: false,
+                        targetName: selectedFriendlyData.name,
+                        attackResult: attackRollResult,
                         weapon,
-                        friendlyActor,
-                        selectedFriendlyData.id // token doc id
-                    );
+                        targetActor: friendlyActor,
+                        selectedFriendlyTokenDocId: selectedFriendlyData.id,
+                    });
 
                     // Prepare system data and flags for when FF occurs and might hit
                     messageSystemData = {
@@ -169,23 +162,22 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
                         targetTokenId: selectedFriendlyData.id,
                         target: selectedFriendlyData.name,
                         weaponId: weapon.id,
+                        // Store attack roll HTML for re-rendering
+                        attackRollHTML:
+                            await attackRollResult.attackRoll.render(),
                     };
                 }
             }
         } else {
             // Friendly fire roll succeeded (d100 > 50), or no weapon/targets for FF
             noFriendlyFireActuallyOccurred = true;
-            templateData = await _prepareFriendlyFireTemplateData(
+            templateData = await _prepareFriendlyFireTemplateData({
                 d100Roll,
-                actor,
+                attacker: actor,
                 qolFlags,
-                true, // noFriendlyFireOccurred = true
-                null, // targetName
-                null, // attackResult
+                noFriendlyFireOccurred: true,
                 weapon, // Pass weapon if available, might be used for properties footer
-                null, // targetActor
-                null // selectedFriendlyTokenDocId
-            );
+            });
             // If weapon is available, try to get properties for the footer
             // This was implicitly handled by _prepareFriendlyFireTemplateData if weapon was null there.
             // Let's ensure `properties` is populated in templateData if weapon exists.
@@ -214,8 +206,21 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
                     isFriendlyFireCheck: true,
                     parentId: message.id,
                     actorId: actor.id,
+                    weaponId: weapon?.id || null,
+                    tokenId: qolFlags.tokenId,
+                    target: templateData.target || null,
+                    targetTokenId: templateData.targetTokenId || null,
                     noFriendlyFireActuallyOccurred:
                         noFriendlyFireActuallyOccurred,
+                    // Store text content for re-rendering
+                    hitText: templateData.hitText || "",
+                    missText: templateData.missText || "",
+                    struckAllyText: templateData.struckAllyText || "",
+                    friendlyFireSafeText:
+                        templateData.friendlyFireSafeText || "",
+                    // Store roll HTML for reliable re-rendering
+                    d100RollHTML: d100RollHTML,
+                    options: qolFlags.options || {},
                     ...messageFlags, // Spread flags for FF hit scenario
                 },
             },
@@ -276,29 +281,32 @@ async function _makeFriendlyFireAttackRoll(attacker, weapon, target) {
 
 /**
  * Prepares template data for the friendly fire card template
- * @param {Roll} d100Roll - The rolled d100 object
- * @param {Actor} attacker - The attacking actor
- * @param {object} qolFlags - Original QoL flags from the message
- * @param {boolean} noFriendlyFireOccurred - True if the d100 roll means no FF
- * @param {string | null} targetName - Name of the friendly target (if FF occurred)
- * @param {object | null} attackResult - Result of the attack roll (if FF occurred)
- * @param {Item | null} weapon - The weapon used (if FF occurred, otherwise null)
- * @param {Actor | null} targetActor - The target actor (if FF occurred)
- * @param {string | null} selectedFriendlyTokenDocId - Token document ID of the friendly target (if FF occurred)
+ * @param {object} options - The options object containing all necessary data
+ * @param {Roll} options.d100Roll - The rolled d100 object
+ * @param {Actor} options.attacker - The attacking actor
+ * @param {object} options.qolFlags - Original QoL flags from the message
+ * @param {boolean} options.noFriendlyFireOccurred - True if the d100 roll means no FF
+ * @param {string} [options.targetName] - Name of the friendly target (if FF occurred)
+ * @param {object} [options.attackResult] - Result of the attack roll (if FF occurred)
+ * @param {Item} [options.weapon] - The weapon used (if FF occurred, otherwise null)
+ * @param {Actor} [options.targetActor] - The target actor (if FF occurred)
+ * @param {string} [options.selectedFriendlyTokenDocId] - Token document ID of the friendly target (if FF occurred)
  * @returns {Promise<object>} The template data object
  * @private
  */
-async function _prepareFriendlyFireTemplateData(
-    d100Roll,
-    attacker,
-    qolFlags,
-    noFriendlyFireOccurred,
-    targetName,
-    attackResult,
-    weapon,
-    targetActor,
-    selectedFriendlyTokenDocId
-) {
+async function _prepareFriendlyFireTemplateData(options) {
+    const {
+        d100Roll,
+        attacker,
+        qolFlags,
+        noFriendlyFireOccurred,
+        targetName,
+        attackResult,
+        weapon,
+        targetActor,
+        selectedFriendlyTokenDocId,
+    } = options;
+
     const d100RollHTML = d100Roll.toAnchor().outerHTML;
 
     let templateData = {

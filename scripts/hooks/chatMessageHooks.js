@@ -181,44 +181,46 @@ export async function enhanceAttackRollCard(message, html, data) {
         }
     } // End of Attack Roll specific enhancements
 
-    // Handle QoL Friendly Fire Cards
+    // Handle QoL Friendly Fire Cards - Re-render with per-client permissions
     if (qolFlags.isFriendlyFireCheck) {
         try {
-            // For friendly fire cards that have a hit and use our full template,
-            // we need to add damage button event listeners
-            if (qolFlags.friendlyFireHit) {
-                // Get actor and weapon for the friendly fire damage
-                let actor;
-                const speaker = message.speaker;
+            // Get actor for permission checks
+            let actor;
+            const speaker = message.speaker;
 
-                // Try to get actor from the token speaker first
-                if (speaker.token && speaker.scene) {
-                    const tokenDocument = game.scenes
-                        .get(speaker.scene)
-                        ?.tokens.get(speaker.token);
-                    if (tokenDocument) {
-                        actor = tokenDocument.actor;
-                    }
+            // Try to get actor from the token speaker first
+            if (speaker.token && speaker.scene) {
+                const tokenDocument = game.scenes
+                    .get(speaker.scene)
+                    ?.tokens.get(speaker.token);
+                if (tokenDocument) {
+                    actor = tokenDocument.actor;
                 }
+            }
 
-                // If no actor from token speaker, fallback to general speaker actor resolution
-                if (!actor) {
-                    actor = message.getSpeakerActor();
-                }
+            // If no actor from token speaker, fallback to general speaker actor resolution
+            if (!actor) {
+                actor = message.getSpeakerActor();
+            }
 
-                // Final fallback to qolFlags.actorId
-                if (!actor && qolFlags.actorId) {
-                    actor = game.actors.get(qolFlags.actorId);
-                }
+            // Final fallback to qolFlags.actorId
+            if (!actor && qolFlags.actorId) {
+                actor = game.actors.get(qolFlags.actorId);
+            }
 
-                if (!actor) {
-                    console.warn(
-                        `DCC-QOL | Actor could not be determined for friendly fire message ${message.id}`
-                    );
-                    return;
-                }
+            if (!actor) {
+                console.warn(
+                    `DCC-QOL | Actor could not be determined for friendly fire message ${message.id}`
+                );
+                return;
+            }
 
-                // Get weapon from actor
+            // Only re-render if this is a friendly fire hit that needs damage button functionality
+            if (
+                !qolFlags.noFriendlyFireActuallyOccurred &&
+                qolFlags.friendlyFireHit
+            ) {
+                // Get weapon for the friendly fire damage
                 const weapon = getWeaponFromActorById(actor, qolFlags.weaponId);
                 if (!weapon) {
                     console.warn(
@@ -227,19 +229,201 @@ export async function enhanceAttackRollCard(message, html, data) {
                     return;
                 }
 
-                // Add event listener for the damage button on friendly fire cards
-                html.find('button[data-action="damage"]').on("click", (event) =>
-                    handleDamageClick(event, message, actor, weapon, qolFlags)
+                // Get both the d100 and attack roll HTML from stored flags (more reliable than DOM extraction)
+                const d100RollHTML = qolFlags.d100RollHTML || "";
+                const attackRollHTML = qolFlags.attackRollHTML || "";
+
+                // Get weapon properties
+                const properties = await getWeaponProperties(
+                    weapon,
+                    qolFlags.options || {}
                 );
 
+                // Prepare template data with per-client permissions
+                const templateData = {
+                    actor: actor,
+                    tokenId: qolFlags.tokenId,
+                    weapon: weapon,
+                    target: qolFlags.target,
+                    targetTokenId: qolFlags.targetTokenId,
+                    d100RollHTML: d100RollHTML,
+                    attackRollHTML: attackRollHTML,
+                    hit: qolFlags.friendlyFireHit,
+                    noFriendlyFireOccurred:
+                        qolFlags.noFriendlyFireActuallyOccurred || false,
+                    hitText: qolFlags.hitText || "",
+                    missText: qolFlags.missText || "",
+                    struckAllyText: qolFlags.struckAllyText || "",
+                    friendlyFireSafeText: qolFlags.friendlyFireSafeText || "",
+                    properties: properties,
+                    // Per-client permission checks
+                    canUserModify: actor.canUserModify(game.user, "update"),
+                    isGM: game.user.isGM,
+                    damageButtonClicked:
+                        message.getFlag("dcc-qol", "damageButtonClicked") ||
+                        false,
+                    damageTotal:
+                        message.getFlag("dcc-qol", "damageTotal") || null,
+                };
+
+                // Re-render the friendly fire card with per-client permissions
+                const renderedContentHtml = await renderTemplate(
+                    "modules/dcc-qol/templates/friendly-fire-card.html",
+                    templateData
+                );
+
+                // Replace the content
+                const messageContentElement = html.find(".message-content");
+                if (messageContentElement.length > 0) {
+                    messageContentElement.html(renderedContentHtml);
+                } else {
+                    console.warn(
+                        "DCC-QOL | .message-content not found for friendly fire card. Appending to main message element."
+                    );
+                    html.append(renderedContentHtml);
+                }
+
+                // Add event listener for the damage button
+                const cardElement =
+                    messageContentElement.length > 0
+                        ? messageContentElement
+                        : html;
+                cardElement
+                    .find('button[data-action="damage"]')
+                    .on("click", (event) =>
+                        handleDamageClick(
+                            event,
+                            message,
+                            actor,
+                            weapon,
+                            qolFlags
+                        )
+                    );
+
                 console.debug(
-                    "DCC-QOL | Added damage button listener for friendly fire message",
+                    "DCC-QOL | Re-rendered friendly fire card with per-client permissions for message",
+                    message.id
+                );
+            } else {
+                // Handle all friendly fire cases (both hit and safe) with re-rendering
+                // This ensures consistent per-client rendering even for safe cases
+
+                // Get d100 roll HTML from stored flags (more reliable than DOM extraction)
+                const d100RollHTML = qolFlags.d100RollHTML || "";
+                const attackRollHTML = qolFlags.attackRollHTML || ""; // Usually empty for safe cases
+
+                // Get weapon and properties (if weapon exists)
+                let weapon = null;
+                let properties = [];
+                if (qolFlags.weaponId) {
+                    weapon = getWeaponFromActorById(actor, qolFlags.weaponId);
+                    if (weapon) {
+                        properties = await getWeaponProperties(
+                            weapon,
+                            qolFlags.options || {}
+                        );
+                    }
+                }
+
+                // Prepare template data for non-hit cases (safe or miss)
+                const templateData = {
+                    actor: actor,
+                    tokenId: qolFlags.tokenId,
+                    weapon: weapon,
+                    target: qolFlags.target,
+                    targetTokenId: qolFlags.targetTokenId,
+                    d100RollHTML: d100RollHTML,
+                    attackRollHTML: attackRollHTML,
+                    hit: qolFlags.friendlyFireHit || false,
+                    noFriendlyFireOccurred:
+                        qolFlags.noFriendlyFireActuallyOccurred || false,
+                    hitText: qolFlags.hitText || "",
+                    missText: qolFlags.missText || "",
+                    struckAllyText: qolFlags.struckAllyText || "",
+                    friendlyFireSafeText: qolFlags.friendlyFireSafeText || "",
+                    properties: properties,
+                    // Per-client permission checks (not really needed for safe cases, but for consistency)
+                    canUserModify: actor.canUserModify(game.user, "update"),
+                    isGM: game.user.isGM,
+                    damageButtonClicked: false, // No damage button for safe/miss cases
+                    damageTotal: null,
+                };
+
+                // Re-render the friendly fire card
+                const renderedContentHtml = await renderTemplate(
+                    "modules/dcc-qol/templates/friendly-fire-card.html",
+                    templateData
+                );
+
+                // Replace the content
+                const messageContentElement = html.find(".message-content");
+                if (messageContentElement.length > 0) {
+                    messageContentElement.html(renderedContentHtml);
+                } else {
+                    html.append(renderedContentHtml);
+                }
+
+                console.debug(
+                    "DCC-QOL | Re-rendered safe/miss friendly fire card for message",
                     message.id
                 );
             }
         } catch (err) {
             console.error(
-                "DCC QoL | Error setting up friendly fire damage button:",
+                "DCC QoL | Error re-rendering friendly fire card:",
+                err,
+                message.id
+            );
+        }
+    } // End of Friendly Fire card re-rendering
+
+    // Legacy friendly fire damage button setup (kept for backwards compatibility)
+    if (qolFlags.isFriendlyFireCheck && qolFlags.friendlyFireHit) {
+        try {
+            // This section is now redundant due to the re-rendering above,
+            // but keeping it as a fallback for any edge cases
+            let actor;
+            const speaker = message.speaker;
+
+            if (speaker.token && speaker.scene) {
+                const tokenDocument = game.scenes
+                    .get(speaker.scene)
+                    ?.tokens.get(speaker.token);
+                if (tokenDocument) {
+                    actor = tokenDocument.actor;
+                }
+            }
+
+            if (!actor) {
+                actor = message.getSpeakerActor();
+            }
+
+            if (!actor && qolFlags.actorId) {
+                actor = game.actors.get(qolFlags.actorId);
+            }
+
+            if (actor) {
+                const weapon = getWeaponFromActorById(actor, qolFlags.weaponId);
+                if (weapon) {
+                    // Only add if not already added by re-rendering above
+                    if (!html.find('button[data-action="damage"]').length) {
+                        html.find('button[data-action="damage"]').on(
+                            "click",
+                            (event) =>
+                                handleDamageClick(
+                                    event,
+                                    message,
+                                    actor,
+                                    weapon,
+                                    qolFlags
+                                )
+                        );
+                    }
+                }
+            }
+        } catch (err) {
+            console.error(
+                "DCC QoL | Error in legacy friendly fire damage button setup:",
                 err,
                 message.id
             );
