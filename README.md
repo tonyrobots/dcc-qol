@@ -4,14 +4,13 @@ A comprehensive quality of life and automation module for the Dungeon Crawl Clas
 
 ## Overview
 
-The DCC Quality of Life module transforms the DCC RPG experience in Foundry VTT by:
+The DCC Quality of Life module improves the DCC RPG experience in Foundry VTT by:
 
--   **Automating tedious calculations** - Let the system handle range penalties, luck modifiers, and damage application
--   **Enforcing DCC rules** - Automatic friendly fire checks, firing into melee penalties, and critical hit mechanics
--   **Improving visual feedback** - Enhanced chat cards, clearer button interactions, and better attack roll presentations
--   **Streamlining combat** - Faster resolution of attacks, criticals, fumbles, and damage application
+-   **Streamlining combat** - Let the system handle hit/miss determination, range penalties, mighty deed success/failure, and damage application
+-   **Enforcing easily forgotten DCC rules** - Automatic friendly fire checks, firing into melee penalties, and luck modifiers on incoming crits & fumbles
+-   **Support for house rules and experimental variants** - DCC-QoL, as an optional add-on, has room to roam when it comes to support for other non-RAW/house rules options. More to come here soon!
 
-[screenshot: showing enhanced attack chat card with colorful buttons and comprehensive information]
+![Comparison between vanilla DCC and DCC-QOL attack cards](docs/images/attack-card-comparison.png)
 
 ## Key Features
 
@@ -23,13 +22,15 @@ The DCC Quality of Life module transforms the DCC RPG experience in Foundry VTT 
 -   **Redesigned attack roll chat cards** with improved visual presentation and added information
 -   Color-coded **roll damage, crit, and fumble buttons** for better feeling of player control
 
-[screenshot: showing comparison between default DCC attack card and enhanced QoL attack card]
+![Enhanced DCC-QOL attack chat card](docs/images/attack-card-crit-backstab.png)
 
 #### **Automatic Damage Application**
 
 -   Automatic damage application to targeted tokens when damage is rolled
 -   Respects token permissions and ownership -- only the attacking player or GM can roll damage
 -   Visual confirmation of damage dealt - red animated text floating from the target shows the damage amount applied
+
+![Automatic Damage Application and in-scene animation](docs/images/damage-application.webp)
 
 #### **Range Checking & Penalties**
 
@@ -40,7 +41,7 @@ The DCC Quality of Life module transforms the DCC RPG experience in Foundry VTT 
     -   Long range: -1 die step penalty to action die (d20→d16)
     -   Out of range: Warning and confirmation dialog
 
-[screenshot: showing range penalty dialog with distance calculation and penalty explanation]
+![Range penalty dialog confirmation](docs/images/range-warning.png)
 
 #### **Friendly Fire System**
 
@@ -50,7 +51,7 @@ The DCC Quality of Life module transforms the DCC RPG experience in Foundry VTT 
 -   Full attack resolution against friendly targets
 -   Damage application workflow for friendly fire hits
 
-[screenshot: showing friendly fire check result with d100 roll and selected target]
+![Friendly Fire Automation](docs/images/friendly-fire.png)
 
 #### **Firing Into Melee Penalties**
 
@@ -87,6 +88,8 @@ Access module settings through **Settings → Module Settings → DCC Quality of
 [screenshot: showing module settings panel with all configuration options]
 
 ### Available Settings
+
+![Settings Screenshot](docs/images/settings.png)
 
 | Setting                             | Description                                                           | Default |
 | ----------------------------------- | --------------------------------------------------------------------- | ------- |
