@@ -1,3 +1,4 @@
 node_modules
 dcc-qol.lock
 .vscode
+.DS_Store

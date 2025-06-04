@@ -1,0 +1,19 @@
+{{#unless damageButtonClicked}} {{#if canUserModify}}
+<div class="card-buttons centered">
+    <button data-action="damage" class="damage-button">
+        {{ localize "DCC.RollDamage" }}
+    </button>
+</div>
+{{else}} {{#if isGM}}
+<div class="card-buttons centered">
+    <button data-action="damage" class="damage-button">
+        {{ localize "DCC.RollDamage" }}
+    </button>
+</div>
+{{/if}} {{/if}} {{else}}
+<div class="chat-details centered">
+    <div class="roll-result">
+        <strong>{{ localize "DCC.DamageRolled" }}: {{damageTotal}}</strong>
+    </div>
+</div>
+{{/unless}}

@@ -1,111 +1,427 @@
+/* Minimal DCC-QoL Styles */
 .dccqol.chat-card {
-  font-size: 12px;
-  font-style: normal;
+    font-family: "Signika", sans-serif;
+    font-size: 12px;
+    margin: 0;
+    border: 1px solid #782e22;
+    background: #e0dbd0; /* parchment background */
+    padding: 5px;
 }
 
 .dccqol.chat-card .card-header {
-  border-bottom: 2px groove #fff;
-  border-top: 2px groove #fff;
-  padding: 3px 0;
+    display: flex;
+    align-items: center;
+    padding: 3px 0;
+    border-bottom: none;
 }
 
 .dccqol.chat-card .card-header img {
-  flex: 0 0 36px;
-  margin-right: 5px;
+    flex: 0 0 36px;
+    margin-right: 5px;
 }
 
-.dccqol.chat-card .card-header h4 {
-  flex: 1;
-  font-family: 'Book Antiqua', 'Palatino Linotype', serif;
-  font-size: 15px;
-  font-weight: bold;
-  line-height: 36px;
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dccqol.chat-card .card-header h4:hover {
-  color: #111;
-  text-shadow: 0 0 10px red;
+.dccqol.chat-card .card-header h3 {
+    margin: 0;
+    line-height: 36px;
+    font-size: 14px;
+    color: #4b1810;
+    /* override default underline */
+    border-bottom: 0px;
 }
 
 .dccqol.chat-card .card-content {
-  margin: 5px 0;
+    padding: 5px 0;
 }
 
-.dccqol.chat-card .card-content h3 {
-  font-size: 12px;
-  font-weight: bold;
-  margin: 0;
+.dccqol.chat-card footer {
+    /* text-align: center; User will add .centered class in HTML if needed */
+    border-top: 1px solid #782e22;
+    padding: 5px 0;
 }
 
-.dccqol.chat-card .card-content > * {
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
+/* Roll Result Base Style */
+.dccqol.chat-card .roll-result {
+    text-align: center;
+    margin: 5px 0;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+/* Status Colors */
+.dccqol.chat-card .status-success,
+.dccqol-system-card-font .status-success {
+    color: #18520b;
+    font-weight: bold;
+}
+
+.dccqol.chat-card .status-failure,
+.dccqol-system-card-font .status-failure {
+    color: #810c0a;
+    font-weight: bold;
+}
+
+.dccqol.chat-card .status-warning,
+.dccqol-system-card-font .status-warning {
+    color: #aa5502;
+    font-weight: bold;
+}
+
+/* Attack Status Styling */
+.dccqol.chat-card .attack-status {
+    text-align: center;
+    margin: 0;
+    padding: 5px 3px;
+    /* color: #18520b; Will be handled by adding .status-success class in HTML */
+    /* font-weight: bold; Will be handled by adding .status-success class in HTML */
+}
+
+.dccqol.chat-card .attack-status h3 {
+    margin: 0;
+    font-size: 14px;
+    /* color: #18520b; Will be handled by adding .status-success class in HTML */
+    /* font-weight: bold; Will be handled by adding .status-success class in HTML */
+}
+
+.dccqol.chat-card .attack-status h3.no-target {
+    color: #666;
+    font-style: italic;
+    font-size: 14px;
+}
+
+/* Deed Die Styling */
+.dccqol.chat-card .deed-die {
+    padding: 5px;
+    margin: 0;
+    text-align: center;
+    font-size: 13px;
+    color: inherit;
+}
+
+.dccqol.chat-card .deed-die.deed-normal {
+    color: #000;
+}
+
+/* Weapon Description */
+.dccqol.chat-card .weapon-description {
+    margin: 5px 0;
+    border: 1px solid rgba(120, 46, 34, 0.2);
+}
+
+.dccqol.chat-card .weapon-description summary {
+    padding: 3px 5px;
+    background: rgba(120, 46, 34, 0.1);
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.dccqol.chat-card .weapon-description .description-content {
+    padding: 5px;
+    font-size: 12px;
+}
+
+/* Warning for Friendly Fire */
+.dccqol.chat-card .friendly-fire-warning {
+    margin: 5px 0;
+    padding: 5px;
+    background: rgba(255, 165, 0, 0.1);
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    /* text-align: center; User will add .centered class in HTML if needed */
+}
+
+.dccqol.chat-card .friendly-fire-warning p.warning {
+    margin: 0;
+    color: #aa5502;
+}
+
+/* Debug Information */
+.dccqol.chat-card .attack-debug-details {
+    margin: 5px 0 0 0;
+    border: 1px solid rgba(120, 46, 34, 0.2);
+    font-size: 11px;
+}
+
+.dccqol.chat-card .attack-debug-details summary {
+    padding: 2px 5px;
+    background: rgba(120, 46, 34, 0.05);
+    cursor: pointer;
+    color: #666;
+}
+
+.dccqol.chat-card .attack-debug {
+    padding: 3px 5px;
+    color: #666;
+}
+
+.dccqol.chat-card .attack-debug p {
+    margin: 0;
+}
+
+.dccqol.chat-card .chat-details {
+    padding: 3px;
+    /* text-align: center; User will add .centered class in HTML if needed */
+}
+
+.dccqol.chat-card .roll-result.warning {
+    color: #aa5502;
 }
 
 .dccqol.chat-card .card-buttons {
-  margin: 5px 0;
-}
-
-.dccqol.chat-card .card-buttons span {
-  border: 1px solid #ccc;
-  display: block;
-  line-height: 28px;
-  text-align: center;
+    padding: 5px;
+    margin: 5px 0;
+    /* text-align: center; User will add .centered class in HTML if needed */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .dccqol.chat-card .card-buttons button {
-  font-size: 12px;
-  height: 24px;
-  line-height: 20px;
-  margin: 2px 0;
+    background: linear-gradient(to bottom, #f5f1e8, #e8e0d0);
+    color: #2c1810;
+    border: 2px solid #8b4513;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 16px;
+    cursor: pointer;
+    width: calc(100% - 4px);
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.2s ease;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.dccqol.chat-card .card-buttons button:hover {
+    background: linear-gradient(to bottom, #f8f4eb, #eae2d2);
+    border-color: #a0522d;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+.dccqol.chat-card .card-buttons button:active {
+    background: linear-gradient(to bottom, #e0d8c8, #d5cdb8);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+}
+
+/* Special styling for different button types */
+.dccqol.chat-card .card-buttons button[data-action="damage"] {
+    background: linear-gradient(to bottom, #f0e8e0, #e0d0c0);
+    border-color: #8b4513;
+    color: #4b1810;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="damage"]:hover {
+    background: linear-gradient(to bottom, #f3ebe3, #e3d3c3);
+    border-color: #a0522d;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="crit"] {
+    background: linear-gradient(to bottom, #e8f0e8, #d0e0d0);
+    border-color: #228b22;
+    color: #0f4f0f;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="crit"]:hover {
+    background: linear-gradient(to bottom, #ebf3eb, #d3e3d3);
+    border-color: #32cd32;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="fumble"] {
+    background: linear-gradient(to bottom, #f0e8e8, #e0d0d0);
+    border-color: #dc143c;
+    color: #8b0000;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="fumble"]:hover {
+    background: linear-gradient(to bottom, #f3ebeb, #e3d3d3);
+    border-color: #ff1493;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="friendlyFire"] {
+    background: linear-gradient(to bottom, #f0f0e8, #e0e0d0);
+    border-color: #ff8c00;
+    color: #8b4500;
+}
+
+.dccqol.chat-card .card-buttons button[data-action="friendlyFire"]:hover {
+    background: linear-gradient(to bottom, #f3f3eb, #e3e3d3);
+    border-color: #ffa500;
 }
 
 .dccqol.chat-card .card-footer {
-  border-top: 2px groove #fff;
-  padding: 3px 0 0;
+    padding: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
 }
 
-.dccqol.chat-card .card-footer span {
-  border-right: 2px groove #fff;
-  font-size: 10px;
-  padding: 0 3px 0 0;
+.dccqol.chat-card .card-footer .tag {
+    display: inline-block;
+    margin: 0 2px;
+    padding: 2px 6px;
+    font-size: 11px;
+    line-height: 14px;
+    background: #d5d1c5;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    color: #000;
 }
 
-.dccqol.chat-card .card-footer span:last-child {
-  padding-right: 0;
+/* Damage Applied Section */
+.dccqol.chat-card .dcc-qol-damage-applied {
+    margin-top: 5px;
+    padding: 3px;
+    font-style: italic;
+    text-align: center;
+    color: #aa0200;
+    border-top: 1px dotted rgba(120, 46, 34, 0.3);
 }
 
-.dccqol.chat-card .roll-result {
-  font-size: 13px;
-  font-weight: bold;
-  margin: 5px 0;
-  text-align: center;
+/* Fumble and Crit Results */
+.dccqol.chat-card .fumble-result,
+.dccqol.chat-card .crit-result {
+    margin-top: 8px;
+    padding: 5px;
+    background: #d5d1c5;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0;
 }
 
-.dccqol.chat-card .ff-result {
-  font-size: 12px;
-  padding: 3px 0 0;
+.dccqol.chat-card .fumble-result {
+    border-left: 3px solid #aa0200;
 }
 
-.dccqol.chat-card .roll-resultx {
-  font-weight: bold;
-  margin: 5px 0;
-  text-align: left;
+.dccqol.chat-card .crit-result {
+    border-left: 3px solid #18520b;
 }
 
-.dice-roll .dice-total.success {
-  color: green;
-  font-weight: 900;
+.dccqol.chat-card .fumble-result em,
+.dccqol.chat-card .crit-result em {
+    font-style: italic;
+    color: #666;
 }
 
-.dice-roll .dice-total.fail {
-  color: red;
-  font-weight: 900;
+/* Table cell styling for crit/fumble results */
+.dccqol.chat-card .fumble-result table,
+.dccqol.chat-card .crit-result table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
+.dccqol.chat-card .fumble-result td,
+.dccqol.chat-card .crit-result td,
+.dccqol.chat-card .fumble-result th,
+.dccqol.chat-card .crit-result th {
+    padding: 3px 5px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dccqol.chat-card .centered {
+    text-align: center;
+}
+
+/* Apply QoL font to system chat cards when setting is active */
+.dccqol-system-card-font .message-content {
+    font-family: "Signika", sans-serif;
+    /* You might want to match the font-size from .dccqol.chat-card as well if needed */
+    /* font-size: 12px; */
+}
+
+/* Global QoL Dice Styling */
+.dice-roll {
+    margin: 0;
+    padding: 0;
+}
+
+.dice-formula {
+    padding: 5px;
+    margin: 0;
+    background: #d5d1c5;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    /* border-top: none; */ /* Intentionally removed to be consistent with Foundry default */
+    text-align: center;
+    color: #555;
+    font-size: 12px;
+}
+
+.dice-total {
+    padding: 5px;
+    margin: 0;
+    background: #d5d1c5;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: none; /* Keep this to make the total distinct when formula is above it */
+    text-align: center;
+    font-size: 24px !important;
+    font-weight: bold !important;
+}
+
+/* DCC QoL Dice Roll Status Colors */
+.dccqol.chat-card .dice-roll .dice-total.critical {
+    color: #18520b !important; /* QoL Success Color */
+}
+
+.dccqol.chat-card .dice-roll .dice-total.fumble {
+    color: #810c0a !important; /* QoL Failure Color */
+}
+
+/* Friendly Fire Result Styling */
+.dccqol-friendlyfire-result {
+    margin: 8px 0;
+    padding: 6px;
+    border-radius: 3px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.dccqol-attack-roll-section {
+    margin: 8px 0;
+    padding: 5px;
+    background: rgba(213, 209, 197, 0.3);
+    border-radius: 3px;
+}
+
+.dccqol-attack-roll-section .attack-roll-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: center;
+    color: #2c1810;
+    font-size: 13px;
+}
+
+.dccqol-attack-result {
+    margin: 5px 0;
+    padding: 4px;
+    border-radius: 3px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.dccqol-damage-result {
+    margin: 5px 0;
+    padding: 4px;
+    border-radius: 3px;
+    text-align: center;
+    font-weight: bold;
+    color: #aa0200;
+}
+
+/* Friendly Fire Damage Button Styling */
+button[data-action="friendlyFireDamage"] {
+    background: linear-gradient(to bottom, #f0e8e0, #e0d0c0) !important;
+    border-color: #8b4513 !important;
+    color: #4b1810 !important;
+}
+
+button[data-action="friendlyFireDamage"]:hover {
+    background: linear-gradient(to bottom, #f3ebe3, #e3d3c3) !important;
+    border-color: #a0522d !important;
+}
+
+button[data-action="friendlyFireDamage"]:disabled {
+    background: linear-gradient(to bottom, #e0d8d0, #d0c8c0) !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+}
