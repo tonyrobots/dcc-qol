@@ -1,20 +1,20 @@
 {
-  "devDependencies": {
-    "sass": "^1.32.8",
-    "standard": "^16.0.4",
-    "stylelint": "^15.10.3",
-    "stylelint-config-sass-guidelines": "^10.0.0"
-  },
-  "license": "MIT",
-  "main": "scripts/dcc-qol.js",
-  "name": "dcc-qol",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/foundryvtt-dcc/dcc.git"
-  },
-  "scripts": {
-    "format": "standard --fix && stylelint \"**/*.scss\"",
-    "scss": "sass styles/dcc-qol.css"
-  },
-  "version": "0.0.1"
+    "devDependencies": {
+        "sass": "^1.32.8",
+        "standard": "^16.0.4",
+        "stylelint": "^15.10.3",
+        "stylelint-config-sass-guidelines": "^10.0.0"
+    },
+    "license": "MIT",
+    "main": "scripts/dcc-qol.js",
+    "name": "dcc-qol",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/foundryvtt-dcc/dcc.git"
+    },
+    "scripts": {
+        "format": "standard --fix && stylelint \"**/*.scss\"",
+        "scss": "sass styles/dcc-qol.css"
+    },
+    "version": "1.0.2"
 }

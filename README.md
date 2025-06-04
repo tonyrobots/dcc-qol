@@ -1,14 +1,14 @@
 # DCC Quality of Life (dcc-qol)
 
-A comprehensive quality of life and automation module for the Dungeon Crawl Classics RPG system in Foundry VTT. This module enhances gameplay by automating common mechanics, improving combat flow, and providing additional visual feedback for DCC-specific rules. This version has been re-written from the ground up to support the 0.50+ version of the DCC RPG system, and Foundry VTT v12+.
+A quality of life and automation module for the Dungeon Crawl Classics RPG system in Foundry VTT. This module aims to enhance gameplay by automating common mechanics, improving combat flow, and providing additional flexibily to DCC players and GMS. This version has been re-written from the ground up to support the 0.50+ version of the DCC RPG system, and Foundry VTT v12+.
 
 ## Overview
 
-The DCC Quality of Life module improves the DCC RPG experience in Foundry VTT by:
+The DCC Quality of Life module aims to improve the DCC RPG experience in Foundry VTT by:
 
 -   **Streamlining combat** - Let the system handle hit/miss determination, range penalties, mighty deed success/failure, and damage application
 -   **Enforcing easily forgotten DCC rules** - Automatic friendly fire checks, firing into melee penalties, and luck modifiers on incoming crits & fumbles
--   **Support for house rules and experimental variants** - DCC-QoL, as an optional add-on, has room to roam when it comes to support for other non-RAW/house rules options. More to come here soon!
+-   **Supporting house rules and experimental variants** - DCC-QoL, as an optional add-on, has room to roam when it comes to support for other non-RAW/house rules options. More to come here soon!
 
 ![Comparison between vanilla DCC and DCC-QOL attack cards](docs/images/attack-card-comparison.png)
 
