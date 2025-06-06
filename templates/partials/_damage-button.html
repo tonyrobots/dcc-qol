@@ -1,19 +1,27 @@
-{{#unless damageButtonClicked}} {{#if canUserModify}}
+{{#unless damageWasAutomated}} {{#if canUserModify}} {{#if compact}}
+<button
+    data-action="damage"
+    class="compact-button{{#if damageButtonClicked}} disabled{{/if}}"
+>
+    {{ localize "DCC.RollDamage" }}
+</button>
+{{else}}
 <div class="card-buttons centered">
-    <button data-action="damage" class="damage-button">
+    <button
+        data-action="damage"
+        class="damage-button{{#if damageButtonClicked}} disabled{{/if}}"
+    >
         {{ localize "DCC.RollDamage" }}
     </button>
 </div>
-{{else}} {{#if isGM}}
-<div class="card-buttons centered">
-    <button data-action="damage" class="damage-button">
-        {{ localize "DCC.RollDamage" }}
-    </button>
-</div>
-{{/if}} {{/if}} {{else}}
+{{/if}} {{/if}} {{else}} {{#if compact}}
+<span class="compact-damage-result"
+    >{{localize "DCC.Damage"}}: <strong>{{automatedDamageTotal}}</strong></span
+>
+{{else}}
 <div class="chat-details centered">
     <div class="roll-result">
-        <strong>{{ localize "DCC-QOL.DamageRolled" }}: {{damageTotal}}</strong>
+        {{localize "DCC.Damage"}}: <strong>{{automatedDamageTotal}}</strong>
     </div>
 </div>
-{{/unless}}
+{{/if}} {{/unless}}

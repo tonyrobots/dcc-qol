@@ -205,49 +205,62 @@
     transform: translateY(0);
 }
 
-/* Special styling for different button types */
-.dccqol.chat-card .card-buttons button[data-action="damage"] {
-    background: linear-gradient(to bottom, #f0e8e0, #e0d0c0);
-    border-color: #8b4513;
-    color: #4b1810;
+/* ========== SHARED BUTTON COLOR STYLES ========== */
+
+/* Damage Button Colors (Green) - Higher specificity to override base styles */
+.dccqol.chat-card .card-buttons button[data-action="damage"],
+.dccqol.chat-card.compact .compact-button[data-action="damage"] {
+    background: linear-gradient(to bottom, #e6f8e6, #ccf0cc) !important;
+    border-color: #228b22 !important;
+    color: #0f4f0f !important;
 }
 
-.dccqol.chat-card .card-buttons button[data-action="damage"]:hover {
-    background: linear-gradient(to bottom, #f3ebe3, #e3d3c3);
-    border-color: #a0522d;
+.dccqol.chat-card .card-buttons button[data-action="damage"]:hover,
+.dccqol.chat-card.compact .compact-button[data-action="damage"]:hover {
+    background: linear-gradient(to bottom, #f0faf0, #d9f2d9) !important;
+    border-color: #32cd32 !important;
 }
 
-.dccqol.chat-card .card-buttons button[data-action="crit"] {
-    background: linear-gradient(to bottom, #e8f0e8, #d0e0d0);
-    border-color: #228b22;
-    color: #0f4f0f;
+/* Critical Button Colors (Orange) */
+.dccqol.chat-card .card-buttons button[data-action="crit"],
+.dccqol.chat-card.compact .compact-button[data-action="crit"] {
+    background: linear-gradient(to bottom, #fff2e6, #ffe6cc) !important;
+    border-color: #cc6600 !important;
+    color: #994d00 !important;
 }
 
-.dccqol.chat-card .card-buttons button[data-action="crit"]:hover {
-    background: linear-gradient(to bottom, #ebf3eb, #d3e3d3);
-    border-color: #32cd32;
+.dccqol.chat-card .card-buttons button[data-action="crit"]:hover,
+.dccqol.chat-card.compact .compact-button[data-action="crit"]:hover {
+    background: linear-gradient(to bottom, #fff7f0, #ffeddb) !important;
+    border-color: #e6730a !important;
 }
 
-.dccqol.chat-card .card-buttons button[data-action="fumble"] {
-    background: linear-gradient(to bottom, #f0e8e8, #e0d0d0);
-    border-color: #dc143c;
-    color: #8b0000;
+/* Fumble Button Colors (Red) */
+.dccqol.chat-card .card-buttons button[data-action="fumble"],
+.dccqol.chat-card.compact .compact-button[data-action="fumble"] {
+    background: linear-gradient(to bottom, #ffe6e6, #ffcccc) !important;
+    border-color: #cc0000 !important;
+    color: #800000 !important;
 }
 
-.dccqol.chat-card .card-buttons button[data-action="fumble"]:hover {
-    background: linear-gradient(to bottom, #f3ebeb, #e3d3d3);
-    border-color: #ff1493;
+.dccqol.chat-card .card-buttons button[data-action="fumble"]:hover,
+.dccqol.chat-card.compact .compact-button[data-action="fumble"]:hover {
+    background: linear-gradient(to bottom, #fff0f0, #ffdbdb) !important;
+    border-color: #e60000 !important;
 }
 
-.dccqol.chat-card .card-buttons button[data-action="friendlyFire"] {
-    background: linear-gradient(to bottom, #f0f0e8, #e0e0d0);
-    border-color: #ff8c00;
-    color: #8b4500;
+/* Friendly Fire Button Colors (Yellow/Amber) */
+.dccqol.chat-card .card-buttons button[data-action="friendlyFire"],
+.dccqol.chat-card.compact .compact-button[data-action="friendlyFire"] {
+    background: linear-gradient(to bottom, #fff4e6, #ffeacc) !important;
+    border-color: #ff9900 !important;
+    color: #cc7700 !important;
 }
 
-.dccqol.chat-card .card-buttons button[data-action="friendlyFire"]:hover {
-    background: linear-gradient(to bottom, #f3f3eb, #e3e3d3);
-    border-color: #ffa500;
+.dccqol.chat-card .card-buttons button[data-action="friendlyFire"]:hover,
+.dccqol.chat-card.compact .compact-button[data-action="friendlyFire"]:hover {
+    background: linear-gradient(to bottom, #fff8f0, #fff0db) !important;
+    border-color: #ffad1a !important;
 }
 
 .dccqol.chat-card .card-footer {
@@ -353,7 +366,7 @@
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-top: none; /* Keep this to make the total distinct when formula is above it */
     text-align: center;
-    font-size: 24px !important;
+    font-size: 20px;
     font-weight: bold !important;
 }
 
@@ -420,8 +433,184 @@ button[data-action="friendlyFireDamage"]:hover {
 }
 
 button[data-action="friendlyFireDamage"]:disabled {
-    background: linear-gradient(to bottom, #e0d8d0, #d0c8c0) !important;
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #ccc;
+    border-color: #999;
+}
+
+/* ========== DISABLED BUTTON STYLES ========== */
+
+/* Disabled state for all buttons */
+.dccqol.chat-card .card-buttons button.disabled,
+.dccqol.chat-card.compact .compact-button.disabled {
+    background: linear-gradient(to bottom, #e8e8e8, #d0d0d0) !important;
+    border-color: #999 !important;
     color: #666 !important;
     cursor: not-allowed !important;
-    opacity: 0.7;
+    opacity: 0.6 !important;
+    pointer-events: none !important;
 }
+
+/* Remove hover effects for disabled buttons */
+.dccqol.chat-card .card-buttons button.disabled:hover,
+.dccqol.chat-card.compact .compact-button.disabled:hover {
+    background: linear-gradient(to bottom, #e8e8e8, #d0d0d0) !important;
+    border-color: #999 !important;
+    transform: none !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ========== COMPACT ATTACK CARD STYLES ========== */
+
+/* Compact Chat Card */
+.dccqol.chat-card.compact {
+    padding: 3px;
+    margin: 2px 0;
+}
+
+/* Compact Header */
+.dccqol.chat-card.compact .compact-header {
+    padding: 2px 0;
+    margin-bottom: 2px;
+}
+
+.dccqol.chat-card.compact .compact-header img {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    margin-right: 3px;
+}
+
+.dccqol.chat-card.compact .compact-title {
+    font-size: 12px;
+    line-height: 24px;
+    margin: 0;
+}
+
+/* Compact Dice Section */
+.dccqol.chat-card.compact .compact-dice-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 1px 0;
+    padding: 1px 0;
+}
+
+.dccqol.chat-card.compact .compact-dice-section .dice-roll {
+    margin: 0;
+    flex: 1;
+}
+
+/* Make dice formula more compact */
+.dccqol.chat-card.compact .dice-formula {
+    font-size: 11px;
+    line-height: 1.2;
+    margin: 0;
+}
+
+/* Make dice total more compact */
+.dccqol.chat-card.compact .dice-total {
+    /* font-size: 14px; */
+    line-height: 1.2;
+    margin: 1px 0;
+    padding: 2px 4px;
+}
+
+/* Compact the entire dice roll container */
+.dccqol.chat-card.compact .dice-roll {
+    line-height: 1.2;
+}
+
+.dccqol.chat-card.compact .dice-roll .dice-formula {
+    margin-bottom: 1px;
+}
+
+.dccqol.chat-card.compact .dice-roll .dice-total {
+    margin-top: 1px;
+}
+
+.dccqol.chat-card.compact .compact-deed-result {
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+/* Compact Results */
+.dccqol.chat-card.compact .compact-result {
+    padding: 2px;
+    margin: 2px 0;
+}
+
+.dccqol.chat-card.compact .compact-result .roll-result {
+    margin: 2px 0;
+    font-size: 1em;
+}
+
+/* Compact Buttons Grid */
+.dccqol.chat-card.compact .compact-buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    align-items: center;
+    margin-top: 3px;
+}
+
+/* Single button spans full width */
+.dccqol.chat-card.compact .compact-buttons-grid:has(> :only-child) {
+    grid-template-columns: 1fr;
+}
+
+/* Fallback for browsers that don't support :has() */
+.dccqol.chat-card.compact .compact-buttons-grid > :only-child {
+    grid-column: 1 / -1;
+}
+
+.dccqol.chat-card.compact .compact-button {
+    background: linear-gradient(to bottom, #f5f1e8, #e8e0d0);
+    color: #2c1810;
+    border: 1px solid #8b4513;
+    border-radius: 3px;
+    padding: 4px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 12px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+    text-align: center;
+    width: 100%;
+}
+
+.dccqol.chat-card.compact .compact-button:hover {
+    background: linear-gradient(to bottom, #f8f4eb, #eae2d2);
+    border-color: #a0522d;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+}
+
+.dccqol.chat-card.compact .compact-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* Compact Damage Result */
+.dccqol.chat-card.compact .compact-damage-result {
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    grid-column: 1 / -1; /* Span full width in grid */
+    text-align: center;
+    padding: 2px 0;
+}
+
+/* Compact Auto Results */
+.dccqol.chat-card.compact .compact-auto-result {
+    font-size: 11px;
+    margin: 2px 0;
+    grid-column: 1 / -1; /* Span full width in grid */
+    text-align: center;
+}
+
+/* Note: Button colors are inherited from shared styles above */

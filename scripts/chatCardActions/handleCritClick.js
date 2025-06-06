@@ -1,4 +1,6 @@
 /* global ui, Roll, ChatMessage, $ */
+import { socket } from "../dcc-qol.js";
+
 /**
  * Handles the click event for the "Roll Critical" button on the QoL attack card.
  *
@@ -59,7 +61,7 @@ export async function handleCritClick(event, message, actor, weapon, qolFlags) {
         );
         await roll.evaluate();
 
-        roll.toMessage({
+        await roll.toMessage({
             speaker: ChatMessage.getSpeaker({ actor: actor }),
             flavor: flavorText,
             flags: {
@@ -71,6 +73,25 @@ export async function handleCritClick(event, message, actor, weapon, qolFlags) {
                 "dccqol.critTableName": message.system.critTableName,
             },
         });
+
+        // Update the original message to mark that crit button was clicked
+        // This will cause all clients to re-render with the button disabled
+        // Use socket to have GM update the flags since players can't modify message flags
+        try {
+            await socket.executeAsGM("gmUpdateMessageFlags", {
+                messageId: message.id,
+                flagScope: "dcc-qol",
+                flags: {
+                    critButtonClicked: true,
+                },
+            });
+        } catch (flagError) {
+            console.warn(
+                "DCC-QOL | Could not update crit button clicked flag:",
+                flagError
+            );
+            // Don't throw here - the crit roll was successful even if flag update failed
+        }
     } catch (rollError) {
         console.error("DCC-QOL | Error performing critical roll:", rollError, {
             formula: message.system.critRollFormula,

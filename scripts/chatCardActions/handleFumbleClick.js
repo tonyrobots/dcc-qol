@@ -1,4 +1,6 @@
 /* global ui, Roll, ChatMessage, $ */
+import { socket } from "../dcc-qol.js";
+
 /**
  * Handles the click event for the "Roll Fumble" button on the QoL attack card.
  *
@@ -65,7 +67,7 @@ export async function handleFumbleClick(
         );
         await roll.evaluate();
 
-        roll.toMessage({
+        await roll.toMessage({
             speaker: ChatMessage.getSpeaker({ actor: actor }),
             flavor: flavorText,
             flags: {
@@ -78,6 +80,25 @@ export async function handleFumbleClick(
                 // "dccqol.fumbleTableName": message.system.fumbleTableName,
             },
         });
+
+        // Update the original message to mark that fumble button was clicked
+        // This will cause all clients to re-render with the button disabled
+        // Use socket to have GM update the flags since players can't modify message flags
+        try {
+            await socket.executeAsGM("gmUpdateMessageFlags", {
+                messageId: message.id,
+                flagScope: "dcc-qol",
+                flags: {
+                    fumbleButtonClicked: true,
+                },
+            });
+        } catch (flagError) {
+            console.warn(
+                "DCC-QOL | Could not update fumble button clicked flag:",
+                flagError
+            );
+            // Don't throw here - the fumble roll was successful even if flag update failed
+        }
     } catch (rollError) {
         console.error("DCC-QOL | Error performing fumble roll:", rollError, {
             formula: message.system.fumbleRollFormula,

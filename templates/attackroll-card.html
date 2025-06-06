@@ -51,23 +51,7 @@
     <div class="chat-details centered">
         <div class="roll-result status-failure">{{localize "DCC.Fumble"}}!</div>
     </div>
-    {{#unless fumbleWasAutomated}}
-    {{#if canUserModify}}
-    <div class="card-buttons centered">
-        <button data-action="fumble">{{ localize "DCC.RollFumble" }}</button>
-    </div>
-    {{else}}
-    {{#if isGM}}
-    <div class="card-buttons centered">
-        <button data-action="fumble">{{ localize "DCC.RollFumble" }}</button>
-    </div>
-    {{/if}}
-    {{/if}}
-    {{else}}
-    <div class="chat-details centered">
-        <div class="roll-result status-info">{{{automatedFumbleDisplay}}}</div>
-    </div>
-    {{/unless}} {{else}} {{#if hitsTarget}}
+    {{> "modules/dcc-qol/templates/partials/_fumble-button.html"}} {{else}} {{#if hitsTarget}}
     <div class="chat-details centered">
         <div class="roll-result status-success">
             <span>
@@ -113,31 +97,7 @@
             {{localize "DCC.Damage"}}: <strong>{{automatedDamageTotal}}</strong>
         </div>
     </div>
-    {{/unless}} {{/if}} {{/if}} {{/if}} {{#if isCrit}} {{#unless critWasAutomated}}
-    {{#unless (and isBackstab target (not hitsTarget))}}
-    {{#if canUserModify}}
-    <div class="card-buttons centered">
-        <button data-action="crit">{{ localize "DCC.RollCritical" }}</button>
-    </div>
-    {{else}}
-    {{#if isGM}}
-    <div class="card-buttons centered">
-        <button data-action="crit">{{ localize "DCC.RollCritical" }}</button>
-    </div>
-    {{/if}}
-    {{/if}}
-    {{/unless}}
-    {{else}}
-    <div class="chat-details centered">
-        <div class="roll-result status-info">{{{automatedCritDisplay}}}</div>
-    </div>
-    {{/unless}} {{/if}} {{#if showFriendlyFireButton}}
-    <div class="card-buttons centered">
-        <button data-action="friendlyFire">
-            {{ localize "DCC-QOL.FriendlyFireCheck" }}
-        </button>
-    </div>
-    {{/if}}
+    {{/unless}} {{/if}} {{/if}} {{/if}} {{#if isCrit}}     {{> "modules/dcc-qol/templates/partials/_crit-button.html"}} {{/if}}     {{> "modules/dcc-qol/templates/partials/_friendly-fire-button.html"}}
 
     <footer class="card-footer centered">
         {{#each properties}}

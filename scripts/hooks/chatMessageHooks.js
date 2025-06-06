@@ -91,11 +91,28 @@ export async function enhanceAttackRollCard(message, html, data) {
                 damageButtonClicked:
                     message.getFlag("dcc-qol", "damageButtonClicked") || false,
                 damageTotal: message.getFlag("dcc-qol", "damageTotal") || null,
+                fumbleButtonClicked:
+                    message.getFlag("dcc-qol", "fumbleButtonClicked") || false,
+                critButtonClicked:
+                    message.getFlag("dcc-qol", "critButtonClicked") || false,
+                friendlyFireButtonClicked:
+                    message.getFlag("dcc-qol", "friendlyFireButtonClicked") ||
+                    false,
             };
 
             // --- Render the Custom Template ---
+            // Check the attack card format setting to determine which template to use
+            const attackCardFormat = game.settings.get(
+                "dcc-qol",
+                "attackCardFormat"
+            );
+            const templatePath =
+                attackCardFormat === "compact"
+                    ? "modules/dcc-qol/templates/attackroll-card-compact.html"
+                    : "modules/dcc-qol/templates/attackroll-card.html";
+
             const renderedContentHtml = await renderTemplate(
-                "modules/dcc-qol/templates/attackroll-card.html",
+                templatePath,
                 templateData
             );
 
@@ -342,8 +359,9 @@ export async function enhanceAttackRollCard(message, html, data) {
                     struckAllyText: qolFlags.struckAllyText || "",
                     friendlyFireSafeText: qolFlags.friendlyFireSafeText || "",
                     properties: properties,
-                    // Per-client permission checks (not really needed for safe cases, but for consistency)
-                    canUserModify: actor.canUserModify(game.user, "update"),
+                    canUserModify:
+                        actor.canUserModify(game.user, "update") ||
+                        game.user.isGM,
                     isGM: game.user.isGM,
                     damageButtonClicked: false, // No damage button for safe/miss cases
                     damageTotal: null,

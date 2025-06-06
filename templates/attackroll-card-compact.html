@@ -1,0 +1,104 @@
+<!-- prettier-ignore -->
+<div
+    class="dccqol chat-card compact"
+    data-actor-id="{{actor._id}}"
+    data-weapon-id="{{weapon._id}}"
+    data-token-id="{{tokenId}}"
+    data-target="{{target}}"
+    data-targettoken-id="{{targetTokenId}}"
+    data-options="{{options}}"
+>
+    <header class="card-header flexrow compact-header">
+        <h3 class="flavor-text compact-title">
+            {{#if isBackstab}}
+                <img src="/systems/dcc/styles/images/backstab.png" title="Backstab" width="16" height="16" style="vertical-align: middle; margin-right: 3px; border: none;" />
+                {{localize "DCC-QOL.BackstabsWith" weapon=weapon.name}}
+            {{else}}
+                {{localize "DCC-QOL.AttacksWith" weapon=weapon.name}}
+            {{/if}}
+        </h3>
+        {{#if isPC}}
+        <img
+            src="{{weapon.img}}"
+            title="{{weapon.name}} (Weapon)"
+            width="24"
+            height="24"
+        />
+        {{else}}
+        <img
+            src="{{actor.img}}"
+            title="{{actor.name}} (Actor)"
+            width="24"
+            height="24"
+            class="npc-token-image"
+        />
+        {{/if}}
+    </header>
+
+    <div class="compact-dice-section">
+        {{{diceHTML}}}
+        {{#if deedDieResult}}
+        <span class="compact-deed-result">
+            {{localize "DCC.DeedDie"}}: <strong>{{deedDieResult}}</strong>
+        </span>
+        {{/if}}
+    </div>
+
+    {{#if isFumble}}
+    <div class="chat-details compact-result">
+        <div class="roll-result status-failure">{{localize "DCC.Fumble"}}!</div>
+        {{> "modules/dcc-qol/templates/partials/_fumble-button.html" compact=true}}
+    </div>
+    {{else}}
+    {{#if hitsTarget}}
+    <div class="chat-details compact-result">
+        <div class="roll-result status-success">
+            <span>
+                {{ localize "DCC.Attack" }} {{#if isCrit}} {{localize
+                "DCC-QOL.AttackRollHitsCrit"}} {{else}} {{ localize
+                "DCC-QOL.AttackRollHits"}} {{/if}}{{target}}!
+            </span>
+            {{#if deedRollSuccess}} <br />{{localize "DCC-QOL.DeedRollSuccess"}}
+            {{/if}}
+        </div>
+        <div class="compact-buttons-grid">
+            {{> "modules/dcc-qol/templates/partials/_damage-button.html" compact=true}}
+            {{#if isCrit}}
+            {{> "modules/dcc-qol/templates/partials/_crit-button.html" compact=true}}
+            {{/if}}
+            {{> "modules/dcc-qol/templates/partials/_friendly-fire-button.html" compact=true}}
+        </div>
+    </div>
+    {{else}}
+    {{#if target}}
+    <div class="chat-details compact-result">
+        <div class="roll-result status-failure">
+            {{ tokenName }} {{ localize "DCC-QOL.AttackRollMisses"}} {{target}}
+        </div>
+        <div class="compact-buttons-grid">
+            {{> "modules/dcc-qol/templates/partials/_friendly-fire-button.html" compact=true}}
+        </div>
+    </div>
+    {{else}}
+    <div class="chat-details compact-result">
+        <div class="roll-result status-success">
+            {{#if isBackstab}}
+                {{ tokenName }} {{localize "DCC-QOL.BackstabHitsAC" AC=hitsAc}}
+            {{else}}
+                {{ tokenName }} {{#if isCrit }} {{localize
+                "DCC-QOL.AttackRollHitsCrit"}}! {{ else }} {{localize
+                "DCC-QOL.AttackRollHitsAC" AC=hitsAc}} {{/if}}
+            {{/if}}
+        </div>
+        <div class="compact-buttons-grid">
+            {{> "modules/dcc-qol/templates/partials/_damage-button.html" compact=true}}
+            {{#if isCrit}}
+            {{> "modules/dcc-qol/templates/partials/_crit-button.html" compact=true}}
+            {{/if}}
+            {{> "modules/dcc-qol/templates/partials/_friendly-fire-button.html" compact=true}}
+        </div>
+    </div>
+    {{/if}}
+    {{/if}}
+    {{/if}}
+</div>

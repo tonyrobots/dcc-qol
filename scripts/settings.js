@@ -12,6 +12,24 @@ export const registerSettings = async function () {
         default: true,
         config: false, // change to true when we're ready to make the qol attack card optional
     });
+
+    /**
+     * Attack Card Format
+     * Choose between Full and Compact attack card layouts
+     */
+    game.settings.register("dcc-qol", "attackCardFormat", {
+        name: "DCC-QOL.SettingAttackCardFormat",
+        hint: "DCC-QOL.SettingAttackCardFormatHint",
+        scope: "world",
+        type: String,
+        default: "full",
+        choices: {
+            full: "DCC-QOL.SettingAttackCardFormatFull",
+            compact: "DCC-QOL.SettingAttackCardFormatCompact",
+        },
+        config: true,
+    });
+
     /**
      * Automate damage apply
      */

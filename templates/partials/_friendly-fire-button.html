@@ -1,0 +1,17 @@
+{{#if showFriendlyFireButton}} {{#if compact}}
+<button
+    data-action="friendlyFire"
+    class="compact-button{{#if friendlyFireButtonClicked}} disabled{{/if}}"
+>
+    {{ localize "DCC-QOL.FriendlyFireCheck" }}
+</button>
+{{else}}
+<div class="card-buttons centered">
+    <button
+        data-action="friendlyFire"
+        class="{{#if friendlyFireButtonClicked}} disabled{{/if}}"
+    >
+        {{ localize "DCC-QOL.FriendlyFireCheck" }}
+    </button>
+</div>
+{{/if}} {{/if}}

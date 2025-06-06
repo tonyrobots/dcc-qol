@@ -1,0 +1,24 @@
+{{#unless critWasAutomated}} {{#unless (and isBackstab target (not
+hitsTarget))}} {{#if canUserModify}} {{#if compact}}
+<button
+    data-action="crit"
+    class="compact-button{{#if critButtonClicked}} disabled{{/if}}"
+>
+    {{ localize "DCC.RollCritical" }}
+</button>
+{{else}}
+<div class="card-buttons centered">
+    <button
+        data-action="crit"
+        class="{{#if critButtonClicked}} disabled{{/if}}"
+    >
+        {{ localize "DCC.RollCritical" }}
+    </button>
+</div>
+{{/if}} {{/if}} {{/unless}} {{else}} {{#if compact}}
+<span class="compact-auto-result">{{{automatedCritDisplay}}}</span>
+{{else}}
+<div class="chat-details centered">
+    <div class="roll-result status-info">{{{automatedCritDisplay}}}</div>
+</div>
+{{/if}} {{/unless}}

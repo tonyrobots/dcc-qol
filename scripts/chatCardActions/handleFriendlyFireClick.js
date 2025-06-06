@@ -1,4 +1,6 @@
 /* global ui, Roll, ChatMessage, game, renderTemplate */
+import { socket } from "../dcc-qol.js";
+
 /**
  * Handles the click event for the "Friendly Fire Check" button on the QoL attack card.
  * Performs a d100 friendly fire check. Regardless of outcome (hit ally or miss all),
@@ -55,10 +57,6 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
     try {
         const d100Roll = new Roll("1d100", actor.getRollData());
         await d100Roll.evaluate();
-        if (game.dice3d) {
-            // Check if DSN is active
-            await game.dice3d.showForRoll(d100Roll);
-        }
 
         const friendlyFireAttemptOccurs = d100Roll.total <= 50;
         let noFriendlyFireActuallyOccurred = true; // True if d100 > 50 OR no valid targets/weapon
@@ -228,6 +226,25 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
 
         await ChatMessage.create(finalMessageData);
         // d100Roll.toMessage(finalMessageData); // Using ChatMessage.create for consistency
+
+        // Update the original message to mark that friendly fire button was clicked
+        // This will cause all clients to re-render with the button disabled
+        // Use socket to have GM update the flags since players can't modify message flags
+        try {
+            await socket.executeAsGM("gmUpdateMessageFlags", {
+                messageId: message.id,
+                flagScope: "dcc-qol",
+                flags: {
+                    friendlyFireButtonClicked: true,
+                },
+            });
+        } catch (flagError) {
+            console.warn(
+                "DCC-QOL | Could not update friendly fire button clicked flag:",
+                flagError
+            );
+            // Don't throw here - the friendly fire check was successful even if flag update failed
+        }
 
         console.debug(
             "DCC-QOL | Friendly fire check completed using unified template."
