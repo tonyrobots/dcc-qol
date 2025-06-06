@@ -349,7 +349,7 @@
 }
 
 .dice-formula {
-    padding: 5px;
+    padding: 0px;
     margin: 0;
     background: #d5d1c5;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -360,7 +360,7 @@
 }
 
 .dice-total {
-    padding: 5px;
+    padding: 2px;
     margin: 0;
     background: #d5d1c5;
     border: 1px solid rgba(0, 0, 0, 0.1);
