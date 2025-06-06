@@ -67,9 +67,25 @@ export async function enhanceAttackRollCard(message, html, data) {
 
             // --- Extract Original Roll HTML ---
             const originalContent = $(`<div>${message.content}</div>`); // Use message.content
-            const diceHTML =
-                originalContent.find(".dice-roll").first()?.prop("outerHTML") ||
-                "";
+
+            // Check the attack card format setting to determine dice HTML format
+            const attackCardFormat = game.settings.get(
+                "dcc-qol",
+                "attackCardFormat"
+            );
+
+            let diceHTML = "";
+            if (
+                attackCardFormat === "compact" &&
+                message.rolls &&
+                message.rolls[0]
+            ) {
+                // Use compact format with toAnchor().outerHTML for compact cards
+                diceHTML = message.rolls[0].toAnchor().outerHTML;
+            } else {
+                // Use full dice roll HTML for standard cards
+                diceHTML = await message.rolls[0].render();
+            }
 
             // --- Get Weapon Properties ---
             const properties = await getWeaponProperties(
@@ -102,10 +118,6 @@ export async function enhanceAttackRollCard(message, html, data) {
 
             // --- Render the Custom Template ---
             // Check the attack card format setting to determine which template to use
-            const attackCardFormat = game.settings.get(
-                "dcc-qol",
-                "attackCardFormat"
-            );
             const templatePath =
                 attackCardFormat === "compact"
                     ? "modules/dcc-qol/templates/attackroll-card-compact.html"

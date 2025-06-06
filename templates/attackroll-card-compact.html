@@ -35,12 +35,10 @@
         {{/if}}
     </header>
 
-    <div class="compact-dice-section">
-        {{{diceHTML}}}
+    <div class="compact-dice-section centered">
+        {{localize "DCC-QOL.AttackRoll"}}: {{{diceHTML}}}
         {{#if deedDieResult}}
-        <span class="compact-deed-result">
             {{localize "DCC.DeedDie"}}: <strong>{{deedDieResult}}</strong>
-        </span>
         {{/if}}
     </div>
 
@@ -73,7 +71,7 @@
     {{#if target}}
     <div class="chat-details compact-result">
         <div class="roll-result status-failure">
-            {{ tokenName }} {{ localize "DCC-QOL.AttackRollMisses"}} {{target}}
+            {{ tokenName }} {{ localize "DCC-QOL.AttackRollMisses"}} {{target}}.
         </div>
         <div class="compact-buttons-grid">
             {{> "modules/dcc-qol/templates/partials/_friendly-fire-button.html" compact=true}}

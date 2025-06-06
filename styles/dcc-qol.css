@@ -1,7 +1,7 @@
 /* Minimal DCC-QoL Styles */
 .dccqol.chat-card {
     font-family: "Signika", sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     margin: 0;
     border: 1px solid #782e22;
     background: #e0dbd0; /* parchment background */
@@ -116,7 +116,7 @@
 
 .dccqol.chat-card .weapon-description .description-content {
     padding: 5px;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 /* Warning for Friendly Fire */
@@ -467,6 +467,7 @@ button[data-action="friendlyFireDamage"]:disabled {
 .dccqol.chat-card.compact {
     padding: 3px;
     margin: 2px 0;
+    font-size: 13px; /* same as base, but here for clarity and ease of editing */
 }
 
 /* Compact Header */
@@ -483,7 +484,6 @@ button[data-action="friendlyFireDamage"]:disabled {
 }
 
 .dccqol.chat-card.compact .compact-title {
-    font-size: 12px;
     line-height: 24px;
     margin: 0;
 }
@@ -497,6 +497,10 @@ button[data-action="friendlyFireDamage"]:disabled {
     padding: 1px 0;
 }
 
+.dccqol.chat-card.compact .compact-dice-section.centered {
+    justify-content: center;
+}
+
 .dccqol.chat-card.compact .compact-dice-section .dice-roll {
     margin: 0;
     flex: 1;
@@ -504,7 +508,6 @@ button[data-action="friendlyFireDamage"]:disabled {
 
 /* Make dice formula more compact */
 .dccqol.chat-card.compact .dice-formula {
-    font-size: 11px;
     line-height: 1.2;
     margin: 0;
 }
@@ -531,7 +534,6 @@ button[data-action="friendlyFireDamage"]:disabled {
 }
 
 .dccqol.chat-card.compact .compact-deed-result {
-    font-size: 11px;
     white-space: nowrap;
 }
 
@@ -571,7 +573,7 @@ button[data-action="friendlyFireDamage"]:disabled {
     border: 1px solid #8b4513;
     border-radius: 3px;
     padding: 4px 6px;
-    font-size: 10px;
+    font-size: 0.85em;
     font-weight: bold;
     line-height: 12px;
     cursor: pointer;
@@ -597,7 +599,6 @@ button[data-action="friendlyFireDamage"]:disabled {
 
 /* Compact Damage Result */
 .dccqol.chat-card.compact .compact-damage-result {
-    font-size: 11px;
     font-weight: bold;
     white-space: nowrap;
     grid-column: 1 / -1; /* Span full width in grid */
@@ -607,10 +608,7 @@ button[data-action="friendlyFireDamage"]:disabled {
 
 /* Compact Auto Results */
 .dccqol.chat-card.compact .compact-auto-result {
-    font-size: 11px;
     margin: 2px 0;
     grid-column: 1 / -1; /* Span full width in grid */
     text-align: center;
 }
-
-/* Note: Button colors are inherited from shared styles above */
