@@ -77,12 +77,11 @@ Hooks.once("socketlib.ready", () => {
 
 Hooks.once("ready", async () => {
     // Any other ready-time setup
-
     // Delay the compatibility check a few seconds to ensure DCC system settings are fully available
-    setTimeout(async () => {
-        await checkAndCorrectEmoteRollsSetting();
-        console.log(
-            "DCC QoL | Module ready and compatibility checks performed."
-        );
-    }, 5000);
+    // setTimeout(async () => {
+    //     await checkAndCorrectEmoteRollsSetting();
+    //     console.log(
+    //         "DCC QoL | Module ready and compatibility checks performed."
+    //     );
+    // }, 5000);
 });
