@@ -35,3 +35,33 @@ The module **must** operate based on listening to hooks provided by Foundry VTT 
 **Avoid Overrides:** Direct modification or replacement (monkey-patching) of core Foundry or DCC system functions is strictly forbidden in the new architecture. Rely solely on the available hooks. If a necessary hook doesn't exist, the preferred approach is to request its addition to the core DCC system.
 
 **Modularity:** Keep hook handler files focused on specific features or hook types. This promotes maintainability and testability.
+
+## Utility Functions
+
+The `scripts/utils.js` file contains shared utility functions that should be used consistently across the module to maintain code quality and reduce duplication.
+
+### Key Utility Functions
+
+-   **`getTokenById(tokenId)`:** Retrieves a TokenDocument by its ID from the canvas. This function includes proper error handling, validation, and consistent logging. **Always use this function instead of manually calling `game.canvas.tokens.get(tokenId)?.document`** to ensure consistent behavior and debugging output.
+
+    ```javascript
+    import { getTokenById } from "../utils.js";
+
+    // Preferred approach
+    const tokenDoc = getTokenById(someTokenId);
+    if (tokenDoc) {
+        // Use the token document
+        console.log(tokenDoc.name, tokenDoc.disposition);
+    }
+
+    // Avoid manual lookups like this:
+    // const token = game.canvas.tokens.get(tokenId)?.document; // DON'T DO THIS
+    ```
+
+-   **`getFirstTarget(targetsSet)`:** Safely extracts the first valid TokenDocument from a Set of targets (e.g., `game.user.targets`). Includes validation and handles the common pattern where hooks provide targets as a Set<Token>.
+
+-   **`getTokensInMeleeRange(targetTokenDocument, scope)`:** Gets all tokens within melee range of a target token, optionally filtered by disposition ("all", "enemy", "friendly", "neutral").
+
+-   **`measureTokenDistance(token1D, token2D)`:** Measures distance between two token documents, accounting for token size.
+
+When adding new utility functions, ensure they follow the established patterns of input validation, error handling, and debug logging.

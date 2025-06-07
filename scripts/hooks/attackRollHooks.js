@@ -9,6 +9,7 @@ import {
     getTokensInMeleeRange,
     getWeaponFromActorById,
     measureTokenDistance,
+    getTokenById,
 } from "../utils.js";
 
 /**
@@ -149,12 +150,13 @@ export async function prepareQoLAttackData(rolls, messageData) {
     const weaponId = messageData.system.weaponId;
     const tokenId = messageData.speaker.token; // Attacker's token ID
 
-    // --- Fetch Actor (prioritizing token if available) ---
+    // --- Fetch Actor and Token (prioritizing token if available) ---
     let actor;
+    let attackerTokenDoc = null; // Declare in broader scope for use throughout function
     if (tokenId) {
-        const token = canvas.tokens.get(tokenId);
-        if (token) {
-            actor = token.actor;
+        attackerTokenDoc = getTokenById(tokenId);
+        if (attackerTokenDoc) {
+            actor = attackerTokenDoc.actor;
         }
     }
     // If no actor from token, or no tokenId, fallback to actorId
@@ -227,7 +229,6 @@ export async function prepareQoLAttackData(rolls, messageData) {
 
     if (
         game.settings.get("dcc-qol", "automateFriendlyFire") && // if setting is enabled
-        isPC &&
         weapon &&
         !weapon.system.melee && // is Ranged weapon
         !hitsTarget &&
@@ -237,7 +238,10 @@ export async function prepareQoLAttackData(rolls, messageData) {
         try {
             const friendlyTokenDocs = getTokensInMeleeRange(
                 targetDocument,
-                "friendly"
+                attackerTokenDoc?.disposition ===
+                    CONST.TOKEN_DISPOSITIONS.FRIENDLY
+                    ? "friendly"
+                    : "enemy"
             );
             showFriendlyFireButton = friendlyTokenDocs.length > 0;
 
@@ -360,7 +364,10 @@ export function applyFiringIntoMeleePenalty(terms, actor, weapon, options) {
     );
 
     try {
-        const isFiringIntoMelee = checkFiringIntoMelee(targetDocument);
+        const isFiringIntoMelee = checkFiringIntoMelee(
+            targetDocument,
+            actor.token.disposition
+        );
         if (isFiringIntoMelee) {
             console.log(
                 `DCC-QOL | Firing into melee detected for target ${targetDocument.name}. Applying penalty.`
@@ -409,10 +416,7 @@ export function applyRangeChecksAndPenalties(terms, actor, weapon, options) {
     if (!attackerTokenDoc && options.token) {
         // options.token might be the token ID for unlinked, or the TokenDocument itself
         if (typeof options.token === "string") {
-            const tokenOnCanvas = canvas.tokens.get(options.token);
-            if (tokenOnCanvas) {
-                attackerTokenDoc = tokenOnCanvas.document;
-            }
+            attackerTokenDoc = getTokenById(options.token);
         } else if (options.token instanceof TokenDocument) {
             attackerTokenDoc = options.token;
         }

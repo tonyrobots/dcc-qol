@@ -43,12 +43,17 @@
         },
         {
             "lang": "es",
-            "name": "Español",
+            "name": "Spanish",
             "path": "language/es.json"
         },
         {
+            "lang": "fr",
+            "name": "French",
+            "path": "language/fr.json"
+        },
+        {
             "lang": "pt-br",
-            "name": "Português (Brasil)",
+            "name": "Portuguese (Brasil)",
             "path": "language/pt-br.json"
         }
     ],

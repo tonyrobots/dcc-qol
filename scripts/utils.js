@@ -175,10 +175,15 @@ function _matchesDispositionScope(disposition, scope) {
  * @param {TokenDocument} targetTokenDocument - The token document to check for adjacent allies
  * @returns {boolean} True if target has adjacent allies, false otherwise
  */
-export function checkFiringIntoMelee(targetTokenDocument) {
+export function checkFiringIntoMelee(
+    targetTokenDocument,
+    firerDisposition = CONST.TOKEN_DISPOSITIONS.FRIENDLY
+) {
     const friendlyTokens = getTokensInMeleeRange(
         targetTokenDocument,
-        "friendly"
+        firerDisposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY
+            ? "friendly"
+            : "enemy"
     );
     const firingIntoMelee = friendlyTokens.length > 0;
 
@@ -254,4 +259,42 @@ export function getWeaponFromActorById(actor, weaponId) {
 
     // console.debug(`DCC-QOL Utils | getWeaponFromActorById: Returning weapon ${weapon.name}`);
     return weapon;
+}
+
+/**
+ * Retrieves a token document by its ID from the canvas.
+ *
+ * @param {string} tokenId - The ID of the token to retrieve.
+ * @returns {TokenDocument|null} The token document if found, otherwise null.
+ */
+export function getTokenById(tokenId) {
+    if (!tokenId) {
+        console.warn("DCC-QOL Utils | getTokenById: Invalid tokenId provided.");
+        return null;
+    }
+
+    const tokenPlaceable = game.canvas.tokens.get(tokenId);
+
+    if (!tokenPlaceable) {
+        console.debug(
+            `DCC-QOL Utils | getTokenById: Token not found on canvas with ID: ${tokenId}`
+        );
+        return null;
+    }
+
+    const tokenDocument = tokenPlaceable.document;
+
+    if (!tokenDocument) {
+        console.warn(
+            `DCC-QOL Utils | getTokenById: Token placeable found but has no document for ID: ${tokenId}`
+        );
+        return null;
+    }
+
+    console.debug(
+        `DCC-QOL Utils | getTokenById: Returning token document ${
+            tokenDocument.name || tokenDocument.id
+        }`
+    );
+    return tokenDocument;
 }
