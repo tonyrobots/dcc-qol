@@ -1,7 +1,7 @@
 {{#unless damageWasAutomated}} {{#if canUserModify}} {{#if compact}}
 <button
     data-action="damage"
-    class="compact-button{{#if damageButtonClicked}} disabled{{/if}}"
+    class="compact-button{{#if damageButtonClicked}}{{#unless isGM}} disabled{{/unless}}{{/if}}"
 >
     {{ localize "DCC.RollDamage" }}
 </button>
@@ -9,7 +9,7 @@
 <div class="card-buttons centered">
     <button
         data-action="damage"
-        class="damage-button{{#if damageButtonClicked}} disabled{{/if}}"
+        class="damage-button{{#if damageButtonClicked}}{{#unless isGM}} disabled{{/unless}}{{/if}}"
     >
         {{ localize "DCC.RollDamage" }}{{#if damageRollFormula}}{{#unless
         compact}} ({{damageRollFormula}}){{/unless}}{{/if}}

@@ -298,3 +298,69 @@ export function getTokenById(tokenId) {
     );
     return tokenDocument;
 }
+
+/**
+ * Resolves a token document from an actor and options object.
+ * Tries multiple approaches to handle linked actors, unlinked tokens, and fallback scenarios.
+ *
+ * @param {Actor} actor - The actor to get the token document for.
+ * @param {object} options - The options object from the hook, may contain token ID or TokenDocument.
+ * @returns {TokenDocument|null} The actor's token document if found, otherwise null.
+ */
+export function getTokenDocumentFromActor(actor, options) {
+    if (!actor) {
+        console.debug(
+            "DCC-QOL Utils | getTokenDocumentFromActor: No actor provided."
+        );
+        return null;
+    }
+
+    let attackerTokenDoc = null;
+
+    // Try 1: Use actor.token (works for linked actors)
+    attackerTokenDoc = actor.token;
+    if (attackerTokenDoc) {
+        console.debug(
+            `DCC-QOL Utils | getTokenDocumentFromActor: Found token via actor.token: ${attackerTokenDoc.name}`
+        );
+        return attackerTokenDoc;
+    }
+
+    // Try 2: Check options.token (for unlinked tokens or when token ID is passed via options)
+    if (options?.token) {
+        if (typeof options.token === "string") {
+            // Token ID string - use our utility function
+            attackerTokenDoc = getTokenById(options.token);
+            if (attackerTokenDoc) {
+                console.debug(
+                    `DCC-QOL Utils | getTokenDocumentFromActor: Found token via options.token ID: ${attackerTokenDoc.name}`
+                );
+                return attackerTokenDoc;
+            }
+        } else if (options.token instanceof TokenDocument) {
+            // Already a TokenDocument
+            attackerTokenDoc = options.token;
+            console.debug(
+                `DCC-QOL Utils | getTokenDocumentFromActor: Found token via options.token document: ${attackerTokenDoc.name}`
+            );
+            return attackerTokenDoc;
+        }
+    }
+
+    // Try 3: Fall back to first active token for the actor
+    if (actor.getActiveTokens().length > 0) {
+        attackerTokenDoc = actor.getActiveTokens()[0].document;
+        if (attackerTokenDoc) {
+            console.debug(
+                `DCC-QOL Utils | getTokenDocumentFromActor: Found token via actor.getActiveTokens(): ${attackerTokenDoc.name}`
+            );
+            return attackerTokenDoc;
+        }
+    }
+
+    // No token found
+    console.debug(
+        `DCC-QOL Utils | getTokenDocumentFromActor: No token found for actor ${actor.name} (ID: ${actor.id})`
+    );
+    return null;
+}

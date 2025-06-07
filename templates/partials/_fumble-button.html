@@ -1,7 +1,7 @@
 {{#unless fumbleWasAutomated}} {{#if canUserModify}} {{#if compact}}
 <button
     data-action="fumble"
-    class="compact-button{{#if fumbleButtonClicked}} disabled{{/if}}"
+    class="compact-button{{#if fumbleButtonClicked}}{{#unless isGM}} disabled{{/unless}}{{/if}}"
 >
     {{ localize "DCC.RollFumble" }}
 </button>
@@ -9,7 +9,7 @@
 <div class="card-buttons centered">
     <button
         data-action="fumble"
-        class="{{#if fumbleButtonClicked}} disabled{{/if}}"
+        class="{{#if fumbleButtonClicked}}{{#unless isGM}} disabled{{/unless}}{{/if}}"
     >
         {{ localize "DCC.RollFumble" }}
     </button>

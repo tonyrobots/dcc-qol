@@ -10,6 +10,7 @@ import {
     getWeaponFromActorById,
     measureTokenDistance,
     getTokenById,
+    getTokenDocumentFromActor,
 } from "../utils.js";
 
 /**
@@ -363,10 +364,19 @@ export function applyFiringIntoMeleePenalty(terms, actor, weapon, options) {
         `DCC-QOL | Checking firing into melee for target: ${targetDocument.name}`
     );
 
+    // Get attacker token to access disposition
+    const attackerTokenDoc = getTokenDocumentFromActor(actor, options);
+    if (!attackerTokenDoc) {
+        console.debug(
+            "DCC-QOL | No attacker token found for firing into melee check."
+        );
+        return;
+    }
+
     try {
         const isFiringIntoMelee = checkFiringIntoMelee(
             targetDocument,
-            actor.token.disposition
+            attackerTokenDoc.disposition
         );
         if (isFiringIntoMelee) {
             console.log(
@@ -412,19 +422,7 @@ export function applyRangeChecksAndPenalties(terms, actor, weapon, options) {
     }
 
     // Get attacker token
-    let attackerTokenDoc = actor.token; // This is often the case for linked actors
-    if (!attackerTokenDoc && options.token) {
-        // options.token might be the token ID for unlinked, or the TokenDocument itself
-        if (typeof options.token === "string") {
-            attackerTokenDoc = getTokenById(options.token);
-        } else if (options.token instanceof TokenDocument) {
-            attackerTokenDoc = options.token;
-        }
-    }
-    // If still no token, try to get the first active token for the actor
-    if (!attackerTokenDoc && actor.getActiveTokens().length > 0) {
-        attackerTokenDoc = actor.getActiveTokens()[0].document;
-    }
+    const attackerTokenDoc = getTokenDocumentFromActor(actor, options);
     if (!attackerTokenDoc) {
         ui.notifications.warn(
             game.i18n.localize("DCC-QOL.WeaponRangeNoAttackerTokenWarn")

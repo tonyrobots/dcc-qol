@@ -2,7 +2,7 @@
 hitsTarget))}} {{#if canUserModify}} {{#if compact}}
 <button
     data-action="crit"
-    class="compact-button{{#if critButtonClicked}} disabled{{/if}}"
+    class="compact-button{{#if critButtonClicked}}{{#unless isGM}} disabled{{/unless}}{{/if}}"
 >
     {{ localize "DCC.RollCritical" }}
 </button>
@@ -10,7 +10,7 @@ hitsTarget))}} {{#if canUserModify}} {{#if compact}}
 <div class="card-buttons centered">
     <button
         data-action="crit"
-        class="{{#if critButtonClicked}} disabled{{/if}}"
+        class="{{#if critButtonClicked}}{{#unless isGM}} disabled{{/unless}}{{/if}}"
     >
         {{ localize "DCC.RollCritical" }}
     </button>
