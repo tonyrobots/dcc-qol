@@ -1,5 +1,26 @@
 # Changelog
 
+## v1.0.3 - 2025-06-07
+
+### v1.0.3 Release
+
+Quick follow-on release fixing some bugs and adding a couple of new features:
+
+#### Features:
+
+- **Choose between "full" and "compact" attack card styles.** The full card was kind of chonky for some tastes, so I made a slimmed down "compact" version that's about 50% of the height.
+- "Full" attack card now includes the **damage formula** in the "Roll Damage" button
+- For non-GMs, **Roll damage, crits, fumbles, and friendly fire check buttons are now disabled after clicking.** GMs can still click to their hearts' content
+- Added **French localization files, joining Spanish and Portuguese** (Brazilian). These are AI translated, so they may be imperfect -- let me know if you have any suggestions.
+
+#### Bug Fixes:
+
+- **Friendly Fire and Firing into Melee checks now work for NPCs** as well as PCs. (Thank you to user tantan from the Foundry VTT discord)
+- **No more "Could not check the DCC system setting 'emoteRolls'" errors**. This was caused by a timing issue, but I've removed the check entirely: `dcc-qol` plays nice with the DCC emotes setting now! `/me cries with joy`
+- 
+
+**Full Changelog**: https://github.com/tonyrobots/dcc-qol/compare/v1.0.2...v1.0.3
+
 ## 1.0.2 - 2025-06-04
 
 ### Version 1.0.2 is finally here!
