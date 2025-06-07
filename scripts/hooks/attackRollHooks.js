@@ -290,6 +290,8 @@ export async function prepareQoLAttackData(rolls, messageData) {
         showFriendlyFireButton: showFriendlyFireButton,
         friendliesInMelee: friendliesInMelee, // Store the array of friendly tokens in melee range
         options: {}, // Placeholder for future options
+        // Add damage formula for display in button
+        damageRollFormula: messageData.system?.damageRollFormula,
         // Add automation flags and results
         damageWasAutomated: damageWasAutomated,
         automatedDamageTotal: automatedDamageTotal,

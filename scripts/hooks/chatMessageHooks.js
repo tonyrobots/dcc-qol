@@ -101,6 +101,8 @@ export async function enhanceAttackRollCard(message, html, data) {
                 diceHTML: diceHTML, // Pass the extracted attack roll HTML
                 properties: properties,
                 messageId: message.id,
+                // Add attack card format setting for template logic
+                attackCardFormat: attackCardFormat,
                 // Add permission checking per-client
                 canUserModify: actor.canUserModify(game.user, "update"),
                 isGM: game.user.isGM,
@@ -285,6 +287,8 @@ export async function enhanceAttackRollCard(message, html, data) {
                     struckAllyText: qolFlags.struckAllyText || "",
                     friendlyFireSafeText: qolFlags.friendlyFireSafeText || "",
                     properties: properties,
+                    // Add damage formula for display in button
+                    damageRollFormula: weapon?.system?.damage,
                     // Per-client permission checks
                     canUserModify: actor.canUserModify(game.user, "update"),
                     isGM: game.user.isGM,
@@ -371,6 +375,8 @@ export async function enhanceAttackRollCard(message, html, data) {
                     struckAllyText: qolFlags.struckAllyText || "",
                     friendlyFireSafeText: qolFlags.friendlyFireSafeText || "",
                     properties: properties,
+                    // Add damage formula for display in button
+                    damageRollFormula: weapon?.system?.damage,
                     canUserModify:
                         actor.canUserModify(game.user, "update") ||
                         game.user.isGM,

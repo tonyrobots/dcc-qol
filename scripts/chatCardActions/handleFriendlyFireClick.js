@@ -395,6 +395,8 @@ async function _prepareFriendlyFireTemplateData(options) {
             }
         );
         templateData.properties = properties;
+        // Add damage formula for display in button
+        templateData.damageRollFormula = weapon?.system?.damage;
     }
 
     return templateData;

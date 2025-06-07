@@ -11,7 +11,8 @@
         data-action="damage"
         class="damage-button{{#if damageButtonClicked}} disabled{{/if}}"
     >
-        {{ localize "DCC.RollDamage" }}
+        {{ localize "DCC.RollDamage" }}{{#if damageRollFormula}}{{#unless
+        compact}} ({{damageRollFormula}}){{/unless}}{{/if}}
     </button>
 </div>
 {{/if}} {{/if}} {{else}} {{#if compact}}
