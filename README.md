@@ -19,7 +19,7 @@ The DCC Quality of Life module aims to improve the DCC RPG experience in Foundry
 #### **Enhanced Attack Cards**
 
 -   **Hit/Miss Display**: Automatically shows whether an attack hits or misses when a target is selected
--   **Redesigned attack roll chat cards** with improved visual presentation and added information
+-   **Redesigned attack roll chat cards** with improved visual presentation and added information, including a "full" view and a "compact" view for added customization
 -   Color-coded **roll damage, crit, and fumble buttons** for better feeling of player control
 
 ![Enhanced DCC-QOL attack chat card](docs/images/attack-card-crit-backstab.png)
@@ -101,12 +101,12 @@ Access module settings through **Settings → Module Settings → DCC Quality of
 
 ### Recommended Configuration
 
-For the full DCC QoL experience, we recommend enabling all DCC QoL settings (enabled by default).
+For the full DCC QoL experience, we recommend enabling all DCC QoL settings, and making sure players always select a target when attacking. (Use "t" key while hovering over the target.)
 
 In addition, while dcc-qol will work with and respect all DCC system settings, we recommend **disabling** the following DCC RPG system settings for the optimal experience:
 
-    ❌ Automate Damage/Crits/Fumbles
-    ❌ Show rolls as emotes
+    ❌ Automate Damage/Crits/Fumbles -- this setting rolls damage, crits, and fumbles at the same time as the attack roll, so players don't get to roll them separately.
+    ❌ Show rolls as emotes -- Since the DCC-QOL attack cards replace the systems, this setting provides an inconsistent emotes experience.
 
 ## Technical Architecture
 
