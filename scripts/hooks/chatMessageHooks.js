@@ -199,9 +199,6 @@ export async function enhanceAttackRollCard(message, html, data) {
                     }
                 }
             }
-            // Note: .critical and .fumble classes are expected to be added by Foundry's core roll rendering
-            // or by the diceHTML content itself if it comes from a Roll object that was evaluated.
-            // Our CSS handles .dccqol.chat-card .dice-roll .dice-total.critical and .fumble directly.
         } catch (err) {
             console.error(
                 "DCC QoL | Error enhancing attack roll card:",

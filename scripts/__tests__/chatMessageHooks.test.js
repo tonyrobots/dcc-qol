@@ -296,16 +296,23 @@ describe("Chat Message Hooks", () => {
                 expect(renderTemplate).not.toHaveBeenCalled();
             });
 
-            it("should handle missing weapon gracefully", async () => {
+            it("should exit gracefully if weapon not found", async () => {
                 // Arrange
-                // Override the mock for this specific test
+                const consoleErrorSpy = jest
+                    .spyOn(console, "error")
+                    .mockImplementation(() => {});
                 utils.getWeaponFromActorById.mockReturnValueOnce(null);
 
-                // Act
-                await enhanceAttackRollCard(mockMessage, $(html), {});
-
-                // Assert
+                // Act & Assert
+                // It should not throw an error, and should not render the template
+                await expect(
+                    enhanceAttackRollCard(mockMessage, $(html), {})
+                ).resolves.toBeUndefined();
                 expect(renderTemplate).not.toHaveBeenCalled();
+                expect(consoleErrorSpy).not.toHaveBeenCalled();
+
+                // Cleanup
+                consoleErrorSpy.mockRestore();
             });
         });
 
