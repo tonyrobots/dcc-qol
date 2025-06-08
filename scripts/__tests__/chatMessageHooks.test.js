@@ -69,34 +69,40 @@ describe("Chat Message Hooks", () => {
             await enhanceAttackRollCard(mockMessage, $(html), {});
         });
 
-        it("should display a 'Roll Damage' button on a successful hit", () => {
-            // Assert
-            const button = html.querySelector('button[data-action="damage"]');
-            expect(button).not.toBeNull();
-            expect(button.textContent).toContain("Roll Damage");
-        });
+        describe("Roll Damage", () => {
+            it("should display a 'Roll Damage' button on a successful hit", () => {
+                // Assert
+                const button = html.querySelector(
+                    'button[data-action="damage"]'
+                );
+                expect(button).not.toBeNull();
+                expect(button.textContent).toContain("Roll Damage");
+            });
 
-        it("should roll the correct damage formula when the damage button is clicked", async () => {
-            // Arrange
-            // Clear any previous mock calls
-            global.rollToMessageMock.mockClear();
+            it("should roll the correct damage formula when the damage button is clicked", async () => {
+                // Arrange
+                // Clear any previous mock calls
+                global.rollToMessageMock.mockClear();
 
-            // Act
-            const button = html.querySelector('button[data-action="damage"]');
-            $(button).trigger("click");
+                // Act
+                const button = html.querySelector(
+                    'button[data-action="damage"]'
+                );
+                $(button).trigger("click");
 
-            // Allow async operations to complete
-            await new Promise((resolve) => setTimeout(resolve, 0));
+                // Allow async operations to complete
+                await new Promise((resolve) => setTimeout(resolve, 0));
 
-            // Assert
-            // Verify that the roll is sent to chat
-            expect(global.rollToMessageMock).toHaveBeenCalledTimes(1);
-            // Verify that the flavor text includes the weapon's name
-            expect(global.rollToMessageMock).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    flavor: expect.stringContaining(mockMeleeWeapon.name), // 'Sword'
-                })
-            );
+                // Assert
+                // Verify that the roll is sent to chat
+                expect(global.rollToMessageMock).toHaveBeenCalledTimes(1);
+                // Verify that the flavor text includes the weapon's name
+                expect(global.rollToMessageMock).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        flavor: expect.stringContaining(mockMeleeWeapon.name), // 'Sword'
+                    })
+                );
+            });
         });
     });
 });

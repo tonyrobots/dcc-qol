@@ -14,6 +14,12 @@ This document outlines the file structure and architectural approach for the `dc
         -   `*.js` (e.g., `attackRollHooks.js`): Individual files containing the specific logic (handler functions) that respond to different hooks. Files should be named logically based on the hooks they handle or the features they implement (e.g., `chatMessageHooks.js`, `damageApplicationHooks.js`).
     -   **`scripts/chatCardActions/`:** Contains handler functions for actions triggered by user interactions with custom chat card elements (e.g., buttons on a QoL attack card). These are typically called by event listeners set up in `chatMessageHooks.js`.
         -   `*.js` (e.g., `handleDamageClick.js`): Individual files for specific card actions.
+    -   **`scripts/__tests__/`:** Contains automated test files using Jest. Test files should end with `.test.js` and be organized to mirror the structure of the code they test.
+        -   `*.test.js` (e.g., `chatMessageHooks.test.js`, `utils.test.js`): Test files grouped by the modules or features they validate.
+    -   **`scripts/__mocks__/`:** Contains mock implementations and test data factories.
+        -   `foundry.js`: Core mock implementations for Foundry VTT API objects (game, Hooks, Actor, etc.).
+        -   `mock-data.js`: Factory functions for creating standardized test data (actors, weapons, etc.).
+        -   `*.js`: Additional specialized mocks as needed.
     -   `settings.js`: Registers module settings and menus using Foundry VTT's Settings API.
     -   `config.js`: Contains module-level configuration constants or flags.
     -   `dcc-qol.js`: Main module entry point.
