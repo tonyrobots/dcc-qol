@@ -43,6 +43,19 @@ export function createMockPc(options = {}) {
         name: "Test PC",
         type: "Player",
         items: [mockMeleeWeapon, mockRangedWeapon],
+        system: {
+            abilities: {
+                lck: {
+                    mod: 1, // Default +1 luck modifier
+                    value: 13,
+                },
+            },
+            attributes: {
+                ac: {
+                    value: 15,
+                },
+            },
+        },
         // Add other PC-specific data here if needed
         ...options,
     };
@@ -60,6 +73,19 @@ export function createMockNpc(options = {}) {
         name: "Test NPC",
         type: "NPC",
         items: [mockMeleeWeapon],
+        system: {
+            abilities: {
+                lck: {
+                    mod: 0, // NPCs typically have 0 luck modifier
+                    value: 10,
+                },
+            },
+            attributes: {
+                ac: {
+                    value: 12,
+                },
+            },
+        },
         // Add other NPC-specific data here if needed
         ...options,
     };

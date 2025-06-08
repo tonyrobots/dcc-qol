@@ -68,7 +68,11 @@ export function addTestBonus(terms, actor, weapon, targets, options) {
  * @param {boolean} isFumble - Whether the current attack is a fumble.
  * @param {Actor} targetActor - The actor being targeted.
  */
-function _modifyFumbleDieForTargetPCLuck(messageData, isFumble, targetActor) {
+export function _modifyFumbleDieForTargetPCLuck(
+    messageData,
+    isFumble,
+    targetActor
+) {
     if (isFumble && targetActor && targetActor.type === "Player") {
         const targetLuckMod = targetActor.system.abilities?.lck?.mod;
         if (typeof targetLuckMod === "number") {
@@ -105,7 +109,11 @@ function _modifyFumbleDieForTargetPCLuck(messageData, isFumble, targetActor) {
  * @param {boolean} isCrit - Whether the current attack is a critical hit.
  * @param {Actor} targetActor - The actor being targeted.
  */
-function _modifyCritRollForTargetPCLuck(messageData, isCrit, targetActor) {
+export function _modifyCritRollForTargetPCLuck(
+    messageData,
+    isCrit,
+    targetActor
+) {
     if (isCrit && targetActor && targetActor.type === "Player") {
         const targetLuckMod = targetActor.system.abilities?.lck?.mod;
         if (typeof targetLuckMod === "number" && targetLuckMod !== 0) {
