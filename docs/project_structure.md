@@ -36,6 +36,10 @@ The module **must** operate based on listening to hooks provided by Foundry VTT 
 
 **Modularity:** Keep hook handler files focused on specific features or hook types. This promotes maintainability and testability.
 
+## Automated Testing
+
+The module includes a suite of automated tests to ensure code quality and prevent regressions. For detailed information on the testing framework, mock implementation, and how to run tests, please see the [Automated Testing documentation](./testing.md).
+
 ## Utility Functions
 
 The `scripts/utils.js` file contains shared utility functions that should be used consistently across the module to maintain code quality and reduce duplication.
