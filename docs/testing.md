@@ -135,6 +135,74 @@ npm test
 
 This will execute all files in the `scripts/__tests__/` directory that end with `.test.js`.
 
+## Testing Philosophy: True Tests, Not Shallow Mocks
+
+**Our tests must validate real functionality, not trivial mock implementations.**
+
+### The Testing Pyramid Applied
+
+We follow a **hybrid approach** based on the testing pyramid:
+
+1. **Unit Tests (Many)**: Test isolated logic, data preparation, and utility functions
+2. **Integration Tests (Some)**: Test interactions between our code and external dependencies using realistic fixtures
+3. **End-to-End Tests (Few)**: Test complete user workflows
+
+### What We DO Test (Core Functionality)
+
+-   ✅ **Data extraction and preparation** from message flags and actor data
+-   ✅ **Template contracts** - verify `renderTemplate` is called with correct paths and data
+-   ✅ **DOM manipulation logic** - test actual HTML changes using realistic fixtures
+-   ✅ **Event listener attachment** - verify click handlers are properly bound
+-   ✅ **Conditional behavior** - test edge cases and setting-dependent logic
+-   ✅ **Business logic** - dice modifications, luck calculations, range checks
+
+### What We DON'T Test (External Dependencies)
+
+-   ❌ **Foundry's template compilation** - that's Foundry's responsibility
+-   ❌ **jQuery/DOM API implementations** - those are third-party libraries
+-   ❌ **Mock implementations that always pass** - these provide false confidence
+
+### Realistic Fixtures Over Shallow Mocks
+
+Instead of mocking `renderTemplate` to return simple strings, we:
+
+```javascript
+// ❌ BAD: Shallow mock that doesn't test real integration
+renderTemplate.mockResolvedValue("<button>Click me</button>");
+
+// ✅ GOOD: Realistic fixture based on actual template output
+const fixtureHTML = `
+    <div class="dccqol chat-card">
+        <div class="roll-result status-success">Attack hits target!</div>
+        <button data-action="damage">Roll Damage (1d8)</button>
+    </div>
+`;
+renderTemplate.mockResolvedValue(fixtureHTML);
+```
+
+This approach ensures we test:
+
+-   Real HTML structure that templates would produce
+-   Actual CSS selectors and DOM queries
+-   Event binding to realistic elements
+-   Integration between template data and rendered output
+
+### Contract Testing
+
+We verify the **contracts** between our code and external systems:
+
+```javascript
+// Test that we call renderTemplate with the right parameters
+expect(renderTemplate).toHaveBeenCalledWith(
+    "modules/dcc-qol/templates/attackroll-card.html",
+    expect.objectContaining({
+        hitsTarget: true,
+        weapon: expect.objectContaining({ name: "Sword" }),
+        // ... other expected data
+    })
+);
+```
+
 ## Best Practices
 
 1. **Start Simple:** Begin with basic unit tests for utility functions before moving to complex integration tests.
@@ -142,4 +210,11 @@ This will execute all files in the `scripts/__tests__/` directory that end with 
 3. **Use Descriptive Test Names:** Test names should clearly describe the expected behavior.
 4. **Group Related Tests:** Use nested `describe` blocks to organize tests by feature or component.
 5. **Share Setup Code:** Use `beforeEach` hooks to eliminate repetitive test setup.
-6. **Mock External Dependencies:** Mock all external APIs and modules to keep tests isolated and fast.
+6. **Mock Thoughtfully:** Mock external dependencies, but use realistic fixtures that represent actual data structures and HTML output.
+7. **Verify Contracts:** Test that your code calls external APIs with the correct parameters.
+8. **Test Edge Cases:** Include tests for error conditions, missing data, and disabled settings.
+9. **Avoid Trivial Tests:** Don't write tests that can only pass or fail based on your mock implementations.
+
+## Audit Step
+
+After implementing tests, perform an audit of the tests: For each test, provide a summary of exactly what it is testing, and an evaluation of whether it meets our testing criteria, as outlined in this document; in particular, is this a true & useful test that will fail if something in our code breaks, or a test that will trivially pass because it's not meaningfully engaging with real application code.
