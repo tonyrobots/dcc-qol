@@ -13,6 +13,7 @@ import {
     appendAppliedDamageInfoToCard,
 } from "./damageApplicationHooks.js";
 import { enrichDccWeaponAttackMessage } from "./enrichmentHooks.js";
+import { handleNPCDeathStatusUpdate } from "./updateActorHooks.js";
 // Import other hook listeners here as they are created...
 // e.g., import { setupChatListeners } from './chatHooks.js';
 
@@ -34,6 +35,9 @@ export function registerHookListeners() {
         handleAutomatedDamageApplication(message, html, data);
         appendAppliedDamageInfoToCard(message, html, data);
     });
+
+    // Register actor update listeners
+    Hooks.on("updateActor", handleNPCDeathStatusUpdate);
 
     console.log("DCC-QOL | Hook listeners initialized.");
 }

@@ -462,9 +462,6 @@ export async function enhanceAttackRollCard(message, html, data) {
             );
         }
     }
-
-    // Handle Appending "Applied Damage" info to QoL Damage Rolls
-    // This section was moved to damageApplicationHooks.js
 }
 
 /**
