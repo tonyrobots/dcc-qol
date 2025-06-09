@@ -123,4 +123,16 @@ export const registerSettings = async function () {
         default: true,
         config: true,
     });
+
+    /**
+     * Automatically apply "dead" status effect to NPCs when they reach 0 HP
+     */
+    game.settings.register("dcc-qol", "automateNPCDeathStatus", {
+        name: "DCC-QOL.SettingAutomateNPCDeathStatus",
+        hint: "DCC-QOL.SettingAutomateNPCDeathStatusHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: true,
+    });
 };

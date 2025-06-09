@@ -74,5 +74,7 @@
     "DCC-QOL.FriendlyFireAttackMisses": "Attack bounces off {targetName} harmlessly (rolled {total} vs AC {ac})",
     "DCC-QOL.FriendlyFireDamageRoll": "Friendly Fire Damage with {weapon}",
     "DCC-QOL.FriendlyFireDamageResult": "{targetName} takes {damage} damage from friendly fire!",
-    "DCC-QOL.DamageRolled": "Damage Rolled"
+    "DCC-QOL.DamageRolled": "Damage Rolled",
+    "DCC-QOL.SettingAutomateNPCDeathStatus": "Automatically apply \"dead\" status effect to NPCs when they reach 0 HP",
+    "DCC-QOL.SettingAutomateNPCDeathStatusHint": "When an NPC's hit points reach 0 or below, automatically apply the \"dead\" status effect."
 }

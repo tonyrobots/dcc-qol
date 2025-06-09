@@ -73,5 +73,7 @@
     "DCC-QOL.FriendlyFireAttackMisses": "El ataque rebota en {targetName} sin causar daño (tiró {total} vs CA {ac})",
     "DCC-QOL.FriendlyFireDamageRoll": "Daño de Fuego Amigo con {weapon}",
     "DCC-QOL.FriendlyFireDamageResult": "¡{targetName} recibe {damage} de daño por fuego amigo!",
-    "DCC-QOL.DamageRolled": "Daño Tirado"
+    "DCC-QOL.DamageRolled": "Daño Tirado",
+    "DCC-QOL.SettingAutomateNPCDeathStatus": "Aplicar automáticamente efecto de estado \"muerto\" a PNJs cuando lleguen a 0 PV",
+    "DCC-QOL.SettingAutomateNPCDeathStatusHint": "Cuando los puntos de vida de un PNJ lleguen a 0 o menos, aplicar automáticamente el efecto de estado \"muerto\"."
 }

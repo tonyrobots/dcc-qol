@@ -74,5 +74,7 @@
     "DCC-QOL.FriendlyFireAttackMisses": "L'attaque rebondit sur {targetName} sans mal (lancé {total} vs CA {ac})",
     "DCC-QOL.FriendlyFireDamageRoll": "Dégâts de Tir Ami avec {weapon}",
     "DCC-QOL.FriendlyFireDamageResult": "{targetName} subit {damage} dégâts de tir ami !",
-    "DCC-QOL.DamageRolled": "Dégâts Lancés"
+    "DCC-QOL.DamageRolled": "Dégâts Lancés",
+    "DCC-QOL.SettingAutomateNPCDeathStatus": "Appliquer automatiquement l'effet de statut \"mort\" aux PNJ lorsqu'ils atteignent 0 PV",
+    "DCC-QOL.SettingAutomateNPCDeathStatusHint": "Lorsque les points de vie d'un PNJ atteignent 0 ou moins, applique automatiquement l'effet de statut \"mort\"."
 }

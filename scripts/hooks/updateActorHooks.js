@@ -18,6 +18,11 @@ export async function handleNPCDeathStatusUpdate(
     options,
     userId
 ) {
+    // Check if the feature is enabled
+    if (!game.settings.get("dcc-qol", "automateNPCDeathStatus")) {
+        return;
+    }
+
     // Only proceed if this is an NPC
     if (actor?.type !== "NPC") {
         return;
@@ -29,40 +34,27 @@ export async function handleNPCDeathStatusUpdate(
         return;
     }
 
-    // // Get the current HP value
-    // const currentHP =
-    //     hpUpdate?.value !== undefined
-    //         ? hpUpdate.value
-    //         : actor.system.attributes?.hp?.value;
-
     // Only apply death status if HP is 0 or below
     if (hpUpdate.value > 0) {
         return;
     }
 
-    // Check if the "dead" status effect is already applied to avoid infinite loops
-    const hasDeadStatus = actor.effects.some((effect) =>
-        effect.statuses?.has("dead")
-    );
+    const statusId = "dead";
 
-    if (hasDeadStatus) {
+    // Check if actor already has that statusId set
+    // Use the actor.statuses Set which contains language-independent status IDs
+    if (actor.statuses?.has(statusId)) {
         return;
     }
 
     try {
         console.log(
-            `DCC-QOL | Applying dead status to NPC ${actor.name} (HP: ${hpUpdate.value})`
+            `DCC-QOL | Applying ${statusId} status to NPC ${actor.name} (HP: ${hpUpdate.value})`
         );
-
-        // Apply the dead status effect
         await actor.toggleStatusEffect("dead");
-
-        console.log(
-            `DCC-QOL | Successfully applied dead status to NPC ${actor.name}`
-        );
     } catch (error) {
         console.error(
-            `DCC-QOL | Error applying dead status to NPC ${actor.name}:`,
+            `DCC-QOL | Error applying status: ${statusId} to NPC ${actor.name}:`,
             error
         );
     }

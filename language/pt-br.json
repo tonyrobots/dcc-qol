@@ -83,5 +83,7 @@
     "DCC-QOL.FriendlyFireAttackMisses": "Ataque quica em {targetName} inofensivamente (rolou {total} vs CA {ac})",
     "DCC-QOL.FriendlyFireDamageRoll": "Dano de Fogo Amigo com {weapon}",
     "DCC-QOL.FriendlyFireDamageResult": "{targetName} recebe {damage} de dano por fogo amigo!",
-    "DCC-QOL.DamageRolled": "Dano Rolado"
+    "DCC-QOL.DamageRolled": "Dano Rolado",
+    "DCC-QOL.SettingAutomateNPCDeathStatus": "Aplicar automaticamente efeito de estado \"morto\" aos NPCs quando chegarem a 0 PV",
+    "DCC-QOL.SettingAutomateNPCDeathStatusHint": "Quando os pontos de vida de um NPC chegarem a 0 ou menos, aplicar automaticamente o efeito de estado \"morto\"."
 }
