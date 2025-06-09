@@ -47,11 +47,6 @@ describe("Update Actor Hooks", () => {
                 statuses: new Set(), // Empty status set initially
                 toggleStatusEffect: jest.fn().mockResolvedValue(true),
             });
-
-            // Mock console methods to avoid noise in tests
-            console.log = jest.fn();
-            console.debug = jest.fn();
-            console.error = jest.fn();
         });
 
         describe("when setting is enabled", () => {
@@ -260,6 +255,8 @@ describe("Update Actor Hooks", () => {
         describe("error handling", () => {
             it("should handle errors gracefully when toggleStatusEffect fails", async () => {
                 // Arrange
+                // Mock console.error
+                console.error = jest.fn();
                 const error = new Error("Status effect failed");
                 mockNPC.toggleStatusEffect.mockRejectedValue(error);
 

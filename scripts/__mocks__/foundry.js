@@ -11,6 +11,9 @@ global.$ = global.jQuery = $;
 
 // console.log('Loading Foundry Mocks')
 
+// Mock console.debug to suppress debug messages in tests
+console.debug = jest.fn();
+
 /**
  * FormApplication
  */
