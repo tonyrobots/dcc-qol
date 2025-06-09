@@ -43,8 +43,6 @@ export async function handleNPCDeathStatusUpdate(
 
     const statusId = "dead";
 
-    console.log(`DCC-QOL | Actor data: ${actor}`);
-
     try {
         console.log(
             `DCC-QOL | Requesting ${statusId} status application for NPC ${actor.name} (HP: ${hpUpdate.value})`
