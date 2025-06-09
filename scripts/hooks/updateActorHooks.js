@@ -3,6 +3,8 @@
  * Specifically manages automatic status effects based on actor state changes.
  */
 
+import { socket } from "../dcc-qol.js";
+
 /**
  * Automatically applies the "dead" status effect to NPCs when their HP reaches 0.
  * Called via the updateActor hook.
@@ -41,20 +43,29 @@ export async function handleNPCDeathStatusUpdate(
 
     const statusId = "dead";
 
-    // Check if actor already has that statusId set
-    // Use the actor.statuses Set which contains language-independent status IDs
-    if (actor.statuses?.has(statusId)) {
-        return;
-    }
+    console.log(`DCC-QOL | Actor data: ${actor}`);
 
     try {
         console.log(
-            `DCC-QOL | Applying ${statusId} status to NPC ${actor.name} (HP: ${hpUpdate.value})`
+            `DCC-QOL | Requesting ${statusId} status application for NPC ${actor.name} (HP: ${hpUpdate.value})`
         );
-        await actor.toggleStatusEffect("dead");
+
+        // Use socket to have GM apply the status (handles permissions properly)
+        // Pass the actor UUID to preserve token actor context
+        const result = await socket.executeAsGM(
+            "gmApplyStatus",
+            actor.uuid,
+            statusId
+        );
+
+        if (!result.success) {
+            console.warn(
+                `DCC-QOL | Failed to apply ${statusId} status to NPC ${actor.name}: ${result.reason}`
+            );
+        }
     } catch (error) {
         console.error(
-            `DCC-QOL | Error applying status: ${statusId} to NPC ${actor.name}:`,
+            `DCC-QOL | Error requesting status application for NPC ${actor.name}:`,
             error
         );
     }

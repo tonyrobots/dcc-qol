@@ -78,28 +78,44 @@ export async function handleAutomatedDamageApplication(message, html, data) {
                 "flags.dccqol.automatedDamageProcessed": true,
             });
 
-            socket
-                .executeAsGM("gmApplyDamage", payload)
-                .catch((err) =>
-                    console.error(
-                        "DCC-QOL | Error in socket call for gmApplyDamage:",
-                        err
-                    )
+            try {
+                const result = await socket.executeAsGM(
+                    "gmApplyDamage",
+                    payload
                 );
+                if (!result.success) {
+                    console.warn(
+                        `DCC-QOL | Failed to apply ${damageToApply} damage to ${targetTokenId}: ${result.reason}`
+                    );
+                }
+            } catch (socketError) {
+                console.error(
+                    "DCC-QOL | Error in socket call for gmApplyDamage:",
+                    socketError
+                );
+            }
         } catch (updateError) {
             console.error(
                 `DCC-QOL | Error updating message ${message.id} with automatedDamageProcessed flag:`,
                 updateError
             );
             // Still attempt damage application even if flag update fails
-            socket
-                .executeAsGM("gmApplyDamage", payload)
-                .catch((err) =>
-                    console.error(
-                        "DCC-QOL | Error in socket call for gmApplyDamage after message update failure:",
-                        err
-                    )
+            try {
+                const result = await socket.executeAsGM(
+                    "gmApplyDamage",
+                    payload
                 );
+                if (!result.success) {
+                    console.warn(
+                        `DCC-QOL | Failed to apply ${damageToApply} damage to ${targetTokenId} (after message update failure): ${result.reason}`
+                    );
+                }
+            } catch (socketError) {
+                console.error(
+                    "DCC-QOL | Error in socket call for gmApplyDamage after message update failure:",
+                    socketError
+                );
+            }
         }
     };
 

@@ -63,6 +63,69 @@ export async function gmApplyDamage(payload) {
 }
 
 /**
+ * Handles the request to apply a status effect to an actor, executed on the GM's client via socketlib.
+ *
+ * @param {string} actorUuid - The UUID of the actor (including token actors) to apply status to.
+ * @param {string} status - The status effect ID to apply.
+ */
+export async function gmApplyStatus(actorUuid, status, silent = false) {
+    if (!game.user.isGM) {
+        return { success: false, reason: "not-gm" };
+    }
+
+    const actor = await fromUuid(actorUuid);
+    if (!actor) {
+        return { success: false, reason: "no-actor" };
+    }
+
+    // Check if actor already has that status set
+    // Use the actor.statuses Set which contains language-independent status IDs
+
+    if (actor.statuses?.has(status)) {
+        console.debug(
+            `DCC-QOL | Actor ${actor.name} already has status '${status}'`
+        );
+        return { success: false, reason: "already-has-status" };
+    }
+
+    try {
+        console.log(
+            `DCC-QOL | Applying ${status} status to ${actor.type} ${actor.name}`
+        );
+        await actor.toggleStatusEffect(status);
+
+        if (!silent) {
+            // Get localized status name
+            const statusConfig = CONFIG.statusEffects.find(
+                (s) => s.id === status
+            );
+            const localizedStatusName = statusConfig
+                ? game.i18n
+                      .localize(
+                          statusConfig.name || statusConfig.label || status
+                      )
+                      .toLowerCase()
+                : status;
+
+            // Create chat message announcing the status change
+            await ChatMessage.create({
+                speaker: ChatMessage.getSpeaker({ actor: actor }),
+                content: `${actor.name} is now ${localizedStatusName}.`,
+                type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+            });
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error(
+            `DCC-QOL | Error applying status: ${status} to ${actor.type} ${actor.name}:`,
+            error
+        );
+        return { success: false, reason: error.message };
+    }
+}
+
+/**
  * Handles the request to update multiple message flags at once, executed on the GM's client via socketlib.
  * This ensures atomic updates and proper re-rendering on all clients.
  *
