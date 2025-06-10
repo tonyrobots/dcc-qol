@@ -111,7 +111,6 @@ export async function gmApplyStatus(actorUuid, status, silent = false) {
             await ChatMessage.create({
                 speaker: ChatMessage.getSpeaker({ actor: actor }),
                 content: `${actor.name} is now ${localizedStatusName}.`,
-                type: CONST.CHAT_MESSAGE_TYPES.OTHER,
             });
         }
 

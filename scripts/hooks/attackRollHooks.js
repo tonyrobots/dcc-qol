@@ -245,13 +245,19 @@ export async function prepareQoLAttackData(rolls, messageData) {
     ) {
         // Missed a specific target with ranged weapon
         try {
-            const friendlyTokenDocs = getTokensInMeleeRange(
+            let friendlyTokenDocs = getTokensInMeleeRange(
                 targetDocument,
                 attackerTokenDoc?.disposition ===
                     CONST.TOKEN_DISPOSITIONS.FRIENDLY
                     ? "friendly"
                     : "enemy"
             );
+
+            // remove the attacker token from the list of friendlies
+            friendlyTokenDocs = friendlyTokenDocs.filter(
+                (tokenDoc) => tokenDoc.id !== attackerTokenDoc.id
+            );
+
             showFriendlyFireButton = friendlyTokenDocs.length > 0;
 
             // Store simplified token data instead of full TokenDocument objects

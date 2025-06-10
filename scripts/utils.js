@@ -40,24 +40,41 @@ export function getFirstTarget(targetsSet) {
  * @param {Object} token2D    The token.document "to"
  */
 export function measureTokenDistance(token1D, token2D) {
-    const gs = game.canvas.dimensions.size;
-    // originate ray from center of token1 to center of token2
-    const ray = new Ray(token1D.object.center, token2D.object.center);
+    if (!token1D || !token2D) {
+        return Infinity;
+    }
+    const d = game.canvas.dimensions;
+    const gs = d.size;
 
-    const nx = Math.ceil(Math.abs(ray.dx / gs));
-    const ny = Math.ceil(Math.abs(ray.dy / gs));
+    // Bounding boxes in pixels
+    const r1 = {
+        left: token1D.x,
+        right: token1D.x + token1D.width * gs,
+        top: token1D.y,
+        bottom: token1D.y + token1D.height * gs,
+    };
+    const r2 = {
+        left: token2D.x,
+        right: token2D.x + token2D.width * gs,
+        top: token2D.y,
+        bottom: token2D.y + token2D.height * gs,
+    };
 
-    // Get the number of straight and diagonal moves
-    const nDiagonal = Math.min(nx, ny);
-    const nStraight = Math.abs(ny - nx);
+    // Pixel distance between rectangle edges
+    const dx = Math.max(0, r1.left - r2.right, r2.left - r1.right);
+    const dy = Math.max(0, r1.top - r2.bottom, r2.top - r1.bottom);
 
-    // Diagonals in DDC calculated as equal to (1.0x) the straight distance - pythagoras be damned!
-    const distance = Math.floor(nDiagonal * 1.0 + nStraight);
-    let distanceOnGrid = distance * game.canvas.dimensions.distance;
-    // make adjustment to account for size of token. Using width as tokens are assumed to be square.
-    let adjustment = Math.round((token1D.width + token2D.width) * 0.5) - 1;
+    // Number of full grid squares between them.
+    const grid_dx = Math.floor(dx / gs);
+    const grid_dy = Math.floor(dy / gs);
 
-    return distanceOnGrid - adjustment * game.canvas.dimensions.distance;
+    // Per DCC rules, diagonal moves are the same cost as straight moves (Chebyshev distance).
+    const spacesBetween = Math.max(grid_dx, grid_dy);
+
+    // For melee check, `getTokensInMeleeRange` wants a distance.
+    // 0 spaces between = adjacent = 5ft distance
+    // 1 space between = 10ft distance
+    return spacesBetween * d.distance + d.distance;
 }
 
 /**
@@ -171,9 +188,9 @@ function _matchesDispositionScope(disposition, scope) {
 }
 
 /**
- * Checks if a target token has any adjacent allied tokens (wrapper function for backward compatibility)
- * @param {TokenDocument} targetTokenDocument - The token document to check for adjacent allies
- * @returns {boolean} True if target has adjacent allies, false otherwise
+ * Checks if a target token has any adjacent allied (to the firer) tokens
+ * @param {TokenDocument} targetTokenDocument - The token document to check for adjacent friendlies
+ * @returns {boolean} True if target has adjacent friendlies, false otherwise
  */
 export function checkFiringIntoMelee(
     targetTokenDocument,
