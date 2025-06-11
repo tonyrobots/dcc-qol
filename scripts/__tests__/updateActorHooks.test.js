@@ -3,6 +3,15 @@
 import { createMockPc, createMockNpc } from "../__mocks__/mock-data.js";
 import { handleNPCDeathStatusUpdate } from "../hooks/updateActorHooks.js";
 
+// Mock the socket module
+jest.mock("../dcc-qol.js", () => ({
+    socket: {
+        executeAsGM: jest.fn(),
+    },
+}));
+
+import { socket } from "../dcc-qol.js";
+
 describe("Update Actor Hooks", () => {
     describe("handleNPCDeathStatusUpdate", () => {
         let mockNPC, mockPC;
@@ -21,8 +30,13 @@ describe("Update Actor Hooks", () => {
                 }),
             };
 
-            // Create mock actors with proper HP data
+            // Reset and mock the socket to return success by default
+            socket.executeAsGM.mockClear();
+            socket.executeAsGM.mockResolvedValue({ success: true });
+
+            // Create mock actors with proper HP data and UUIDs
             mockNPC = createMockNpc({
+                uuid: "Actor.mock-npc-uuid", // Add UUID for socket calls
                 system: {
                     attributes: {
                         hp: {
@@ -32,10 +46,10 @@ describe("Update Actor Hooks", () => {
                     },
                 },
                 statuses: new Set(), // Empty status set initially
-                toggleStatusEffect: jest.fn().mockResolvedValue(true),
             });
 
             mockPC = createMockPc({
+                uuid: "Actor.mock-pc-uuid", // Add UUID for socket calls
                 system: {
                     attributes: {
                         hp: {
@@ -45,7 +59,6 @@ describe("Update Actor Hooks", () => {
                     },
                 },
                 statuses: new Set(), // Empty status set initially
-                toggleStatusEffect: jest.fn().mockResolvedValue(true),
             });
         });
 
@@ -73,8 +86,12 @@ describe("Update Actor Hooks", () => {
                 );
 
                 // Assert
-                expect(mockNPC.toggleStatusEffect).toHaveBeenCalledWith("dead");
-                expect(mockNPC.toggleStatusEffect).toHaveBeenCalledTimes(1);
+                expect(socket.executeAsGM).toHaveBeenCalledWith(
+                    "gmApplyStatus",
+                    mockNPC.uuid,
+                    "dead"
+                );
+                expect(socket.executeAsGM).toHaveBeenCalledTimes(1);
             });
 
             it("should NOT apply dead status to PC when HP goes to 0", async () => {
@@ -100,7 +117,7 @@ describe("Update Actor Hooks", () => {
                 );
 
                 // Assert
-                expect(mockPC.toggleStatusEffect).not.toHaveBeenCalled();
+                expect(socket.executeAsGM).not.toHaveBeenCalled();
             });
 
             it("should NOT apply dead status to NPC when HP is above 0", async () => {
@@ -126,7 +143,7 @@ describe("Update Actor Hooks", () => {
                 );
 
                 // Assert
-                expect(mockNPC.toggleStatusEffect).not.toHaveBeenCalled();
+                expect(socket.executeAsGM).not.toHaveBeenCalled();
             });
 
             it("should NOT apply dead status to NPC when no HP update is present", async () => {
@@ -153,10 +170,12 @@ describe("Update Actor Hooks", () => {
                 );
 
                 // Assert
-                expect(mockNPC.toggleStatusEffect).not.toHaveBeenCalled();
+                expect(socket.executeAsGM).not.toHaveBeenCalled();
             });
 
-            it("should NOT apply dead status to NPC that already has dead status", async () => {
+            it("should request status application without checking current status (socket handler's responsibility)", async () => {
+                // The hook function's job is to detect HP <= 0 and request status application
+                // Status deduplication is handled by the socket handler (gmApplyStatus)
                 // Arrange
                 mockNPC.statuses.add("dead"); // NPC already has dead status
                 const updateData = {
@@ -179,8 +198,13 @@ describe("Update Actor Hooks", () => {
                     userId
                 );
 
-                // Assert
-                expect(mockNPC.toggleStatusEffect).not.toHaveBeenCalled();
+                // Assert - Hook should still make the request; socket handler will handle duplicates
+                expect(socket.executeAsGM).toHaveBeenCalledWith(
+                    "gmApplyStatus",
+                    mockNPC.uuid,
+                    "dead"
+                );
+                expect(socket.executeAsGM).toHaveBeenCalledTimes(1);
             });
 
             it("should apply dead status to NPC when HP goes below 0", async () => {
@@ -206,8 +230,12 @@ describe("Update Actor Hooks", () => {
                 );
 
                 // Assert
-                expect(mockNPC.toggleStatusEffect).toHaveBeenCalledWith("dead");
-                expect(mockNPC.toggleStatusEffect).toHaveBeenCalledTimes(1);
+                expect(socket.executeAsGM).toHaveBeenCalledWith(
+                    "gmApplyStatus",
+                    mockNPC.uuid,
+                    "dead"
+                );
+                expect(socket.executeAsGM).toHaveBeenCalledTimes(1);
             });
         });
 
@@ -248,17 +276,17 @@ describe("Update Actor Hooks", () => {
                 );
 
                 // Assert
-                expect(mockNPC.toggleStatusEffect).not.toHaveBeenCalled();
+                expect(socket.executeAsGM).not.toHaveBeenCalled();
             });
         });
 
         describe("error handling", () => {
-            it("should handle errors gracefully when toggleStatusEffect fails", async () => {
+            it("should handle errors gracefully when socket call fails", async () => {
                 // Arrange
                 // Mock console.error
                 console.error = jest.fn();
-                const error = new Error("Status effect failed");
-                mockNPC.toggleStatusEffect.mockRejectedValue(error);
+                const error = new Error("Socket call failed");
+                socket.executeAsGM.mockRejectedValue(error);
 
                 const updateData = {
                     system: {
@@ -285,9 +313,51 @@ describe("Update Actor Hooks", () => {
                 // Verify error was logged
                 expect(console.error).toHaveBeenCalledWith(
                     expect.stringContaining(
-                        "Error applying status: dead to NPC"
+                        "Error requesting status application for NPC"
                     ),
                     error
+                );
+            });
+
+            it("should log warning when socket returns failure result", async () => {
+                // Arrange
+                // Mock console.warn
+                console.warn = jest.fn();
+                socket.executeAsGM.mockResolvedValue({
+                    success: false,
+                    reason: "Status already applied",
+                });
+
+                const updateData = {
+                    system: {
+                        attributes: {
+                            hp: {
+                                value: 0,
+                            },
+                        },
+                    },
+                };
+                const options = {};
+                const userId = "test-user-id";
+
+                // Act
+                await handleNPCDeathStatusUpdate(
+                    mockNPC,
+                    updateData,
+                    options,
+                    userId
+                );
+
+                // Assert
+                expect(socket.executeAsGM).toHaveBeenCalledWith(
+                    "gmApplyStatus",
+                    mockNPC.uuid,
+                    "dead"
+                );
+                expect(console.warn).toHaveBeenCalledWith(
+                    expect.stringContaining(
+                        "Failed to apply dead status to NPC Test NPC: Status already applied"
+                    )
                 );
             });
         });
