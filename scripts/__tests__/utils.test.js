@@ -6,7 +6,7 @@ describe("Utility Functions", () => {
     describe("getTokenById", () => {
         it("should return a token document when a valid ID is provided", () => {
             // Arrange
-            const fakeTokenId = "xxxxxxxxxxxxxxxx";
+            const fakeTokenId = "90210";
             const fakeTokenDocument = { id: fakeTokenId, name: "Test Token" };
             game.canvas.tokens.get.mockReturnValue({
                 document: fakeTokenDocument,
