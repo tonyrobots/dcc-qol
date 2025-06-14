@@ -1,6 +1,6 @@
 # Project Structure and Architecture
 
-This document outlines the file structure and architectural approach for the `dcc-qol` Foundry VTT module. The primary goal is to transition from a legacy system based on function overrides to a modern, event-driven architecture using Foundry VTT's core hooks.
+This document outlines the file structure and architectural approach for the `dcc-qol` Foundry VTT module. The purpose of the module is to provide automation options and other enhancements to the DCC RPG experience on Foundry.
 
 ## Key Directories
 
@@ -31,7 +31,7 @@ This document outlines the file structure and architectural approach for the `dc
 
 ## Architectural Approach: Hook-Based Events
 
-The module **must** operate based on listening to hooks provided by Foundry VTT core and the DCC-RPG system.
+The module **must** operate based on listening to hooks provided by Foundry VTT core and the DCC-RPG syste wherever possible.
 
 1.  **Identify the Hook:** Determine the appropriate hook that fires when the desired action occurs or data is available (e.g., `renderChatMessage`, `dcc.rollWeaponAttack`, `dcc.modifyRoll`).
 2.  **Register Listener:** Add a listener for the hook in `scripts/hooks/listeners.js`.
@@ -44,7 +44,7 @@ The module **must** operate based on listening to hooks provided by Foundry VTT 
 
 ## Automated Testing
 
-The module includes a suite of automated tests to ensure code quality and prevent regressions. For detailed information on the testing framework, mock implementation, and how to run tests, please see the [Automated Testing documentation](./testing.md).
+The module includes a suite of automated tests to ensure code quality and prevent regressions. For detailed information on the testing framework, mock implementation, and how to run tests, please see the [Automated Testing documentation](./testing.md). @testing.md
 
 ## Utility Functions
 

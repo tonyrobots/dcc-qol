@@ -3,10 +3,8 @@ description:
 globs: 
 alwaysApply: true
 ---
-Before formulating any response, review the [project_structure.md](mdc:dcc-qol/docs/project_structure.md) doc, determine any relevant parts of the codebase you need to examine, and then read those files. Lay out a plan of action and get agreement/consent before taking action.
-
-DCC-RPG system documentation can be found in /docs/dcc-rpg-system-docs/index.html
+Before formulating any response, review the [project_structure.md](mdc:dcc-qol/dcc-qol/docs/project_structure.md) doc, determine any relevant parts of the codebase you need to examine, and then read those files. Lay out a plan of action and get agreement/consent before taking action.
 
 DCC RPG game rules can be found at https://goodman-games.com/wp-content/uploads/2020/03/DCC_QSR_Free.pdf
 
-DCC-RPG system code is available for reference in this workspace, so you can view it directly at /dcc/* . NEVER CHANGE DCC system code without explicit permission.
+DCC RPG system code is available for reference in this workspace, so you can view it directly at /dcc/* . NEVER CHANGE DCC system code without explicit permission.
