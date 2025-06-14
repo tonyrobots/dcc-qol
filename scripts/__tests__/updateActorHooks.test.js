@@ -173,11 +173,10 @@ describe("Update Actor Hooks", () => {
                 expect(socket.executeAsGM).not.toHaveBeenCalled();
             });
 
-            it("should request status application without checking current status (socket handler's responsibility)", async () => {
-                // The hook function's job is to detect HP <= 0 and request status application
-                // Status deduplication is handled by the socket handler (gmApplyStatus)
+            it("should not request status application if actor already has the status", async () => {
                 // Arrange
                 mockNPC.statuses.add("dead"); // NPC already has dead status
+
                 const updateData = {
                     system: {
                         attributes: {
@@ -198,13 +197,8 @@ describe("Update Actor Hooks", () => {
                     userId
                 );
 
-                // Assert - Hook should still make the request; socket handler will handle duplicates
-                expect(socket.executeAsGM).toHaveBeenCalledWith(
-                    "gmApplyStatus",
-                    mockNPC.uuid,
-                    "dead"
-                );
-                expect(socket.executeAsGM).toHaveBeenCalledTimes(1);
+                // Assert - Hook should not make the request
+                expect(socket.executeAsGM).not.toHaveBeenCalled();
             });
 
             it("should apply dead status to NPC when HP goes below 0", async () => {
