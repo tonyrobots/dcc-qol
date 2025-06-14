@@ -14,11 +14,11 @@ export function createDamageScrollingText(tokenId, damage) {
 
     canvas.interface.createScrollingText(token.center, damage.toString(), {
         anchor: CONST.TEXT_ANCHOR_POINTS.TOP,
-        fontSize: 28,
+        fontSize: 32,
         fill: "#FF0000", // Red for damage
         stroke: "#000000",
         strokeThickness: 4,
-        duration: 3000,
+        duration: 4000,
     });
 }
 
