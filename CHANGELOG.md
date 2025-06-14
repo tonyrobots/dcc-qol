@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.4 - 2025-06-14
+
+### v1.0.4 Release
+
+**New Feature: Automatically set NPC status to "dead" when their HP value reaches zero.** (Optional setting, defaults to "true".)
+
+**Full Changelog**: https://github.com/tonyrobots/dcc-qol/compare/v1.0.3...v1.0.4
+
 ## v1.0.3 - 2025-06-07
 
 ### v1.0.3 Release
