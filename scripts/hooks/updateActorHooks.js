@@ -32,8 +32,7 @@ export async function handleNPCDeathStatusUpdate(
 
     // Check if HP was updated in this change
     const hpUpdate = updateData?.system?.attributes?.hp;
-    // console.log(`DCC-QOL | HP update:`, hpUpdate);
-    if (!hpUpdate?.value || hpUpdate.value === undefined) {
+    if (!hpUpdate || hpUpdate.hasOwnProperty("value") === false) {
         return;
     }
 
@@ -46,7 +45,7 @@ export async function handleNPCDeathStatusUpdate(
 
     try {
         console.log(
-            `DCC-QOL | Requesting ${statusId} status application for NPC ${actor.name} (HP: ${hpUpdate})`
+            `DCC-QOL | Requesting ${statusId} status application for NPC ${actor.name} (HP: ${hpUpdate.value})`
         );
 
         // Use socket to have GM apply the status (handles permissions properly)

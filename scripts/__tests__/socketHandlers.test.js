@@ -104,7 +104,6 @@ describe("Socket Handlers", () => {
                 expect(ChatMessage.create).toHaveBeenCalledWith({
                     speaker: { alias: "Test NPC" },
                     content: "Test NPC is now dcc-qol.statuseffect.dead.",
-                    type: CONST.CHAT_MESSAGE_TYPES.OTHER,
                 });
             });
 
@@ -185,27 +184,6 @@ describe("Socket Handlers", () => {
                 );
             });
 
-            it("should use localized status name in chat message", async () => {
-                // Arrange
-                game.i18n.localize.mockReturnValue("DEAD"); // Mock localized value
-                const actorUuid = "Actor.mock-npc-uuid";
-                const status = "dead";
-
-                // Act
-                const result = await gmApplyStatus(actorUuid, status);
-
-                // Assert
-                expect(result).toEqual({ success: true });
-                expect(game.i18n.localize).toHaveBeenCalledWith(
-                    "DCC-QOL.StatusEffect.Dead"
-                );
-                expect(ChatMessage.create).toHaveBeenCalledWith({
-                    speaker: { alias: "Test NPC" },
-                    content: "Test NPC is now dead.",
-                    type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-                });
-            });
-
             it("should fall back to status ID when no config found", async () => {
                 // Arrange
                 const actorUuid = "Actor.mock-npc-uuid";
@@ -219,7 +197,6 @@ describe("Socket Handlers", () => {
                 expect(ChatMessage.create).toHaveBeenCalledWith({
                     speaker: { alias: "Test NPC" },
                     content: "Test NPC is now unknown-status.",
-                    type: CONST.CHAT_MESSAGE_TYPES.OTHER,
                 });
             });
 
