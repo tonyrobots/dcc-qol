@@ -36,12 +36,12 @@ export async function handleNPCDeathStatusUpdate(
         return;
     }
 
-    // Only apply death status if HP is 0 or below
-    if (hpUpdate.value > 0) {
+    const statusId = "dead";
+
+    // Only apply death status if HP is 0 or below and the actor does not already have the status
+    if (hpUpdate.value > 0 || actor.statuses?.has(statusId)) {
         return;
     }
-
-    const statusId = "dead";
 
     try {
         console.log(
