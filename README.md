@@ -6,7 +6,7 @@ A quality of life and automation module for the Dungeon Crawl Classics RPG syste
 
 The DCC Quality of Life module aims to improve the DCC RPG experience in Foundry VTT by:
 
--   **Streamlining combat** - Let the system handle hit/miss determination, range penalties, mighty deed success/failure, and damage application
+-   **Streamlining combat** - Let the system handle hit/miss determination, range penalties, mighty deed success/failure, damage application, and auto-apply "dead" status to NPCs who reach 0 HP
 -   **Enforcing easily forgotten DCC rules** - Automatic friendly fire checks, firing into melee penalties, and luck modifiers on incoming crits & fumbles
 -   **Supporting house rules and experimental variants** - DCC-QoL, as an optional add-on, has room to roam when it comes to support for other non-RAW/house rules options. More to come here soon!
 
@@ -19,8 +19,11 @@ The DCC Quality of Life module aims to improve the DCC RPG experience in Foundry
 #### **Enhanced Attack Cards**
 
 -   **Hit/Miss Display**: Automatically shows whether an attack hits or misses when a target is selected
--   **Redesigned attack roll chat cards** with improved visual presentation and added information, including a "full" view and a "compact" view for added customization
--   Color-coded **roll damage, crit, and fumble buttons** for better feeling of player control
+-   **Redesigned attack roll chat cards** with improved visual presentation and added information
+-   **Two Layout Options**: Choose between "Full" and "Compact" attack card formats
+    -   **Full Format**: Shows all attack details (including damage formula in Roll Damage button) with maximum visual clarity
+    -   **Compact Format**: Reduces vertical space by approximately 50% while maintaining essential information
+-   Color-coded **roll damage, crit, and fumble buttons**
 
 ![Enhanced DCC-QOL attack chat card](docs/images/attack-card-crit-backstab.png)
 
@@ -29,6 +32,7 @@ The DCC Quality of Life module aims to improve the DCC RPG experience in Foundry
 -   Automatic damage application to targeted tokens when damage is rolled
 -   Respects token permissions and ownership -- only the attacking player or GM can roll damage
 -   Visual confirmation of damage dealt - red animated text floating from the target shows the damage amount applied
+-   **Automatic "Dead" Status**: When an NPC's hit points reach 0 or below, the "dead" status effect is automatically applied
 
 ![Automatic Damage Application and in-scene animation](docs/images/damage-application.webp)
 
@@ -93,8 +97,10 @@ Access module settings through **Settings → Module Settings → DCC Quality of
 
 | Setting                             | Description                                                           | Default |
 | ----------------------------------- | --------------------------------------------------------------------- | ------- |
+| **Attack Card Format**              | Choose between Full and Compact layouts for attack cards              | Full    |
 | **Automate Damage Apply**           | Automatically apply damage to targeted tokens when damage is rolled   | Enabled |
 | **Automatic Friendly Fire**         | Perform friendly fire checks when firing into melee and attack misses | Enabled |
+| **Automatically Apply Dead Status** | Automatically apply "dead" status effect to NPCs when they reach 0 HP | Enabled |
 | **Firing Into Melee Penalty**       | Automatically apply -1 penalty when firing ranged weapons into melee  | Enabled |
 | **Monster Critical vs Player Luck** | Apply player luck modifiers to reduce monster critical hit rolls      | Enabled |
 | **Weapon Range Checking**           | Check weapon range and apply appropriate penalties automatically      | Enabled |
