@@ -9,6 +9,11 @@ Project Structure is in @docs/project_structure.md
 ### Bugs to Fix
 
 -   [ ] Properties set in range check aren't making it through to `prepareQolData`, check flow of data. Look at adding logical data, e.g. range value, penalty applied, and then adding conditional logic on the `attackroll` hook to figure out how to present that (logically separating the two parts).
+-   [] Rule: Note that while higher-level warriors threaten critical hits on rolls other than 20, only a natural 20 is an automatic hit.
+    Strikes that fail to hit do not incur critical hits. For example, a warrior with a threat range of 19-20 rolls a natural 19 against
+    a foe with AC 21. If the warrior’s deed die rolls a 1, the total attack is a result of 20, less than the AC, so this attack does not
+    hit. It thus does not score a critical hit, even though it is within the threat range. If the deed die is a 2 or higher, the total
+    attack roll is at least 21, so the attack hits and due to the natural 19 it counts as a critical hit.
 
 ## Non-Core Future Tasks
 
