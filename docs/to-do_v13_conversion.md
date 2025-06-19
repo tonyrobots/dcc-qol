@@ -12,6 +12,31 @@
 
 **The dcc-qol module is now fully compatible with Foundry V13.**
 
+## Recent Updates
+
+### **V13 Dead Status Application Bug Fix** ✅ **RESOLVED**
+
+**Issue:** The automatic dead status application for NPCs was experiencing race conditions in V13 due to multiple `updateActor` hook calls, causing either duplicate status applications or complete failure.
+
+**Root Cause:**
+
+-   V13 changes caused multiple `updateActor` hook calls for single HP changes
+-   Race conditions with socket calls and debouncing logic
+-   Complex token actor vs base actor UUID handling was unnecessary
+
+**Fix Applied:**
+
+-   ✅ **Simplified Debouncing**: Changed from complex UUID logic to simple `actor._id` for tracking
+-   ✅ **Enhanced Status Checking**: More robust detection using both `actor.statuses` Set and `actor.effects` collection
+-   ✅ **Test Updates**: Updated test mocks to match simplified `actor._id` approach
+-   ✅ **Debug Cleanup**: Removed temporary debug logging added during troubleshooting
+
+**Status:**
+
+-   **✅ FUNCTIONAL** - Dead status application now works correctly in V13
+-   **✅ ALL TESTS PASSING** - 44/44 automated tests continue to pass
+-   **✅ PRODUCTION READY** - Clean, simplified code without debug noise
+
 ## Overview
 
 This document outlined the complete migration plan for converting the `dcc-qol` module from Foundry V12 to V13 compatibility. The module was well-positioned for V13 migration because it uses a hook-based architecture without ApplicationV2 forms, avoiding the most complex V13 breaking changes.
