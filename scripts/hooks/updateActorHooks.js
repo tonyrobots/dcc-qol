@@ -3,19 +3,6 @@
  * Specifically manages automatic status effects based on actor state changes.
  */
 
-import { socket } from "../dcc-qol.js";
-
-// Track actors currently being processed to prevent duplicate status applications
-const processingActors = new Set();
-
-/**
- * Clear the processing actors set (primarily for testing)
- * @private
- */
-export function _clearProcessingActors() {
-    processingActors.clear();
-}
-
 /**
  * Automatically applies the "dead" status effect to NPCs when their HP reaches 0.
  * Called via the updateActor hook.
@@ -31,6 +18,11 @@ export async function handleNPCDeathStatusUpdate(
     options,
     userId
 ) {
+    // Only let the GM client handle this to prevent multiple clients from triggering the same action
+    if (!game.user.isGM) {
+        return;
+    }
+
     // Check if the feature is enabled
     if (!game.settings.get("dcc-qol", "automateNPCDeathStatus")) {
         return;
@@ -59,41 +51,28 @@ export async function handleNPCDeathStatusUpdate(
         return;
     }
 
-    // V13 Fix: Prevent duplicate status applications due to multiple hook calls
-    // Use the actor's _id to track processing state
-    const actorId = actor._id;
-
-    if (processingActors.has(actorId)) {
-        return;
-    }
-
-    // Mark this actor as being processed
-    processingActors.add(actorId);
-
     try {
-        // Use socket to have GM apply the status (handles permissions properly)
-        // Pass the actor UUID to preserve token actor context
-        const result = await socket.executeAsGM(
-            "gmApplyStatus",
-            actor.uuid,
-            statusId
-        );
+        // Apply the status directly since we're on the GM client
+        await actor.toggleStatusEffect(statusId);
 
-        if (!result.success) {
-            console.warn(
-                `DCC-QOL | Failed to apply ${statusId} status to NPC ${actor.name}: ${result.reason}`
-            );
-        }
+        // Create chat message announcing the status change
+        const statusConfig = CONFIG.statusEffects.find(
+            (s) => s.id === statusId
+        );
+        const localizedStatusName = statusConfig
+            ? game.i18n
+                  .localize(statusConfig.name || statusConfig.label || statusId)
+                  .toLowerCase()
+            : statusId;
+
+        await ChatMessage.create({
+            speaker: ChatMessage.getSpeaker({ actor: actor }),
+            content: `${actor.name} is now ${localizedStatusName}.`,
+        });
     } catch (error) {
         console.error(
-            `DCC-QOL | Error requesting status application for NPC ${actor.name}:`,
+            `DCC-QOL | Error applying status ${statusId} to NPC ${actor.name}:`,
             error
         );
-    } finally {
-        // Always clean up the processing flag after a short delay
-        // This allows for the status to be applied and prevents permanent blocking
-        setTimeout(() => {
-            processingActors.delete(actorId);
-        }, 1000);
     }
 }

@@ -65,8 +65,13 @@ export async function gmApplyDamage(payload) {
 /**
  * Handles the request to apply a status effect to an actor, executed on the GM's client via socketlib.
  *
+ * NOTE: This function is currently unused but kept for potential future use when non-GM clients
+ * need to request status applications (e.g., spell effects, conditions from player actions).
+ * For GM-only operations, direct actor.toggleStatusEffect() is preferred.
+ *
  * @param {string} actorUuid - The UUID of the actor (including token actors) to apply status to.
  * @param {string} status - The status effect ID to apply.
+ * @param {boolean} [silent=false] - Whether to skip creating a chat message.
  */
 export async function gmApplyStatus(actorUuid, status, silent = false) {
     if (!game.user.isGM) {
@@ -78,19 +83,10 @@ export async function gmApplyStatus(actorUuid, status, silent = false) {
         return { success: false, reason: "no-actor" };
     }
 
-    // V13 Fix: More robust status checking to prevent duplicate applications
-    // Check both the statuses Set and the active effects collection
-    const hasStatusInSet = actor.statuses?.has(status);
-    const hasStatusInEffects = actor.effects?.some(
-        (effect) =>
-            effect.statuses?.has(status) ||
-            effect.id === status ||
-            effect.flags?.core?.statusId === status
-    );
-
-    if (hasStatusInSet || hasStatusInEffects) {
+    // V13 best practice: Use the actor.statuses Set for duplicate checking
+    if (actor.statuses?.has(status)) {
         console.debug(
-            `DCC-QOL | Actor ${actor.name} already has status '${status}' (Set: ${hasStatusInSet}, Effects: ${hasStatusInEffects})`
+            `DCC-QOL | Actor ${actor.name} already has status '${status}'`
         );
         return { success: false, reason: "already-has-status" };
     }
