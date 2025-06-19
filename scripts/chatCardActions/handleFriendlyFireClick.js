@@ -1,4 +1,7 @@
-/* global ui, Roll, ChatMessage, game, renderTemplate */
+/* global ui, Roll, ChatMessage, game */
+
+// V13 namespace import for renderTemplate
+const { renderTemplate } = foundry.applications.handlebars;
 import { socket } from "../dcc-qol.js";
 
 /**

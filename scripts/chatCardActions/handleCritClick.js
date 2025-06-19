@@ -1,4 +1,4 @@
-/* global ui, Roll, ChatMessage, $ */
+/* global ui, Roll, ChatMessage */
 import { socket } from "../dcc-qol.js";
 
 /**
@@ -42,10 +42,11 @@ export async function handleCritClick(event, message, actor, weapon, qolFlags) {
         })`; // Fallback flavor
         if (message.system.critInlineRoll) {
             try {
-                const tempDiv = $("<div>").html(message.system.critInlineRoll);
-                const anchorTag = tempDiv.find("a.inline-roll");
-                if (anchorTag.length && anchorTag.data("flavor")) {
-                    flavorText = anchorTag.data("flavor");
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = message.system.critInlineRoll;
+                const anchorTag = tempDiv.querySelector("a.inline-roll");
+                if (anchorTag && anchorTag.dataset.flavor) {
+                    flavorText = anchorTag.dataset.flavor;
                 }
             } catch (e) {
                 console.warn(

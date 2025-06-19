@@ -29,7 +29,7 @@ export function registerHookListeners() {
     // Hooks.on("dcc.rollWeaponAttack", enrichDccWeaponAttackMessage);
 
     // Register chat message listeners
-    Hooks.on("renderChatMessage", (message, html, data) => {
+    Hooks.on("renderChatMessageHTML", (message, html, data) => {
         enhanceAttackRollCard(message, html, data);
         styleSystemChatCard(message, html, data);
         handleAutomatedDamageApplication(message, html, data);

@@ -3,7 +3,10 @@
  * This typically involves modifying the HTML of a chat message before it's displayed
  * or attaching event listeners to elements within a rendered chat message.
  */
-/* global game, renderTemplate, $, canvas, Hooks */
+/* global game, canvas, Hooks */
+
+// V13 namespace import for renderTemplate
+const { renderTemplate } = foundry.applications.handlebars;
 import { getWeaponProperties, getWeaponFromActorById } from "../utils.js"; // Import the utility function
 import { handleDamageClick } from "../chatCardActions/handleDamageClick.js";
 import { handleCritClick } from "../chatCardActions/handleCritClick.js";
@@ -12,11 +15,11 @@ import { handleFriendlyFireClick } from "../chatCardActions/handleFriendlyFireCl
 
 /**
  * Replaces the content of DCC attack roll chat cards with a custom QoL template.
- * Called via the renderChatMessage hook.
+ * Called via the renderChatMessageHTML hook.
  * Assumes data has been prepared by the dcc.rollWeaponAttack hook.
  *
  * @param {ChatMessage} message - The ChatMessage document being rendered.
- * @param {jQuery} html - The jQuery object representing the message's HTML content.
+ * @param {HTMLElement} html - The DOM element representing the message's HTML content. (V13: was jQuery in V12)
  * @param {object} data - The data object provided to the hook (includes original message content).
  */
 export async function enhanceAttackRollCard(message, html, data) {
@@ -66,7 +69,8 @@ export async function enhanceAttackRollCard(message, html, data) {
             }
 
             // --- Extract Original Roll HTML ---
-            const originalContent = $(`<div>${message.content}</div>`); // Use message.content
+            // V13: Remove jQuery HTML parsing - not needed for current logic
+            // const originalContent = $(`<div>${message.content}</div>`); // Use message.content
 
             // Check the attack card format setting to determine dice HTML format
             const attackCardFormat = game.settings.get(
@@ -131,71 +135,87 @@ export async function enhanceAttackRollCard(message, html, data) {
             );
 
             // --- Modify existing message elements ---
-            const messageHeader = html.find(".message-header");
-            if (messageHeader.length > 0) {
+            const messageHeader = html.querySelector(".message-header");
+            if (messageHeader) {
                 // Remove the specific flavor text span
-                messageHeader.find("span.flavor-text").remove();
+                const flavorSpan =
+                    messageHeader.querySelector("span.flavor-text");
+                if (flavorSpan) flavorSpan.remove();
 
                 // Add a custom class to the sender for styling
-                messageHeader
-                    .find("h4.message-sender")
-                    .addClass("dccqol-speaker-name");
+                const senderH4 =
+                    messageHeader.querySelector("h4.message-sender");
+                if (senderH4) senderH4.classList.add("dccqol-speaker-name");
             }
 
             // Replace the content of the .message-content div with our card
-            const messageContentElement = html.find(".message-content");
-            if (messageContentElement.length > 0) {
-                messageContentElement.html(renderedContentHtml);
+            const messageContentElement =
+                html.querySelector(".message-content");
+            if (messageContentElement) {
+                messageContentElement.innerHTML = renderedContentHtml;
             } else {
                 // Fallback if .message-content wasn't found (should be rare for standard messages)
                 console.warn(
                     "DCC-QOL | .message-content not found. Appending card to main message element (li)."
                 );
-                html.append(renderedContentHtml);
+                html.insertAdjacentHTML("beforeend", renderedContentHtml);
             }
 
             // --- Add Event Listeners for QoL Card Buttons ---
             // Determine the correct element to attach listeners to (either the specific .message-content div or the whole html if .message-content wasn't found)
-            const cardElement =
-                messageContentElement.length > 0 ? messageContentElement : html;
+            const cardElement = messageContentElement || html;
 
-            cardElement
-                .find('button[data-action="damage"]')
-                .on("click", (event) =>
+            const damageButton = cardElement.querySelector(
+                'button[data-action="damage"]'
+            );
+            if (damageButton) {
+                damageButton.addEventListener("click", (event) =>
                     handleDamageClick(event, message, actor, weapon, qolFlags)
                 );
+            }
 
-            cardElement
-                .find('button[data-action="crit"]')
-                .on("click", (event) =>
+            const critButton = cardElement.querySelector(
+                'button[data-action="crit"]'
+            );
+            if (critButton) {
+                critButton.addEventListener("click", (event) =>
                     handleCritClick(event, message, actor, weapon, qolFlags)
                 );
+            }
 
-            cardElement
-                .find('button[data-action="fumble"]')
-                .on("click", (event) =>
+            const fumbleButton = cardElement.querySelector(
+                'button[data-action="fumble"]'
+            );
+            if (fumbleButton) {
+                fumbleButton.addEventListener("click", (event) =>
                     handleFumbleClick(event, message, actor, weapon, qolFlags)
                 );
+            }
 
-            cardElement
-                .find('button[data-action="friendlyFire"]')
-                .on("click", (event) =>
+            const friendlyFireButton = cardElement.querySelector(
+                'button[data-action="friendlyFire"]'
+            );
+            if (friendlyFireButton) {
+                friendlyFireButton.addEventListener("click", (event) =>
                     handleFriendlyFireClick(event, message, actor, qolFlags)
                 );
+            }
 
             // --- Apply Dice Roll Status Coloring for Hits/Misses/Crits/Fumbles ---
-            const diceTotalElement = cardElement.find(".dice-roll .dice-total");
-            if (diceTotalElement.length > 0) {
+            const diceTotalElement = cardElement.querySelector(
+                ".dice-roll .dice-total"
+            );
+            if (diceTotalElement) {
                 if (qolFlags.isCrit) {
-                    diceTotalElement.addClass("critical");
+                    diceTotalElement.classList.add("critical");
                 } else if (qolFlags.isFumble) {
-                    diceTotalElement.addClass("fumble");
+                    diceTotalElement.classList.add("fumble");
                 } else if (qolFlags.target) {
                     // Only apply hit/miss if it's a targeted roll and not a crit/fumble
                     if (qolFlags.hitsTarget) {
-                        diceTotalElement.addClass("status-success");
+                        diceTotalElement.classList.add("status-success");
                     } else {
-                        diceTotalElement.addClass("status-failure");
+                        diceTotalElement.classList.add("status-failure");
                     }
                 }
             }
@@ -303,24 +323,24 @@ export async function enhanceAttackRollCard(message, html, data) {
                 );
 
                 // Replace the content
-                const messageContentElement = html.find(".message-content");
-                if (messageContentElement.length > 0) {
-                    messageContentElement.html(renderedContentHtml);
+                const messageContentElement =
+                    html.querySelector(".message-content");
+                if (messageContentElement) {
+                    messageContentElement.innerHTML = renderedContentHtml;
                 } else {
                     console.warn(
                         "DCC-QOL | .message-content not found for friendly fire card. Appending to main message element."
                     );
-                    html.append(renderedContentHtml);
+                    html.insertAdjacentHTML("beforeend", renderedContentHtml);
                 }
 
                 // Add event listener for the damage button
-                const cardElement =
-                    messageContentElement.length > 0
-                        ? messageContentElement
-                        : html;
-                cardElement
-                    .find('button[data-action="damage"]')
-                    .on("click", (event) =>
+                const cardElement = messageContentElement || html;
+                const damageButton = cardElement.querySelector(
+                    'button[data-action="damage"]'
+                );
+                if (damageButton) {
+                    damageButton.addEventListener("click", (event) =>
                         handleDamageClick(
                             event,
                             message,
@@ -329,6 +349,7 @@ export async function enhanceAttackRollCard(message, html, data) {
                             qolFlags
                         )
                     );
+                }
 
                 console.debug(
                     "DCC-QOL | Re-rendered friendly fire card with per-client permissions for message",
@@ -389,11 +410,12 @@ export async function enhanceAttackRollCard(message, html, data) {
                 );
 
                 // Replace the content
-                const messageContentElement = html.find(".message-content");
-                if (messageContentElement.length > 0) {
-                    messageContentElement.html(renderedContentHtml);
+                const messageContentElement =
+                    html.querySelector(".message-content");
+                if (messageContentElement) {
+                    messageContentElement.innerHTML = renderedContentHtml;
                 } else {
-                    html.append(renderedContentHtml);
+                    html.insertAdjacentHTML("beforeend", renderedContentHtml);
                 }
 
                 console.debug(
@@ -439,10 +461,15 @@ export async function enhanceAttackRollCard(message, html, data) {
                 const weapon = getWeaponFromActorById(actor, qolFlags.weaponId);
                 if (weapon) {
                     // Only add if not already added by re-rendering above
-                    if (!html.find('button[data-action="damage"]').length) {
-                        html.find('button[data-action="damage"]').on(
-                            "click",
-                            (event) =>
+                    const existingDamageButton = html.querySelector(
+                        'button[data-action="damage"]'
+                    );
+                    if (!existingDamageButton) {
+                        const damageButton = html.querySelector(
+                            'button[data-action="damage"]'
+                        );
+                        if (damageButton) {
+                            damageButton.addEventListener("click", (event) =>
                                 handleDamageClick(
                                     event,
                                     message,
@@ -450,7 +477,8 @@ export async function enhanceAttackRollCard(message, html, data) {
                                     weapon,
                                     qolFlags
                                 )
-                        );
+                            );
+                        }
                     }
                 }
             }
@@ -468,20 +496,20 @@ export async function enhanceAttackRollCard(message, html, data) {
  * Adds a specific CSS class to non-QoL chat messages if the 'useQoLAttackCard' setting is enabled.
  * This allows for applying a consistent base font style to system messages.
  * @param {ChatMessage} message - The ChatMessage document.
- * @param {jQuery} html - The jQuery object for the message's HTML.
+ * @param {HTMLElement} html - The DOM element for the message's HTML. (V13: was jQuery in V12)
  * @param {object} data - Additional data related to the message.
  */
 export const styleSystemChatCard = (message, html, data) => {
     if (game.settings.get("dcc-qol", "useQoLAttackCard")) {
-        // html is the jQuery object for the outer .chat-message element.
+        // html is the DOM element for the outer .chat-message element.
         // QoL cards have .dccqol.chat-card class usually on a direct child of .message-content or similar.
         // We check if such a card exists within the current message's HTML.
-        const qolCard = html.find(".dccqol.chat-card");
+        const qolCard = html.querySelector(".dccqol.chat-card");
 
-        if (qolCard.length === 0) {
+        if (!qolCard) {
             // If no .dccqol.chat-card is found, it's not a QoL card,
             // so we add our class to the main message element for font styling.
-            html.addClass("dccqol-system-card-font");
+            html.classList.add("dccqol-system-card-font");
         }
     }
 };

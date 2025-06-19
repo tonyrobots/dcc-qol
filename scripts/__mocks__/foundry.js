@@ -339,11 +339,6 @@ global.game.dcc = {
         updateFlags: global.updateFlagsMock,
     },
 };
-global.renderTemplate = jest
-    .fn((template, data) => {
-        return "";
-    })
-    .mockName("renderTemplate");
 
 /**
  * Settings
@@ -398,6 +393,22 @@ global.ui = {
 global.foundry = {
     utils: {},
 };
+
+// V13 namespace structure - add applications to existing foundry namespace
+global.foundry.applications = {
+    handlebars: {
+        renderTemplate: jest
+            .fn((template, data) => {
+                return Promise.resolve(
+                    '<div class="mock-template">Mock Content</div>'
+                );
+            })
+            .mockName("renderTemplate"),
+    },
+};
+
+// Maintain backward compatibility
+global.renderTemplate = global.foundry.applications.handlebars.renderTemplate;
 
 // Foundry's implementation of getType
 global.getType = function (token) {

@@ -4,10 +4,10 @@ import { socket } from "../dcc-qol.js"; // Import the socket
 /**
  * Handles the automatic application of damage if the roll was automated by the DCC system
  * and the relevant QoL setting is enabled.
- * Called via the renderChatMessage hook.
+ * Called via the renderChatMessageHTML hook.
  *
  * @param {ChatMessage} message - The ChatMessage document being rendered.
- * @param {jQuery} html - The jQuery object representing the message's HTML content. (Unused in this function but part of the hook signature)
+ * @param {HTMLElement} html - The DOM element representing the message's HTML content. (V13: was jQuery in V12) (Unused in this function but part of the hook signature)
  * @param {object} data - The data object provided to the hook. (Unused in this function but part of the hook signature)
  */
 export async function handleAutomatedDamageApplication(message, html, data) {
@@ -142,10 +142,10 @@ export async function handleAutomatedDamageApplication(message, html, data) {
 
 /**
  * Appends "Applied Damage" information to QoL Damage Roll chat messages.
- * Called via the renderChatMessage hook. Not currently used.
+ * Called via the renderChatMessageHTML hook. Not currently used.
  *
  * @param {ChatMessage} message - The ChatMessage document being rendered.
- * @param {jQuery} html - The jQuery object representing the message's HTML content.
+ * @param {HTMLElement} html - The DOM element representing the message's HTML content. (V13: was jQuery in V12)
  * @param {object} data - The data object provided to the hook. (Unused in this function but part of the hook signature)
  */
 export function appendAppliedDamageInfoToCard(message, html, data) {
@@ -161,11 +161,11 @@ export function appendAppliedDamageInfoToCard(message, html, data) {
             `Applied ${qolFlags.appliedDamageValue} damage to ${qolFlags.appliedDamageTargetName}.` +
             `</div>`;
 
-        const messageContent = html.find(".message-content");
-        if (messageContent.length > 0) {
-            messageContent.append(appliedDamageHtml);
+        const messageContent = html.querySelector(".message-content");
+        if (messageContent) {
+            messageContent.insertAdjacentHTML("beforeend", appliedDamageHtml);
         } else {
-            html.append(appliedDamageHtml);
+            html.insertAdjacentHTML("beforeend", appliedDamageHtml);
         }
     }
 }

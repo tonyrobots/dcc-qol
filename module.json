@@ -2,12 +2,13 @@
     "id": "dcc-qol",
     "title": "DCC Quality of Life Improvements",
     "description": "Various automation and quality of life improvements for Dungeon Crawl Classics.",
-    "version": "1.0.4",
+    "version": "1.1.0",
     "library": "false",
     "manifestPlusVersion": "1.2.0",
     "compatibility": {
         "minimum": 12,
-        "verified": 12
+        "verified": 13,
+        "maximum": 13
     },
     "authors": [
         {
