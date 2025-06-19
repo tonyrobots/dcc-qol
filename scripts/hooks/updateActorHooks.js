@@ -3,8 +3,6 @@
  * Specifically manages automatic status effects based on actor state changes.
  */
 
-import { socket } from "../dcc-qol.js";
-
 /**
  * Automatically applies the "dead" status effect to NPCs when their HP reaches 0.
  * Called via the updateActor hook.
@@ -20,6 +18,11 @@ export async function handleNPCDeathStatusUpdate(
     options,
     userId
 ) {
+    // Only let the GM client handle this to prevent multiple clients from triggering the same action
+    if (!game.user.isGM) {
+        return;
+    }
+
     // Check if the feature is enabled
     if (!game.settings.get("dcc-qol", "automateNPCDeathStatus")) {
         return;
@@ -44,26 +47,26 @@ export async function handleNPCDeathStatusUpdate(
     }
 
     try {
-        console.log(
-            `DCC-QOL | Requesting ${statusId} status application for NPC ${actor.name} (HP: ${hpUpdate.value})`
-        );
+        // Apply the status directly since we're on the GM client
+        await actor.toggleStatusEffect(statusId);
 
-        // Use socket to have GM apply the status (handles permissions properly)
-        // Pass the actor UUID to preserve token actor context
-        const result = await socket.executeAsGM(
-            "gmApplyStatus",
-            actor.uuid,
-            statusId
+        // Create chat message announcing the status change
+        const statusConfig = CONFIG.statusEffects.find(
+            (s) => s.id === statusId
         );
+        const localizedStatusName = statusConfig
+            ? game.i18n
+                  .localize(statusConfig.name || statusConfig.label || statusId)
+                  .toLowerCase()
+            : statusId;
 
-        if (!result.success) {
-            console.warn(
-                `DCC-QOL | Failed to apply ${statusId} status to NPC ${actor.name}: ${result.reason}`
-            );
-        }
+        await ChatMessage.create({
+            speaker: ChatMessage.getSpeaker({ actor: actor }),
+            content: `${actor.name} is now ${localizedStatusName}.`,
+        });
     } catch (error) {
         console.error(
-            `DCC-QOL | Error requesting status application for NPC ${actor.name}:`,
+            `DCC-QOL | Error applying status ${statusId} to NPC ${actor.name}:`,
             error
         );
     }
