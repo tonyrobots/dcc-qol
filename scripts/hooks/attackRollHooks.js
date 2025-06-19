@@ -482,22 +482,34 @@ export function applyRangeChecksAndPenalties(terms, actor, weapon, options) {
     // This is used to show a confirmation dialog and resolve with the user's choice
     function confirmDialog({ title, content }) {
         return new Promise((resolve) => {
-            new Dialog({
-                title,
-                content: `<p>${content}</p>`,
-                buttons: {
-                    cancel: {
-                        label: game.i18n.localize("DCC-QOL.Cancel"),
-                        callback: () => resolve(false),
-                    },
-                    proceed: {
-                        label: game.i18n.localize("DCC-QOL.AttackAnyway"),
-                        callback: () => resolve(true),
-                    },
+            const dialog = new foundry.applications.api.DialogV2({
+                window: {
+                    title,
+                    resizable: false,
                 },
-                default: "cancel",
+                content: `<p>${content}</p>`,
+                buttons: [
+                    {
+                        action: "cancel",
+                        label: game.i18n.localize("DCC-QOL.Cancel"),
+                        default: true,
+                        callback: (event, button, dialog) => {
+                            resolve(false);
+                            dialog.close();
+                        },
+                    },
+                    {
+                        action: "proceed",
+                        label: game.i18n.localize("DCC-QOL.AttackAnyway"),
+                        callback: (event, button, dialog) => {
+                            resolve(true);
+                            dialog.close();
+                        },
+                    },
+                ],
                 close: () => resolve(false),
-            }).render(true);
+            });
+            dialog.render(true);
         });
     }
 

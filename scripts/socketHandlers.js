@@ -78,12 +78,19 @@ export async function gmApplyStatus(actorUuid, status, silent = false) {
         return { success: false, reason: "no-actor" };
     }
 
-    // Check if actor already has that status set
-    // Use the actor.statuses Set which contains language-independent status IDs
+    // V13 Fix: More robust status checking to prevent duplicate applications
+    // Check both the statuses Set and the active effects collection
+    const hasStatusInSet = actor.statuses?.has(status);
+    const hasStatusInEffects = actor.effects?.some(
+        (effect) =>
+            effect.statuses?.has(status) ||
+            effect.id === status ||
+            effect.flags?.core?.statusId === status
+    );
 
-    if (actor.statuses?.has(status)) {
+    if (hasStatusInSet || hasStatusInEffects) {
         console.debug(
-            `DCC-QOL | Actor ${actor.name} already has status '${status}'`
+            `DCC-QOL | Actor ${actor.name} already has status '${status}' (Set: ${hasStatusInSet}, Effects: ${hasStatusInEffects})`
         );
         return { success: false, reason: "already-has-status" };
     }

@@ -141,7 +141,7 @@ describe("Socket Handlers", () => {
                 expect(mockActor.toggleStatusEffect).not.toHaveBeenCalled();
                 expect(ChatMessage.create).not.toHaveBeenCalled();
                 expect(console.debug).toHaveBeenCalledWith(
-                    "DCC-QOL | Actor Test NPC already has status 'dead'"
+                    "DCC-QOL | Actor Test NPC already has status 'dead' (Set: true, Effects: undefined)"
                 );
             });
 

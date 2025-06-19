@@ -5,6 +5,17 @@
 
 import { socket } from "../dcc-qol.js";
 
+// Track actors currently being processed to prevent duplicate status applications
+const processingActors = new Set();
+
+/**
+ * Clear the processing actors set (primarily for testing)
+ * @private
+ */
+export function _clearProcessingActors() {
+    processingActors.clear();
+}
+
 /**
  * Automatically applies the "dead" status effect to NPCs when their HP reaches 0.
  * Called via the updateActor hook.
@@ -38,16 +49,28 @@ export async function handleNPCDeathStatusUpdate(
 
     const statusId = "dead";
 
-    // Only apply death status if HP is 0 or below and the actor does not already have the status
-    if (hpUpdate.value > 0 || actor.statuses?.has(statusId)) {
+    // Only apply death status if HP is 0 or below
+    if (hpUpdate.value > 0) {
         return;
     }
 
-    try {
-        console.log(
-            `DCC-QOL | Requesting ${statusId} status application for NPC ${actor.name} (HP: ${hpUpdate.value})`
-        );
+    // Don't apply if actor already has the status
+    if (actor.statuses?.has(statusId)) {
+        return;
+    }
 
+    // V13 Fix: Prevent duplicate status applications due to multiple hook calls
+    // Use the actor's _id to track processing state
+    const actorId = actor._id;
+
+    if (processingActors.has(actorId)) {
+        return;
+    }
+
+    // Mark this actor as being processed
+    processingActors.add(actorId);
+
+    try {
         // Use socket to have GM apply the status (handles permissions properly)
         // Pass the actor UUID to preserve token actor context
         const result = await socket.executeAsGM(
@@ -66,5 +89,11 @@ export async function handleNPCDeathStatusUpdate(
             `DCC-QOL | Error requesting status application for NPC ${actor.name}:`,
             error
         );
+    } finally {
+        // Always clean up the processing flag after a short delay
+        // This allows for the status to be applied and prevents permanent blocking
+        setTimeout(() => {
+            processingActors.delete(actorId);
+        }, 1000);
     }
 }

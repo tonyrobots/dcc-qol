@@ -1,7 +1,10 @@
 /* globals jest, describe, it, expect, beforeEach, game */
 
 import { createMockPc, createMockNpc } from "../__mocks__/mock-data.js";
-import { handleNPCDeathStatusUpdate } from "../hooks/updateActorHooks.js";
+import {
+    handleNPCDeathStatusUpdate,
+    _clearProcessingActors,
+} from "../hooks/updateActorHooks.js";
 
 // Mock the socket module
 jest.mock("../dcc-qol.js", () => ({
@@ -17,6 +20,9 @@ describe("Update Actor Hooks", () => {
         let mockNPC, mockPC;
 
         beforeEach(() => {
+            // Clear the processing actors set between tests to prevent debouncing issues
+            _clearProcessingActors();
+
             // Mock game.settings.get to control the feature toggle
             game.settings = {
                 get: jest.fn((namespace, setting) => {
@@ -36,7 +42,8 @@ describe("Update Actor Hooks", () => {
 
             // Create mock actors with proper HP data and UUIDs
             mockNPC = createMockNpc({
-                uuid: "Actor.mock-npc-uuid", // Add UUID for socket calls
+                _id: "mock-npc-id", // Simple actor ID for debouncing
+                uuid: "Scene.abc123.Token.def456.Actor.mock-npc-uuid", // Token actor UUID
                 system: {
                     attributes: {
                         hp: {
@@ -49,7 +56,8 @@ describe("Update Actor Hooks", () => {
             });
 
             mockPC = createMockPc({
-                uuid: "Actor.mock-pc-uuid", // Add UUID for socket calls
+                _id: "mock-pc-id", // Simple actor ID for debouncing
+                uuid: "Scene.abc123.Token.ghi789.Actor.mock-pc-uuid", // Token actor UUID
                 system: {
                     attributes: {
                         hp: {

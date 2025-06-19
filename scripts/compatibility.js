@@ -21,15 +21,20 @@ export async function checkAndCorrectEmoteRollsSetting() {
             return new Promise((resolve) => {
                 let buttonClicked = false; // Flag to track if a primary button was clicked
 
-                new Dialog({
-                    title: "DCC QoL Compatibility Check",
+                const dialog = new foundry.applications.api.DialogV2({
+                    window: {
+                        title: "DCC QoL Compatibility Check",
+                        resizable: false,
+                    },
                     content:
                         "<p>The 'Narrative Emote Rolls' setting in the DCC system is currently <strong>enabled</strong>.</p><p>This setting can conflict with DCC-QoL, and we recommend disabling it for optimal compatibility.</p><p><strong>Would you like to disable this setting now?</strong></p>",
-                    buttons: {
-                        yes: {
-                            icon: '<i class="fas fa-check"></i>',
+                    buttons: [
+                        {
+                            action: "yes",
+                            icon: "fas fa-check",
                             label: "Yes, Disable It",
-                            callback: async () => {
+                            default: true,
+                            callback: async (event, button, dialog) => {
                                 buttonClicked = true; // Set flag
                                 try {
                                     await game.settings.set(
@@ -44,6 +49,7 @@ export async function checkAndCorrectEmoteRollsSetting() {
                                         `DCC-QOL Compatibility | DCC setting '${settingKey}' successfully changed to false.`
                                     );
                                     resolve(true); // Setting changed
+                                    dialog.close();
                                 } catch (err) {
                                     console.error(
                                         `DCC-QOL Compatibility | Error trying to set DCC setting '${settingKey}':`,
@@ -53,13 +59,15 @@ export async function checkAndCorrectEmoteRollsSetting() {
                                         "Failed to change the DCC 'Narrative Emote Rolls' setting. Please check the console for errors."
                                     );
                                     resolve(false); // Failed to change
+                                    dialog.close();
                                 }
                             },
                         },
-                        no: {
-                            icon: '<i class="fas fa-times"></i>',
+                        {
+                            action: "no",
+                            icon: "fas fa-times",
                             label: "No, Keep Enabled (Not Recommended)",
-                            callback: () => {
+                            callback: (event, button, dialog) => {
                                 buttonClicked = true; // Set flag
                                 ui.notifications.warn(
                                     "DCC 'Narrative Emote Rolls' setting remains enabled. This may cause issues with DCC QoL. You can change this in the DCC system's module settings."
@@ -68,10 +76,10 @@ export async function checkAndCorrectEmoteRollsSetting() {
                                     `DCC-QOL Compatibility | User chose to keep incompatible DCC setting '${settingKey}' enabled.`
                                 );
                                 resolve(false); // Setting not changed
+                                dialog.close();
                             },
                         },
-                    },
-                    default: "yes",
+                    ],
                     close: () => {
                         if (!buttonClicked) {
                             // Only show dismissal message if no button was clicked
@@ -84,7 +92,8 @@ export async function checkAndCorrectEmoteRollsSetting() {
                         }
                         resolve(false); // Setting not changed (or dismissal implies no change)
                     },
-                }).render(true);
+                });
+                dialog.render(true);
             });
         } else {
             console.debug(
