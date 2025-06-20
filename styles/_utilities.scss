@@ -1,0 +1,50 @@
+/* ---------------------------------------- */
+/* DCC-QoL Utility Classes                  */
+/* ---------------------------------------- */
+
+/* Text alignment utilities */
+.centered {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Status indicator utilities (used throughout templates) */
+.status-success {
+    color: var(--dcc-qol-status-success);
+    font-weight: bold;
+}
+
+.status-failure {
+    color: var(--dcc-qol-status-failure);
+    font-weight: bold;
+}
+
+.status-warning {
+    color: var(--dcc-qol-status-warning);
+    font-weight: bold;
+}
+
+.status-info {
+    color: var(--dcc-qol-status-info);
+    font-weight: bold;
+}
+
+/* Visibility utilities */
+.dcc-qol-hidden {
+    display: none;
+}
+
+.dcc-qol-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

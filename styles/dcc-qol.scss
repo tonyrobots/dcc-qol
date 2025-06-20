@@ -1,0 +1,19 @@
+/* ---------------------------------------- */
+/* DCC Quality of Life Improvements        */
+/* Main SCSS Entry Point                   */
+/* ---------------------------------------- */
+
+// Import modular SCSS files following DCC's pattern
+@use "variables";
+@use "utilities";
+@use "chat-cards";
+@use "buttons";
+
+/* ---------------------------------------- */
+/* Module Metadata                          */
+/* ---------------------------------------- */
+/* 
+ * DCC-QoL CSS follows Foundry v13 CSS Layers
+ * This CSS is automatically placed in the 'modules' layer
+ * which has higher priority than 'system' and core Foundry layers
+ */

@@ -1,0 +1,122 @@
+/* ---------------------------------------- */
+/* DCC-QoL CSS Custom Properties - MINIMAL */
+/* ---------------------------------------- */
+
+:root {
+    /* ---------------------------------------- */
+    /* Status Colors - Core QoL Functionality  */
+    /* ---------------------------------------- */
+    --dcc-qol-status-success: #18520b; /* Green for hits, success */
+    --dcc-qol-status-failure: #810c0a; /* Red for misses, failure */
+    --dcc-qol-status-warning: #aa5502; /* Orange for warnings */
+    --dcc-qol-status-info: #17a2b8; /* Blue for informational */
+
+    /* ---------------------------------------- */
+    /* Button Action Types - 5 QoL Actions     */
+    /* ---------------------------------------- */
+
+    /* Damage buttons (Green) */
+    --dcc-qol-damage-bg-start: #e6f8e6;
+    --dcc-qol-damage-bg-end: #ccf0cc;
+    --dcc-qol-damage-border: #228b22;
+    --dcc-qol-damage-text: #0f4f0f;
+
+    /* Critical buttons (Orange) */
+    --dcc-qol-crit-bg-start: #fff2e6;
+    --dcc-qol-crit-bg-end: #ffe6cc;
+    --dcc-qol-crit-border: #cc6600;
+    --dcc-qol-crit-text: #994d00;
+
+    /* Fumble buttons (Red) */
+    --dcc-qol-fumble-bg-start: #ffe6e6;
+    --dcc-qol-fumble-bg-end: #ffcccc;
+    --dcc-qol-fumble-border: #cc0000;
+    --dcc-qol-fumble-text: #800000;
+
+    /* Friendly Fire buttons (Yellow/Amber) */
+    --dcc-qol-friendly-fire-bg-start: #fff4e6;
+    --dcc-qol-friendly-fire-bg-end: #ffeacc;
+    --dcc-qol-friendly-fire-border: #ff9900;
+    --dcc-qol-friendly-fire-text: #cc7700;
+
+    /* Friendly Fire Damage buttons (Brown) */
+    --dcc-qol-friendly-fire-damage-bg-start: #f0e8e0;
+    --dcc-qol-friendly-fire-damage-bg-end: #e0d0c0;
+    --dcc-qol-friendly-fire-damage-border: #8b4513;
+    --dcc-qol-friendly-fire-damage-text: #4b1810;
+
+    /* ---------------------------------------- */
+    /* UI Elements - Light Theme Defaults      */
+    /* ---------------------------------------- */
+
+    /* Property tags and UI backgrounds */
+    --dcc-qol-ui-border-light: rgba(120, 46, 34, 0.2);
+    --dcc-qol-ui-bg-light: #d5d1c5;
+    --dcc-qol-ui-bg-subtle: rgba(120, 46, 34, 0.05);
+
+    /* Friendly fire warning styling */
+    --dcc-qol-warning-border: rgba(255, 165, 0, 0.3);
+
+    /* Muted text colors */
+    --dcc-qol-text-muted: #583636;
+    --dcc-qol-text-subtle: #656464;
+
+    /* Table and border styling */
+    --dcc-qol-table-border: rgba(0, 0, 0, 0.1);
+}
+
+/* ---------------------------------------- */
+/* Dark Theme Overrides - Comprehensive    */
+/* ---------------------------------------- */
+.theme-dark {
+    /* Status colors for dark backgrounds */
+    --dcc-qol-status-success: #34ce57;
+    --dcc-qol-status-failure: #ff6b6b;
+    --dcc-qol-status-warning: #ffa726;
+    --dcc-qol-status-info: #42a5f5;
+
+    /* Button backgrounds for dark theme */
+    --dcc-qol-damage-bg-start: #1a4d1a;
+    --dcc-qol-damage-bg-end: #0f3f0f;
+    --dcc-qol-damage-border: #34ce57;
+    --dcc-qol-damage-text: #e8f5e8;
+
+    --dcc-qol-crit-bg-start: #4d2200;
+    --dcc-qol-crit-bg-end: #331700;
+    --dcc-qol-crit-border: #ffa726;
+    --dcc-qol-crit-text: #fff3e6;
+
+    --dcc-qol-fumble-bg-start: #4d1a1a;
+    --dcc-qol-fumble-bg-end: #330f0f;
+    --dcc-qol-fumble-border: #ff6b6b;
+    --dcc-qol-fumble-text: #ffebee;
+
+    --dcc-qol-friendly-fire-bg-start: #4d3300;
+    --dcc-qol-friendly-fire-bg-end: #332200;
+    --dcc-qol-friendly-fire-border: #ffa726;
+    --dcc-qol-friendly-fire-text: #fff8e1;
+
+    --dcc-qol-friendly-fire-damage-bg-start: #3d2f1f;
+    --dcc-qol-friendly-fire-damage-bg-end: #2d1f0f;
+    --dcc-qol-friendly-fire-damage-border: #d2691e;
+    --dcc-qol-friendly-fire-damage-text: #efebe9;
+
+    /* ---------------------------------------- */
+    /* UI Elements - Dark Theme Overrides      */
+    /* ---------------------------------------- */
+
+    /* Property tags and UI backgrounds for dark theme */
+    --dcc-qol-ui-border-light: rgba(180, 140, 120, 0.3);
+    --dcc-qol-ui-bg-light: rgba(180, 140, 120, 0.15);
+    --dcc-qol-ui-bg-subtle: rgba(180, 140, 120, 0.08);
+
+    /* Friendly fire warning styling for dark theme */
+    --dcc-qol-warning-border: rgba(255, 193, 7, 0.4);
+
+    /* Muted text colors for dark theme */
+    --dcc-qol-text-muted: #aaa;
+    --dcc-qol-text-subtle: #888;
+
+    /* Table and border styling for dark theme */
+    --dcc-qol-table-border: rgba(255, 255, 255, 0.15);
+}

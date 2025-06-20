@@ -6,7 +6,7 @@
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^30.0.0-beta.3",
         "jquery": "^3.7.1",
-        "sass": "^1.32.8",
+        "sass": "^1.69.3",
         "standard": "^16.0.4",
         "stylelint": "^15.10.3",
         "stylelint-config-sass-guidelines": "^10.0.0"
@@ -19,8 +19,9 @@
         "url": "git+https://github.com/foundryvtt-dcc/dcc.git"
     },
     "scripts": {
-        "format": "standard --fix && stylelint \"**/*.scss\"",
-        "scss": "sass styles/dcc-qol.css",
+        "format": "standard --fix && stylelint \"**/*.scss\" --fix",
+        "scss": "sass styles/dcc-qol.scss styles/dcc-qol.css",
+        "scss-watch": "sass --watch styles/dcc-qol.scss styles/dcc-qol.css",
         "test": "jest"
     },
     "version": "1.0.3"
