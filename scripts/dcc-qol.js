@@ -85,5 +85,5 @@ Hooks.once("ready", async () => {
     //     console.log(
     //         "DCC QoL | Module ready and compatibility checks performed."
     //     );
-    // }, 5000);
+    // }, 10000);
 });

@@ -4,7 +4,6 @@
     font-size: 13px;
     margin: 0;
     border: 1px solid #782e22;
-    background: #e0dbd0; /* parchment background */
     padding: 5px;
 }
 
@@ -173,7 +172,6 @@
 }
 
 .dccqol.chat-card .card-buttons button {
-    background: linear-gradient(to bottom, #f5f1e8, #e8e0d0);
     color: #2c1810;
     border: 2px solid #8b4513;
     border-radius: 4px;
@@ -192,7 +190,6 @@
 }
 
 .dccqol.chat-card .card-buttons button:hover {
-    background: linear-gradient(to bottom, #f8f4eb, #eae2d2);
     border-color: #a0522d;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25),
         inset 0 1px 0 rgba(255, 255, 255, 0.4);
@@ -200,7 +197,6 @@
 }
 
 .dccqol.chat-card .card-buttons button:active {
-    background: linear-gradient(to bottom, #e0d8c8, #d5cdb8);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
     transform: translateY(0);
 }
@@ -245,21 +241,18 @@
 
 .dccqol.chat-card .card-buttons button[data-action="fumble"]:hover,
 .dccqol.chat-card.compact .compact-button[data-action="fumble"]:hover {
-    background: linear-gradient(to bottom, #fff0f0, #ffdbdb) !important;
     border-color: #e60000 !important;
 }
 
 /* Friendly Fire Button Colors (Yellow/Amber) */
 .dccqol.chat-card .card-buttons button[data-action="friendlyFire"],
 .dccqol.chat-card.compact .compact-button[data-action="friendlyFire"] {
-    background: linear-gradient(to bottom, #fff4e6, #ffeacc) !important;
     border-color: #ff9900 !important;
     color: #cc7700 !important;
 }
 
 .dccqol.chat-card .card-buttons button[data-action="friendlyFire"]:hover,
 .dccqol.chat-card.compact .compact-button[data-action="friendlyFire"]:hover {
-    background: linear-gradient(to bottom, #fff8f0, #fff0db) !important;
     border-color: #ffad1a !important;
 }
 
@@ -276,7 +269,6 @@
     padding: 2px 6px;
     font-size: 11px;
     line-height: 14px;
-    background: #d5d1c5;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 3px;
     color: #000;
@@ -297,7 +289,6 @@
 .dccqol.chat-card .crit-result {
     margin-top: 8px;
     padding: 5px;
-    background: #d5d1c5;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 0;
 }
@@ -351,7 +342,6 @@
 .dice-formula {
     padding: 0px;
     margin: 0;
-    background: #d5d1c5;
     border: 1px solid rgba(0, 0, 0, 0.1);
     /* border-top: none; */ /* Intentionally removed to be consistent with Foundry default */
     text-align: center;
@@ -362,7 +352,6 @@
 .dice-total {
     padding: 2px;
     margin: 0;
-    background: #d5d1c5;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-top: none; /* Keep this to make the total distinct when formula is above it */
     text-align: center;
@@ -422,13 +411,11 @@
 
 /* Friendly Fire Damage Button Styling */
 button[data-action="friendlyFireDamage"] {
-    background: linear-gradient(to bottom, #f0e8e0, #e0d0c0) !important;
     border-color: #8b4513 !important;
     color: #4b1810 !important;
 }
 
 button[data-action="friendlyFireDamage"]:hover {
-    background: linear-gradient(to bottom, #f3ebe3, #e3d3c3) !important;
     border-color: #a0522d !important;
 }
 
@@ -444,7 +431,6 @@ button[data-action="friendlyFireDamage"]:disabled {
 /* Disabled state for all buttons */
 .dccqol.chat-card .card-buttons button.disabled,
 .dccqol.chat-card.compact .compact-button.disabled {
-    background: linear-gradient(to bottom, #e8e8e8, #d0d0d0) !important;
     border-color: #999 !important;
     color: #666 !important;
     cursor: not-allowed !important;
@@ -455,7 +441,6 @@ button[data-action="friendlyFireDamage"]:disabled {
 /* Remove hover effects for disabled buttons */
 .dccqol.chat-card .card-buttons button.disabled:hover,
 .dccqol.chat-card.compact .compact-button.disabled:hover {
-    background: linear-gradient(to bottom, #e8e8e8, #d0d0d0) !important;
     border-color: #999 !important;
     transform: none !important;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
@@ -568,7 +553,6 @@ button[data-action="friendlyFireDamage"]:disabled {
 }
 
 .dccqol.chat-card.compact .compact-button {
-    background: linear-gradient(to bottom, #f5f1e8, #e8e0d0);
     color: #2c1810;
     border: 1px solid #8b4513;
     border-radius: 3px;
@@ -586,7 +570,6 @@ button[data-action="friendlyFireDamage"]:disabled {
 }
 
 .dccqol.chat-card.compact .compact-button:hover {
-    background: linear-gradient(to bottom, #f8f4eb, #eae2d2);
     border-color: #a0522d;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     transform: translateY(-1px);
