@@ -5,7 +5,7 @@
 /* Base chat card - inherits DCC system styling */
 .dccqol.chat-card {
     /* Inherit DCC system styling directly */
-    background: var(--system-frame-background);
+    background: transparent;
     border: 1px solid var(--system-border-color);
     color: var(--system-primary-color);
     font-family: var(--system-data-font);
@@ -334,8 +334,6 @@
 .dccqol-friendlyfire-result {
     margin: 5px 0;
     padding: 5px;
-    background: rgba(255, 193, 7, 0.1);
-    border: 1px solid rgba(255, 193, 7, 0.3);
     text-align: center;
 }
 
