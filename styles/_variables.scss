@@ -20,30 +20,40 @@
     --dcc-qol-damage-bg-end: #ccf0cc;
     --dcc-qol-damage-border: #228b22;
     --dcc-qol-damage-text: #0f4f0f;
+    --dcc-qol-damage-hover-bg-start: #f0faf0;
+    --dcc-qol-damage-hover-bg-end: #d9f2d9;
 
     /* Critical buttons (Orange) */
     --dcc-qol-crit-bg-start: #fff2e6;
     --dcc-qol-crit-bg-end: #ffe6cc;
     --dcc-qol-crit-border: #cc6600;
     --dcc-qol-crit-text: #994d00;
+    --dcc-qol-crit-hover-bg-start: #fff7f0;
+    --dcc-qol-crit-hover-bg-end: #ffeddb;
 
     /* Fumble buttons (Red) */
     --dcc-qol-fumble-bg-start: #ffe6e6;
     --dcc-qol-fumble-bg-end: #ffcccc;
     --dcc-qol-fumble-border: #cc0000;
     --dcc-qol-fumble-text: #800000;
+    --dcc-qol-fumble-hover-bg-start: #fff0f0;
+    --dcc-qol-fumble-hover-bg-end: #ffdbdb;
 
     /* Friendly Fire buttons (Yellow/Amber) */
     --dcc-qol-friendly-fire-bg-start: #fff4e6;
     --dcc-qol-friendly-fire-bg-end: #ffeacc;
     --dcc-qol-friendly-fire-border: #ff9900;
     --dcc-qol-friendly-fire-text: #cc7700;
+    --dcc-qol-friendly-fire-hover-bg-start: #fff8f0;
+    --dcc-qol-friendly-fire-hover-bg-end: #fff0db;
 
     /* Friendly Fire Damage buttons (Brown) */
     --dcc-qol-friendly-fire-damage-bg-start: #f0e8e0;
     --dcc-qol-friendly-fire-damage-bg-end: #e0d0c0;
     --dcc-qol-friendly-fire-damage-border: #8b4513;
     --dcc-qol-friendly-fire-damage-text: #4b1810;
+    --dcc-qol-friendly-fire-damage-hover-bg-start: #f3ebe3;
+    --dcc-qol-friendly-fire-damage-hover-bg-end: #e3d3c3;
 
     /* ---------------------------------------- */
     /* UI Elements - Light Theme Defaults      */
@@ -63,6 +73,16 @@
 
     /* Table and border styling */
     --dcc-qol-table-border: rgba(0, 0, 0, 0.1);
+
+    /* ---------------------------------------- */
+    /* Typography - DCC-QoL Font Overrides     */
+    /* ---------------------------------------- */
+
+    /* Display font (headers, labels, buttons) - override system-label-font */
+    --dcc-qol-display-font: "Signika", sans-serif;
+
+    /* Text font (body text, content) - override system-data-font */
+    --dcc-qol-text-font: "Signika", sans-serif;
 }
 
 /* ---------------------------------------- */
@@ -80,26 +100,36 @@
     --dcc-qol-damage-bg-end: #0f3f0f;
     --dcc-qol-damage-border: #34ce57;
     --dcc-qol-damage-text: #e8f5e8;
+    --dcc-qol-damage-hover-bg-start: #0f3f0f;
+    --dcc-qol-damage-hover-bg-end: #0a2f0a;
 
     --dcc-qol-crit-bg-start: #4d2200;
     --dcc-qol-crit-bg-end: #331700;
     --dcc-qol-crit-border: #ffa726;
     --dcc-qol-crit-text: #fff3e6;
+    --dcc-qol-crit-hover-bg-start: #331700;
+    --dcc-qol-crit-hover-bg-end: #220f00;
 
     --dcc-qol-fumble-bg-start: #4d1a1a;
     --dcc-qol-fumble-bg-end: #330f0f;
     --dcc-qol-fumble-border: #ff6b6b;
     --dcc-qol-fumble-text: #ffebee;
+    --dcc-qol-fumble-hover-bg-start: #330f0f;
+    --dcc-qol-fumble-hover-bg-end: #220a0a;
 
     --dcc-qol-friendly-fire-bg-start: #4d3300;
     --dcc-qol-friendly-fire-bg-end: #332200;
     --dcc-qol-friendly-fire-border: #ffa726;
     --dcc-qol-friendly-fire-text: #fff8e1;
+    --dcc-qol-friendly-fire-hover-bg-start: #332200;
+    --dcc-qol-friendly-fire-hover-bg-end: #221700;
 
     --dcc-qol-friendly-fire-damage-bg-start: #3d2f1f;
     --dcc-qol-friendly-fire-damage-bg-end: #2d1f0f;
     --dcc-qol-friendly-fire-damage-border: #d2691e;
     --dcc-qol-friendly-fire-damage-text: #efebe9;
+    --dcc-qol-friendly-fire-damage-hover-bg-start: #2d1f0f;
+    --dcc-qol-friendly-fire-damage-hover-bg-end: #1f1508;
 
     /* ---------------------------------------- */
     /* UI Elements - Dark Theme Overrides      */

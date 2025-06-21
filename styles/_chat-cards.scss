@@ -8,7 +8,7 @@
     background: transparent;
     border: 1px solid var(--system-border-color);
     color: var(--system-primary-color);
-    font-family: var(--system-data-font);
+    font-family: var(--dcc-qol-text-font);
     border-radius: 4px;
     padding: 5px;
     margin: 0;
@@ -26,7 +26,7 @@
             margin: 0;
             line-height: 36px;
             font-size: 14px;
-            font-family: var(--system-label-font);
+            font-family: var(--dcc-qol-display-font);
             font-weight: bold;
             border-bottom: 0;
             color: var(--system-primary-color);
@@ -221,6 +221,27 @@
             }
         }
     }
+
+    /* Friendly fire specific components */
+    .dccqol-friendlyfire-result {
+        margin: 5px 0;
+        padding: 5px;
+        text-align: center;
+    }
+
+    /* Attack/Damage roll sections */
+    .dccqol-attack-roll-section,
+    .dccqol-attack-result,
+    .dccqol-damage-result {
+        margin: 5px 0;
+        padding: 3px;
+
+        .attack-roll-label {
+            font-weight: bold;
+            font-family: var(--dcc-qol-display-font);
+            margin-bottom: 3px;
+        }
+    }
 }
 
 /* Compact variant */
@@ -320,32 +341,21 @@
     border-left: 4px solid #ffc107;
 }
 
+/* Attack result indicators */
+.dccqol.chat-card.attack-hit {
+    border-left: 4px solid var(--dcc-qol-status-success);
+}
+
+.dccqol.chat-card.attack-miss {
+    border-left: 4px solid var(--dcc-qol-status-failure);
+}
+
 /* ---------------------------------------- */
 /* Standalone Components & System Cards     */
 /* ---------------------------------------- */
 
 /* System card font overrides */
 .dccqol-system-card-font .message-content {
-    font-family: var(--system-data-font);
+    font-family: var(--dcc-qol-text-font);
     font-size: 13px;
-}
-
-/* Friendly fire result display */
-.dccqol-friendlyfire-result {
-    margin: 5px 0;
-    padding: 5px;
-    text-align: center;
-}
-
-/* Attack/Damage roll sections */
-.dccqol-attack-roll-section,
-.dccqol-attack-result,
-.dccqol-damage-result {
-    margin: 5px 0;
-    padding: 3px;
-
-    .attack-roll-label {
-        font-weight: bold;
-        margin-bottom: 3px;
-    }
 }

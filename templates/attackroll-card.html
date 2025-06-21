@@ -1,6 +1,6 @@
 <!-- prettier-ignore -->
 <div
-    class="dccqol chat-card"
+    class="dccqol chat-card{{#if isFumble}} attack-miss{{else}}{{#if hitsTarget}} attack-hit{{else}}{{#if target}} attack-miss{{else}} attack-hit{{/if}}{{/if}}{{/if}}"
     data-actor-id="{{actor._id}}"
     data-weapon-id="{{weapon._id}}"
     data-token-id="{{tokenId}}"

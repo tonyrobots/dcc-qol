@@ -21,26 +21,36 @@
   --dcc-qol-damage-bg-end: #ccf0cc;
   --dcc-qol-damage-border: #228b22;
   --dcc-qol-damage-text: #0f4f0f;
+  --dcc-qol-damage-hover-bg-start: #f0faf0;
+  --dcc-qol-damage-hover-bg-end: #d9f2d9;
   /* Critical buttons (Orange) */
   --dcc-qol-crit-bg-start: #fff2e6;
   --dcc-qol-crit-bg-end: #ffe6cc;
   --dcc-qol-crit-border: #cc6600;
   --dcc-qol-crit-text: #994d00;
+  --dcc-qol-crit-hover-bg-start: #fff7f0;
+  --dcc-qol-crit-hover-bg-end: #ffeddb;
   /* Fumble buttons (Red) */
   --dcc-qol-fumble-bg-start: #ffe6e6;
   --dcc-qol-fumble-bg-end: #ffcccc;
   --dcc-qol-fumble-border: #cc0000;
   --dcc-qol-fumble-text: #800000;
+  --dcc-qol-fumble-hover-bg-start: #fff0f0;
+  --dcc-qol-fumble-hover-bg-end: #ffdbdb;
   /* Friendly Fire buttons (Yellow/Amber) */
   --dcc-qol-friendly-fire-bg-start: #fff4e6;
   --dcc-qol-friendly-fire-bg-end: #ffeacc;
   --dcc-qol-friendly-fire-border: #ff9900;
   --dcc-qol-friendly-fire-text: #cc7700;
+  --dcc-qol-friendly-fire-hover-bg-start: #fff8f0;
+  --dcc-qol-friendly-fire-hover-bg-end: #fff0db;
   /* Friendly Fire Damage buttons (Brown) */
   --dcc-qol-friendly-fire-damage-bg-start: #f0e8e0;
   --dcc-qol-friendly-fire-damage-bg-end: #e0d0c0;
   --dcc-qol-friendly-fire-damage-border: #8b4513;
   --dcc-qol-friendly-fire-damage-text: #4b1810;
+  --dcc-qol-friendly-fire-damage-hover-bg-start: #f3ebe3;
+  --dcc-qol-friendly-fire-damage-hover-bg-end: #e3d3c3;
   /* ---------------------------------------- */
   /* UI Elements - Light Theme Defaults      */
   /* ---------------------------------------- */
@@ -55,6 +65,13 @@
   --dcc-qol-text-subtle: #656464;
   /* Table and border styling */
   --dcc-qol-table-border: rgba(0, 0, 0, 0.1);
+  /* ---------------------------------------- */
+  /* Typography - DCC-QoL Font Overrides     */
+  /* ---------------------------------------- */
+  /* Display font (headers, labels, buttons) - override system-label-font */
+  --dcc-qol-display-font: "Signika", sans-serif;
+  /* Text font (body text, content) - override system-data-font */
+  --dcc-qol-text-font: "Signika", sans-serif;
 }
 
 /* ---------------------------------------- */
@@ -71,22 +88,32 @@
   --dcc-qol-damage-bg-end: #0f3f0f;
   --dcc-qol-damage-border: #34ce57;
   --dcc-qol-damage-text: #e8f5e8;
+  --dcc-qol-damage-hover-bg-start: #0f3f0f;
+  --dcc-qol-damage-hover-bg-end: #0a2f0a;
   --dcc-qol-crit-bg-start: #4d2200;
   --dcc-qol-crit-bg-end: #331700;
   --dcc-qol-crit-border: #ffa726;
   --dcc-qol-crit-text: #fff3e6;
+  --dcc-qol-crit-hover-bg-start: #331700;
+  --dcc-qol-crit-hover-bg-end: #220f00;
   --dcc-qol-fumble-bg-start: #4d1a1a;
   --dcc-qol-fumble-bg-end: #330f0f;
   --dcc-qol-fumble-border: #ff6b6b;
   --dcc-qol-fumble-text: #ffebee;
+  --dcc-qol-fumble-hover-bg-start: #330f0f;
+  --dcc-qol-fumble-hover-bg-end: #220a0a;
   --dcc-qol-friendly-fire-bg-start: #4d3300;
   --dcc-qol-friendly-fire-bg-end: #332200;
   --dcc-qol-friendly-fire-border: #ffa726;
   --dcc-qol-friendly-fire-text: #fff8e1;
+  --dcc-qol-friendly-fire-hover-bg-start: #332200;
+  --dcc-qol-friendly-fire-hover-bg-end: #221700;
   --dcc-qol-friendly-fire-damage-bg-start: #3d2f1f;
   --dcc-qol-friendly-fire-damage-bg-end: #2d1f0f;
   --dcc-qol-friendly-fire-damage-border: #d2691e;
   --dcc-qol-friendly-fire-damage-text: #efebe9;
+  --dcc-qol-friendly-fire-damage-hover-bg-start: #2d1f0f;
+  --dcc-qol-friendly-fire-damage-hover-bg-end: #1f1508;
   /* ---------------------------------------- */
   /* UI Elements - Dark Theme Overrides      */
   /* ---------------------------------------- */
@@ -162,7 +189,7 @@
   background: transparent;
   border: 1px solid var(--system-border-color);
   color: var(--system-primary-color);
-  font-family: var(--system-data-font);
+  font-family: var(--dcc-qol-text-font);
   border-radius: 4px;
   padding: 5px;
   margin: 0;
@@ -181,6 +208,8 @@
   /* Dice styling - overrides for QoL enhancement */
   /* Damage application feedback */
   /* Fumble and crit results */
+  /* Friendly fire specific components */
+  /* Attack/Damage roll sections */
 }
 .dccqol.chat-card .card-header {
   display: flex;
@@ -193,7 +222,7 @@
   margin: 0;
   line-height: 36px;
   font-size: 14px;
-  font-family: var(--system-label-font);
+  font-family: var(--dcc-qol-display-font);
   font-weight: bold;
   border-bottom: 0;
   color: var(--system-primary-color);
@@ -346,6 +375,24 @@
   padding: 2px 5px;
   border-bottom: 1px solid var(--dcc-qol-table-border);
 }
+.dccqol.chat-card .dccqol-friendlyfire-result {
+  margin: 5px 0;
+  padding: 5px;
+  text-align: center;
+}
+.dccqol.chat-card .dccqol-attack-roll-section,
+.dccqol.chat-card .dccqol-attack-result,
+.dccqol.chat-card .dccqol-damage-result {
+  margin: 5px 0;
+  padding: 3px;
+}
+.dccqol.chat-card .dccqol-attack-roll-section .attack-roll-label,
+.dccqol.chat-card .dccqol-attack-result .attack-roll-label,
+.dccqol.chat-card .dccqol-damage-result .attack-roll-label {
+  font-weight: bold;
+  font-family: var(--dcc-qol-display-font);
+  margin-bottom: 3px;
+}
 
 /* Compact variant */
 .dccqol.chat-card.compact {
@@ -428,34 +475,22 @@
   border-left: 4px solid #ffc107;
 }
 
+/* Attack result indicators */
+.dccqol.chat-card.attack-hit {
+  border-left: 4px solid var(--dcc-qol-status-success);
+}
+
+.dccqol.chat-card.attack-miss {
+  border-left: 4px solid var(--dcc-qol-status-failure);
+}
+
 /* ---------------------------------------- */
 /* Standalone Components & System Cards     */
 /* ---------------------------------------- */
 /* System card font overrides */
 .dccqol-system-card-font .message-content {
-  font-family: var(--system-data-font);
+  font-family: var(--dcc-qol-text-font);
   font-size: 13px;
-}
-
-/* Friendly fire result display */
-.dccqol-friendlyfire-result {
-  margin: 5px 0;
-  padding: 5px;
-  text-align: center;
-}
-
-/* Attack/Damage roll sections */
-.dccqol-attack-roll-section,
-.dccqol-attack-result,
-.dccqol-damage-result {
-  margin: 5px 0;
-  padding: 3px;
-}
-.dccqol-attack-roll-section .attack-roll-label,
-.dccqol-attack-result .attack-roll-label,
-.dccqol-damage-result .attack-roll-label {
-  font-weight: bold;
-  margin-bottom: 3px;
 }
 
 /* ---------------------------------------- */
@@ -471,7 +506,7 @@
 
 /* Base button styling */
 .dccqol.chat-card button {
-  font-family: var(--system-label-font);
+  font-family: var(--dcc-qol-display-font);
   font-size: 12px;
   font-weight: bold;
   text-align: center;
@@ -518,7 +553,7 @@
   color: var(--dcc-qol-damage-text) !important;
 }
 .dccqol.chat-card button[data-action=damage]:hover:not(:disabled):not(.disabled) {
-  background: linear-gradient(to bottom, #f0faf0, #d9f2d9) !important;
+  background: linear-gradient(to bottom, var(--dcc-qol-damage-hover-bg-start), var(--dcc-qol-damage-hover-bg-end)) !important;
   border-color: #32cd32 !important;
 }
 .dccqol.chat-card button[data-action=damage]:active:not(:disabled):not(.disabled) {
@@ -532,7 +567,7 @@
   color: var(--dcc-qol-crit-text) !important;
 }
 .dccqol.chat-card button[data-action=crit]:hover:not(:disabled):not(.disabled) {
-  background: linear-gradient(to bottom, #fff7f0, #ffeddb) !important;
+  background: linear-gradient(to bottom, var(--dcc-qol-crit-hover-bg-start), var(--dcc-qol-crit-hover-bg-end)) !important;
   border-color: #e6730a !important;
 }
 .dccqol.chat-card button[data-action=crit]:active:not(:disabled):not(.disabled) {
@@ -546,7 +581,7 @@
   color: var(--dcc-qol-fumble-text) !important;
 }
 .dccqol.chat-card button[data-action=fumble]:hover:not(:disabled):not(.disabled) {
-  background: linear-gradient(to bottom, #fff0f0, #ffdbdb) !important;
+  background: linear-gradient(to bottom, var(--dcc-qol-fumble-hover-bg-start), var(--dcc-qol-fumble-hover-bg-end)) !important;
   border-color: #e60000 !important;
 }
 .dccqol.chat-card button[data-action=fumble]:active:not(:disabled):not(.disabled) {
@@ -560,24 +595,24 @@
   color: var(--dcc-qol-friendly-fire-text) !important;
 }
 .dccqol.chat-card button[data-action=friendlyFire]:hover:not(:disabled):not(.disabled) {
-  background: linear-gradient(to bottom, #fff8f0, #fff0db) !important;
+  background: linear-gradient(to bottom, var(--dcc-qol-friendly-fire-hover-bg-start), var(--dcc-qol-friendly-fire-hover-bg-end)) !important;
   border-color: #ffad1a !important;
 }
 .dccqol.chat-card button[data-action=friendlyFire]:active:not(:disabled):not(.disabled) {
   background: linear-gradient(to bottom, var(--dcc-qol-friendly-fire-bg-end), var(--dcc-qol-friendly-fire-bg-start)) !important;
 }
 
-/* Friendly Fire Damage buttons (Brown) */
-.dccqol.chat-card button[data-action=friendlyFireDamage] {
+/* Friendly Fire Damage buttons (Brown) - damage buttons within friendly fire cards */
+.dccqol.friendly-fire-card button[data-action=damage] {
   background: linear-gradient(to bottom, var(--dcc-qol-friendly-fire-damage-bg-start), var(--dcc-qol-friendly-fire-damage-bg-end)) !important;
   border-color: var(--dcc-qol-friendly-fire-damage-border) !important;
   color: var(--dcc-qol-friendly-fire-damage-text) !important;
 }
-.dccqol.chat-card button[data-action=friendlyFireDamage]:hover:not(:disabled):not(.disabled) {
-  background: linear-gradient(to bottom, #f3ebe3, #e3d3c3) !important;
+.dccqol.friendly-fire-card button[data-action=damage]:hover:not(:disabled):not(.disabled) {
+  background: linear-gradient(to bottom, var(--dcc-qol-friendly-fire-damage-hover-bg-start), var(--dcc-qol-friendly-fire-damage-hover-bg-end)) !important;
   border-color: #a0522d !important;
 }
-.dccqol.chat-card button[data-action=friendlyFireDamage]:active:not(:disabled):not(.disabled) {
+.dccqol.friendly-fire-card button[data-action=damage]:active:not(:disabled):not(.disabled) {
   background: linear-gradient(to bottom, var(--dcc-qol-friendly-fire-damage-bg-end), var(--dcc-qol-friendly-fire-damage-bg-start)) !important;
 }
 
@@ -593,7 +628,7 @@
 
 /* Legacy compatibility */
 .dccqol-button {
-  font-family: var(--system-label-font);
+  font-family: var(--dcc-qol-display-font);
   font-size: 12px;
   font-weight: bold;
   text-align: center;
@@ -645,7 +680,7 @@
 /* ---------------------------------------- */
 /* Global dice styling overrides */
 .dice-roll {
-  font-family: var(--system-data-font);
+  font-family: var(--dcc-qol-text-font);
   font-size: 13px;
   border: none;
 }
