@@ -201,6 +201,52 @@ export async function enhanceAttackRollCard(message, html, data) {
                 );
             }
 
+            // Add event listener for weapon image click to toggle description
+            const weaponImage = cardElement.querySelector(
+                '.weapon-image-clickable[data-action="toggle-weapon-description"]'
+            );
+            if (weaponImage) {
+                weaponImage.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    const weaponId =
+                        weaponImage.closest(".dccqol.chat-card")?.dataset
+                            .weaponId;
+                    if (weaponId) {
+                        const descriptionElement = cardElement.querySelector(
+                            `[data-weapon-description="${weaponId}"]`
+                        );
+                        if (descriptionElement) {
+                            descriptionElement.classList.toggle(
+                                "dcc-qol-hidden"
+                            );
+                        }
+                    }
+                });
+            }
+
+            // Add event listener for weapon name click to toggle description
+            const weaponName = cardElement.querySelector(
+                '.weapon-name-clickable[data-action="toggle-weapon-description"]'
+            );
+            if (weaponName) {
+                weaponName.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    const weaponId =
+                        weaponName.closest(".dccqol.chat-card")?.dataset
+                            .weaponId;
+                    if (weaponId) {
+                        const descriptionElement = cardElement.querySelector(
+                            `[data-weapon-description="${weaponId}"]`
+                        );
+                        if (descriptionElement) {
+                            descriptionElement.classList.toggle(
+                                "dcc-qol-hidden"
+                            );
+                        }
+                    }
+                });
+            }
+
             // --- Apply Dice Roll Status Coloring for Hits/Misses/Crits/Fumbles ---
             const diceTotalElement = cardElement.querySelector(
                 ".dice-roll .dice-total"
@@ -417,11 +463,6 @@ export async function enhanceAttackRollCard(message, html, data) {
                 } else {
                     html.insertAdjacentHTML("beforeend", renderedContentHtml);
                 }
-
-                console.debug(
-                    "DCC-QOL | Re-rendered safe/miss friendly fire card for message",
-                    message.id
-                );
             }
         } catch (err) {
             console.error(

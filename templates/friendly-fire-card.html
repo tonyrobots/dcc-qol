@@ -25,11 +25,11 @@
 
         {{#if hit}}
         <!-- Hit - show "failure" and include damage button partial -->
-        <div class="dccqol-attack-result status-failure">{{hitText}}</div>
+        <div class="dccqol-attack-result centered status-failure">{{hitText}}</div>
         {{> "modules/dcc-qol/templates/partials/_damage-button.html"}}
         {{else}}
         <!-- Miss - show harmless result, which is a "success" -->
-        <div class="dccqol-attack-result status-success">{{missText}}</div>
+        <div class="dccqol-attack-result centered status-success">{{missText}}</div>
         {{/if}}
     </div>
     {{/if}}

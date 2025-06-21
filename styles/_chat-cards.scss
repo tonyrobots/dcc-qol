@@ -359,3 +359,81 @@
     font-family: var(--dcc-qol-text-font);
     font-size: 13px;
 }
+
+/* Weapon image clickable styling */
+.dccqol.chat-card .weapon-image-clickable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+
+    &:hover {
+        opacity: 0.8;
+        transform: scale(1.05);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+/* Weapon name clickable styling */
+.dccqol.chat-card .weapon-name-clickable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 2px 4px;
+    border-radius: 3px;
+
+    &:hover {
+        background-color: rgba(var(--dcc-qol-primary-rgb), 0.1);
+        color: var(--dcc-qol-primary-hover);
+        text-decoration: underline;
+    }
+
+    &:active {
+        background-color: rgba(var(--dcc-qol-primary-rgb), 0.2);
+    }
+}
+
+/* Weapon description visibility states */
+.dccqol.chat-card .weapon-description {
+    transition: all 0.3s ease;
+
+    &.dcc-qol-hidden {
+        display: none;
+    }
+
+    &:not(.dcc-qol-hidden) {
+        display: block;
+        animation: fadeIn 0.3s ease;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Backstab text container and icon alignment */
+.dccqol.chat-card .backstab-text-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+}
+
+.dccqol.chat-card .backstab-icon {
+    flex-shrink: 0;
+    margin-top: 2px; /* Slight offset to align with text baseline */
+    border: none !important;
+
+    &.compact {
+        margin-top: 1px;
+    }
+}

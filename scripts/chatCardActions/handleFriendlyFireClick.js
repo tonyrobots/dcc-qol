@@ -16,10 +16,6 @@ import { socket } from "../dcc-qol.js";
  */
 export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
     event.preventDefault();
-    console.debug(
-        "DCC-QOL | Friendly Fire button clicked via handleFriendlyFireClick",
-        { actor, qolFlags }
-    );
 
     if (!actor) {
         console.error(
@@ -27,7 +23,7 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
             message.id
         );
         ui.notifications.error(
-            "DCC QoL: Actor context not found for friendly fire check."
+            "DCC QoL: Actor not found for friendly fire check."
         );
         return;
     }
@@ -248,10 +244,6 @@ export async function handleFriendlyFireClick(event, message, actor, qolFlags) {
             );
             // Don't throw here - the friendly fire check was successful even if flag update failed
         }
-
-        console.debug(
-            "DCC-QOL | Friendly fire check completed using unified template."
-        );
     } catch (rollError) {
         console.error(
             "DCC-QOL | Error performing friendly fire roll:",

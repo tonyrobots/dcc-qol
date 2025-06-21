@@ -11,18 +11,34 @@
     <header class="card-header flexrow compact-header">
         <h3 class="flavor-text compact-title">
             {{#if isBackstab}}
-                <img src="/systems/dcc/styles/images/backstab.png" title="Backstab" width="16" height="16" style="vertical-align: middle; margin-right: 3px; border: none;" />
-                {{localize "DCC-QOL.BackstabsWith" weapon=weapon.name}}
+                <div class="backstab-text-container">
+                    <img src="/systems/dcc/styles/images/backstab.png" title="Backstab" width="16" height="16" class="backstab-icon compact" />
+                    {{#if isPC}}
+                    <span class="weapon-name-clickable" data-action="toggle-weapon-description" title="Click to toggle weapon description">
+                        {{localize "DCC-QOL.BackstabsWith" weapon=weapon.name}}
+                    </span>
+                    {{else}}
+                    <span>{{localize "DCC-QOL.BackstabsWith" weapon=weapon.name}}</span>
+                    {{/if}}
+                </div>
             {{else}}
+                {{#if isPC}}
+                <span class="weapon-name-clickable" data-action="toggle-weapon-description" title="Click to toggle weapon description">
+                    {{localize "DCC-QOL.AttacksWith" weapon=weapon.name}}
+                </span>
+                {{else}}
                 {{localize "DCC-QOL.AttacksWith" weapon=weapon.name}}
+                {{/if}}
             {{/if}}
         </h3>
         {{#if isPC}}
         <img
             src="{{weapon.img}}"
-            title="{{weapon.name}} (Weapon)"
+            title="{{weapon.name}} (Weapon) - Click to toggle description"
             width="24"
             height="24"
+            class="weapon-image-clickable"
+            data-action="toggle-weapon-description"
         />
         {{else}}
         <img
@@ -34,6 +50,16 @@
         />
         {{/if}}
     </header>
+
+    {{#if isPC}}
+    {{#if weapon.system.description.value}}
+    <div class="weapon-description dcc-qol-hidden" data-weapon-description="{{weapon._id}}">
+        <div class="description-content">
+            {{{weapon.system.description.value}}}
+        </div>
+    </div>
+    {{/if}}
+    {{/if}}
 
     <div class="compact-dice-section centered">
         {{localize "DCC-QOL.AttackRoll"}}: {{{diceHTML}}}
