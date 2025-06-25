@@ -112,20 +112,17 @@ export function getTokensInMeleeRange(targetTokenDocument, scope = "all") {
     const nearbyTokenPlaceables =
         game.canvas.tokens.quadtree.getObjects(searchRect);
 
-    console.debug(
-        `DCC-QOL Utils | getTokensInMeleeRange: Found ${nearbyTokenPlaceables.size} tokens near target using quadtree.`
-    );
+    // console.debug(
+    //     `DCC-QOL Utils | getTokensInMeleeRange: Found ${nearbyTokenPlaceables.size} tokens near target using quadtree.`
+    // );
 
     for (const tokenPlaceable of nearbyTokenPlaceables) {
         const otherTokenDocument = tokenPlaceable.document;
-        console.debug(
-            `DCC-QOL Utils |   - Iterating nearby token: ${otherTokenDocument?.name} (ID: ${otherTokenDocument?.id})`
-        );
+        // console.debug(
+        //     `DCC-QOL Utils |   - Iterating nearby token: ${otherTokenDocument?.name} (ID: ${otherTokenDocument?.id})`
+        // );
 
         if (otherTokenDocument.id === targetTokenDocument.id) {
-            console.debug(
-                `DCC-QOL Utils |   - Skipping target token itself: ${otherTokenDocument?.name}`
-            );
             continue; // Skip the target token itself
         }
 
@@ -317,15 +314,13 @@ export function getTokenById(tokenId) {
 }
 
 /**
- * Resolves a token document from an actor and options object.
- * Tries multiple approaches to handle linked actors, unlinked tokens, and fallback scenarios.
- * Prioritizes the selected/attacking token over other tokens of the same actor.
+ * Resolves a token document from an actor.
+ * Prioritizes the selected/controlled token, then falls back to active tokens.
  *
  * @param {Actor} actor - The actor to get the token document for.
- * @param {object} options - The options object from the hook, may contain token ID or TokenDocument.
  * @returns {TokenDocument|null} The actor's token document if found, otherwise null.
  */
-export function getTokenDocumentFromActor(actor, options) {
+export function getTokenDocumentFromActor(actor) {
     if (!actor) {
         console.debug(
             "DCC-QOL Utils | getTokenDocumentFromActor: No actor provided."
@@ -335,28 +330,9 @@ export function getTokenDocumentFromActor(actor, options) {
 
     let attackerTokenDoc = null;
 
-    // Try 1: Check options.token first (most reliable for the specific attacking token)
-    if (options?.token) {
-        if (typeof options.token === "string") {
-            // Token ID string - use our utility function
-            attackerTokenDoc = getTokenById(options.token);
-            if (attackerTokenDoc) {
-                console.debug(
-                    `DCC-QOL Utils | getTokenDocumentFromActor: Found token via options.token ID: ${attackerTokenDoc.name}`
-                );
-                return attackerTokenDoc;
-            }
-        } else if (options.token instanceof TokenDocument) {
-            // Already a TokenDocument
-            attackerTokenDoc = options.token;
-            console.debug(
-                `DCC-QOL Utils | getTokenDocumentFromActor: Found token via options.token document: ${attackerTokenDoc.name}`
-            );
-            return attackerTokenDoc;
-        }
-    }
+    // these 3 tries might be massive overkill, todo: simplify
 
-    // Try 2: Check for controlled/selected tokens belonging to this actor
+    // Try 1: Check for controlled/selected tokens belonging to this actor
     const controlledTokens = game.canvas.tokens.controlled;
     if (controlledTokens.length > 0) {
         const controlledActorToken = controlledTokens.find(
@@ -364,14 +340,12 @@ export function getTokenDocumentFromActor(actor, options) {
         );
         if (controlledActorToken) {
             attackerTokenDoc = controlledActorToken.document;
-            console.debug(
-                `DCC-QOL Utils | getTokenDocumentFromActor: Found token via controlled tokens: ${attackerTokenDoc.name}`
-            );
+
             return attackerTokenDoc;
         }
     }
 
-    // Try 3: Use actor.getActiveTokens() but warn if multiple tokens exist
+    // Try 2: Use actor.getActiveTokens() but warn if multiple tokens exist
     const activeTokens = actor.getActiveTokens();
     if (activeTokens.length > 0) {
         if (activeTokens.length > 1) {
@@ -381,14 +355,11 @@ export function getTokenDocumentFromActor(actor, options) {
         }
         attackerTokenDoc = activeTokens[0].document;
         if (attackerTokenDoc) {
-            console.debug(
-                `DCC-QOL Utils | getTokenDocumentFromActor: Found token via actor.getActiveTokens(): ${attackerTokenDoc.name}`
-            );
             return attackerTokenDoc;
         }
     }
 
-    // Try 4: Use actor.token as last resort (may be prototype token with wrong coordinates)
+    // Try 3: Use actor.token as last resort (may be prototype token with wrong coordinates)
     attackerTokenDoc = actor.token;
     if (attackerTokenDoc) {
         console.debug(

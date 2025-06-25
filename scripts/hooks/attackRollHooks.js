@@ -151,9 +151,6 @@ export function _modifyCritRollForTargetPCLuck(
  * @param {object} messageData - The chat message data object before creation.
  */
 export async function prepareQoLAttackData(rolls, messageData) {
-    console.debug("DCC-QOL | prepareQoLAttackData hook listener called");
-    console.debug("DCC-QOL | Received messageData:", messageData);
-
     // Extract basic data
     const actorId = messageData.system.actorId;
     const weaponId = messageData.system.weaponId;
@@ -343,43 +340,39 @@ export async function prepareQoLAttackData(rolls, messageData) {
  * @param {object} options - The options object from the hook, containing the actual targets Set and other roll parameters.
  */
 export function applyFiringIntoMeleePenalty(terms, actor, weapon, options) {
-    console.debug("DCC-QOL | applyFiringIntoMeleePenalty hook listener called");
-    console.debug(
-        "DCC-QOL | Options received by applyFiringIntoMeleePenalty:",
-        options
-    );
-
     // Check if the setting is enabled
     if (!game.settings.get("dcc-qol", "automateFiringIntoMeleePenalty")) {
-        console.debug(
-            "DCC-QOL | Firing into melee penalty automation is disabled."
-        );
         return;
     }
 
     // Check if the weapon is ranged
     if (!weapon || weapon.system.melee) {
-        console.debug(
-            "DCC-QOL | Weapon is melee or not found, skipping penalty."
-        );
         return;
     }
 
     // Determine the first valid target document
     const targetDocument = getFirstTarget(options.targets);
     if (!targetDocument) {
-        console.debug(
-            "DCC-QOL | No valid target found for firing into melee check."
-        );
         return;
     }
 
-    console.debug(
-        `DCC-QOL | Checking firing into melee for target: ${targetDocument.name}`
-    );
+    // Get attacker token to access disposition - try options first, then fall back to actor lookup
+    let attackerTokenDoc = null;
 
-    // Get attacker token to access disposition
-    const attackerTokenDoc = getTokenDocumentFromActor(actor, options);
+    // Try options.token first
+    if (options?.token) {
+        if (typeof options.token === "string") {
+            attackerTokenDoc = getTokenById(options.token);
+        } else if (options.token instanceof TokenDocument) {
+            attackerTokenDoc = options.token;
+        }
+    }
+
+    // Fall back to getting token from actor
+    if (!attackerTokenDoc) {
+        attackerTokenDoc = getTokenDocumentFromActor(actor);
+    }
+
     if (!attackerTokenDoc) {
         console.debug(
             "DCC-QOL | No attacker token found for firing into melee check."
@@ -403,14 +396,7 @@ export function applyFiringIntoMeleePenalty(terms, actor, weapon, options) {
                 ),
                 formula: "-1", // Apply a -1 penalty
             });
-            console.log(
-                "DCC-QOL | Terms after applying penalty:",
-                JSON.parse(JSON.stringify(terms))
-            );
         } else {
-            console.debug(
-                `DCC-QOL | Target ${targetDocument.name} is not engaged in melee with friendlies.`
-            );
         }
     } catch (e) {
         console.error("DCC-QOL | Error checking firing into melee:", e);
@@ -427,16 +413,13 @@ export function applyFiringIntoMeleePenalty(terms, actor, weapon, options) {
  * @param {object} options - The options object from the hook, containing targets and other roll parameters.
  */
 export function applyRangeChecksAndPenalties(terms, actor, weapon, options) {
-    console.debug(
-        "DCC-QOL | applyRangeChecksAndPenalties hook listener called"
-    );
-
     if (!game.settings.get("dcc-qol", "checkWeaponRange")) {
         return; // Setting disabled
     }
 
-    // Get attacker token
-    const attackerTokenDoc = getTokenDocumentFromActor(actor, options);
+    let attackerTokenDoc = null;
+    attackerTokenDoc = getTokenDocumentFromActor(actor);
+
     if (!attackerTokenDoc) {
         ui.notifications.warn(
             game.i18n.localize("DCC-QOL.WeaponRangeNoAttackerTokenWarn")

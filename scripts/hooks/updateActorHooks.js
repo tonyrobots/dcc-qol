@@ -60,9 +60,15 @@ export async function handleNPCDeathStatusUpdate(
                   .toLowerCase()
             : statusId;
 
+        let actorName = actor.name;
+
+        if (actor.isToken) {
+            actorName = actor.token.name;
+        }
+
         await ChatMessage.create({
             speaker: ChatMessage.getSpeaker({ actor: actor }),
-            content: `${actor.name} is now ${localizedStatusName}.`,
+            content: `${actorName} is now ${localizedStatusName}.`,
         });
     } catch (error) {
         console.error(
