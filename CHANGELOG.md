@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.5 - 2025-06-19
+
+### v1.0.5 Release
+
+Hot Fix: Fixes bug where "dead" status was applied multiple times under certain conditions
+
+**Full Changelog**: https://github.com/tonyrobots/dcc-qol/compare/v1.0.4...v1.0.5
+
 ## v1.0.4 - 2025-06-14
 
 ### v1.0.4 Release

@@ -45,7 +45,8 @@ export async function gmApplyDamage(payload) {
 
     try {
         // Use the DCC system's applyDamage method
-        await targetActor.applyDamage(damageToApply, 1); // multiplier of 1 for standard damage
+        // await targetActor.applyDamage(damageToApply, 1); // multiplier of 1 for standard damage
+        await targetActor.applyDamage(damageToApply, 1);
 
         // Show scrolling text on canvas for ALL clients
         createDamageScrollingText(targetTokenId, damageToApply);
@@ -110,10 +111,15 @@ export async function gmApplyStatus(actorUuid, status, silent = false) {
                       .toLowerCase()
                 : status;
 
-            // Create chat message announcing the status change
+            let actorName = actor.name;
+
+            if (actor.isToken) {
+                actorName = actor.token.name;
+            }
+
             await ChatMessage.create({
                 speaker: ChatMessage.getSpeaker({ actor: actor }),
-                content: `${actor.name} is now ${localizedStatusName}.`,
+                content: `${actorName} is now ${localizedStatusName}.`,
             });
         }
 
