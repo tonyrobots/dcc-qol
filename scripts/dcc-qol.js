@@ -35,7 +35,7 @@ async function preloadTemplates() {
         "modules/dcc-qol/templates/friendly-fire-card.html",
         // Add other template paths here if needed
     ];
-    return loadTemplates(templatePaths);
+    return foundry.applications.handlebars.loadTemplates(templatePaths);
 }
 
 // Initialize the module
