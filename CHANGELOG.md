@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.1.0 - 2025-07-06
+
+### v1.1.0 Release, with Foundry v13+ and DCC system v 0.60.0+ support!
+
+This release marks the transition to Foundry v13 , which will be the minimum supported version from v1.1.0 onward. Foundry v12 users can use the v1.0.5 dcc-qol release.
+
+**Full Changelog**: https://github.com/tonyrobots/dcc-qol/compare/v1.0.4...v1.1.0
+
 ## v1.0.5 - 2025-06-19
 
 ### v1.0.5 Release
