@@ -4,7 +4,6 @@
     "description": "Various automation and quality of life improvements for Dungeon Crawl Classics.",
     "version": "1.1.0",
     "library": "false",
-    "manifestPlusVersion": "1.2.0",
     "compatibility": {
         "minimum": 13,
         "verified": 13,
@@ -13,8 +12,7 @@
     "authors": [
         {
             "name": "tonyrobots",
-            "url": "https://github.com/tonyrobots/",
-            "discord": "tonyrobots"
+            "url": "https://github.com/tonyrobots/"
         }
     ],
     "relationships": {
@@ -23,7 +21,7 @@
                 "id": "dcc",
                 "type": "system",
                 "compatibility": {
-                    "minimum": "0.51.60"
+                    "minimum": "0.52.0"
                 }
             }
         ],
