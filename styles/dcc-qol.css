@@ -77,7 +77,7 @@
 /* ---------------------------------------- */
 /* Dark Theme Overrides - Comprehensive    */
 /* ---------------------------------------- */
-.theme-dark {
+body.theme-dark {
   /* Status colors for dark backgrounds */
   --dcc-qol-status-success: #34ce57;
   --dcc-qol-status-failure: #ff6b6b;
@@ -188,7 +188,7 @@
   /* Inherit DCC system styling directly */
   background: transparent;
   border: 1px solid var(--system-border-color);
-  color: var(--system-primary-color);
+  color: var(--chat-primary-color, var(--system-primary-color));
   font-family: var(--dcc-qol-text-font);
   border-radius: 4px;
   padding: 5px;
@@ -225,7 +225,7 @@
   font-family: var(--dcc-qol-display-font);
   font-weight: bold;
   border-bottom: 0;
-  color: var(--system-primary-color);
+  color: var(--chat-primary-color, var(--system-primary-color));
 }
 .dccqol.chat-card .card-header img {
   flex: 0 0 36px;
@@ -297,7 +297,7 @@
   color: inherit;
 }
 .dccqol.chat-card .deed-die.deed-normal {
-  color: var(--system-primary-color);
+  color: var(--chat-primary-color, var(--system-primary-color));
 }
 .dccqol.chat-card .weapon-description {
   margin: 5px 0;
@@ -415,7 +415,7 @@
 .dccqol.chat-card.compact .compact-dice-section {
   padding: 3px 0;
   font-size: 13px;
-  color: var(--system-primary-color);
+  color: var(--chat-primary-color, var(--system-primary-color));
   font-weight: normal;
 }
 .dccqol.chat-card.compact .compact-dice-section.centered {
@@ -434,7 +434,7 @@
 }
 .dccqol.chat-card.compact .compact-dice-section strong {
   font-weight: bold;
-  color: var(--system-primary-color);
+  color: var(--chat-primary-color, var(--system-primary-color));
 }
 .dccqol.chat-card.compact .compact-result {
   padding: 3px 0;
@@ -756,7 +756,7 @@
 }
 
 .dice-formula {
-  color: var(--system-primary-color);
+  color: var(--chat-primary-color, var(--system-primary-color));
   font-weight: normal;
   background: transparent;
   border: none;
@@ -766,7 +766,7 @@
 
 .dice-total {
   font-weight: bold;
-  color: var(--system-primary-color);
+  color: var(--chat-primary-color, var(--system-primary-color));
   background: transparent;
   border: none;
   padding: 0;

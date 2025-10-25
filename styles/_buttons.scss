@@ -294,7 +294,7 @@
 }
 
 .dice-formula {
-    color: var(--system-primary-color);
+    color: var(--chat-primary-color, var(--system-primary-color));
     font-weight: normal;
     background: transparent;
     border: none;
@@ -304,7 +304,7 @@
 
 .dice-total {
     font-weight: bold;
-    color: var(--system-primary-color);
+    color: var(--chat-primary-color, var(--system-primary-color));
     background: transparent;
     border: none;
     padding: 0;
