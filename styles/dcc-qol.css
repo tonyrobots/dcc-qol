@@ -397,6 +397,7 @@ body.theme-dark {
 /* Compact variant */
 .dccqol.chat-card.compact {
   padding: 3px;
+  /* In compact layout, ensure automated results span full width and stack */
 }
 .dccqol.chat-card.compact .card-header {
   padding: 2px 0;
@@ -453,6 +454,10 @@ body.theme-dark {
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 3px;
   margin-top: 3px;
+  /* When autoroll outputs are present, use a single-column stack */
+}
+.dccqol.chat-card.compact .compact-buttons-grid:has(.compact-damage-result), .dccqol.chat-card.compact .compact-buttons-grid:has(.compact-auto-result) {
+  grid-template-columns: 1fr;
 }
 .dccqol.chat-card.compact .compact-buttons-grid:has(> :only-child) {
   grid-template-columns: 1fr;
@@ -468,6 +473,11 @@ body.theme-dark {
   padding: 2px 5px;
   font-size: 12px;
   font-weight: bold;
+}
+.dccqol.chat-card.compact .compact-damage-result,
+.dccqol.chat-card.compact .compact-auto-result {
+  grid-column: 1/-1; /* span all columns of the grid */
+  display: block; /* use full available width */
 }
 
 /* Friendly fire card */
