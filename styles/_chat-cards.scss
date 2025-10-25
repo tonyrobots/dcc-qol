@@ -7,7 +7,7 @@
     /* Inherit DCC system styling directly */
     background: transparent;
     border: 1px solid var(--system-border-color);
-    color: var(--system-primary-color);
+    color: var(--chat-primary-color, var(--system-primary-color));
     font-family: var(--dcc-qol-text-font);
     border-radius: 4px;
     padding: 5px;
@@ -29,7 +29,7 @@
             font-family: var(--dcc-qol-display-font);
             font-weight: bold;
             border-bottom: 0;
-            color: var(--system-primary-color);
+            color: var(--chat-primary-color, var(--system-primary-color));
         }
 
         img {
@@ -121,7 +121,7 @@
         color: inherit;
 
         &.deed-normal {
-            color: var(--system-primary-color);
+            color: var(--chat-primary-color, var(--system-primary-color));
         }
     }
 
@@ -268,7 +268,7 @@
     .compact-dice-section {
         padding: 3px 0;
         font-size: 13px;
-        color: var(--system-primary-color);
+        color: var(--chat-primary-color, var(--system-primary-color));
         font-weight: normal;
 
         &.centered {
@@ -291,7 +291,7 @@
 
         strong {
             font-weight: bold;
-            color: var(--system-primary-color);
+            color: var(--chat-primary-color, var(--system-primary-color));
         }
     }
 
