@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.1.2 - 2025-10-25
+
+### v1.1.2
+
+Fix: Respect the DCC system setting to adjust light mode/dark mode defaults for chat cards, preventing issue where users were getting light colored text in light background chat cards.
+
+Improvement: Include attacker's name in attack card message, which is especially useful if you happen to have DCC system's "emote" setting turned on (though you probably shouldn't with dcc-qol)
+
+Fix: layout of compact attack card for crits when "autoroll damage, crits, fumbles" is enabled in DCC system settings. (Again, this setting isn't recommended in dcc-qol.)
+
 ## v1.1.0 - 2025-07-06
 
 ### v1.1.0 Release, with Foundry v13+ and DCC system v 0.60.0+ support!
