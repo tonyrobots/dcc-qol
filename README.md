@@ -24,6 +24,7 @@ The DCC Quality of Life module aims to improve the DCC RPG experience in Foundry
     -   **Full Format**: Shows all attack details (including damage formula in Roll Damage button) with maximum visual clarity
     -   **Compact Format**: Reduces vertical space by approximately 50% while maintaining essential information
 -   Color-coded **roll damage, crit, and fumble buttons**
+    -   Respects DCC setting: "Show the Modify Roll dialog by default" (hold CTRL/CMD to invert)
 
 ![Enhanced DCC-QOL attack chat card](docs/images/attack-card-crit-backstab.png)
 

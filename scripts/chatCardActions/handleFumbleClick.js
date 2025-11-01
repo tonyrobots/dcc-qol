@@ -43,6 +43,12 @@ export async function handleFumbleClick(
     }
 
     try {
+        const rollModifierDefault = game.settings.get(
+            "dcc",
+            "showRollModifierByDefault"
+        );
+        const showModifierDialog = rollModifierDefault ^ (event.ctrlKey || event.metaKey);
+
         let flavorText = game.i18n.localize("DCC.Fumble"); // Default flavor
         if (message.system.fumbleInlineRoll) {
             try {
@@ -60,9 +66,20 @@ export async function handleFumbleClick(
             }
         }
 
-        const roll = new Roll(
-            message.system.fumbleRollFormula,
-            actor.getRollData()
+        const roll = await game.dcc.DCCRoll.createRoll(
+            [
+                {
+                    type: "Compound",
+                    formula: message.system.fumbleRollFormula,
+                },
+            ],
+            actor.getRollData(),
+            {
+                showModifierDialog,
+                rollLabel: game.i18n.localize("DCC.RollFumble"),
+                title: game.i18n.localize("DCC.Fumble"),
+                window: { title: game.i18n.localize("DCC.Fumble") },
+            }
         );
         await roll.evaluate();
 

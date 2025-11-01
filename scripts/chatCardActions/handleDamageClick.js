@@ -44,10 +44,28 @@ export async function handleDamageClick(
     }
 
     try {
-        // Use actor.getRollData() to allow for @attributes in the formula from the actor's sheet
-        const roll = new Roll(
-            message.system.damageRollFormula,
-            actor.getRollData()
+        // Respect DCC system setting: Show Modify Roll dialog by default
+        const rollModifierDefault = game.settings.get(
+            "dcc",
+            "showRollModifierByDefault"
+        );
+        const showModifierDialog = rollModifierDefault ^ (event.ctrlKey || event.metaKey);
+
+        // Use DCC's roll helper so the Modify Roll dialog is honored
+        const roll = await game.dcc.DCCRoll.createRoll(
+            [
+                {
+                    type: "Compound",
+                    formula: message.system.damageRollFormula,
+                },
+            ],
+            actor.getRollData(),
+            {
+                showModifierDialog,
+                rollLabel: game.i18n.localize("DCC.RollDamage"),
+                title: game.i18n.localize("DCC.Damage"),
+                window: { title: game.i18n.localize("DCC.Damage") },
+            }
         );
         await roll.evaluate();
 

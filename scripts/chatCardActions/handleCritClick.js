@@ -37,6 +37,12 @@ export async function handleCritClick(event, message, actor, weapon, qolFlags) {
     }
 
     try {
+        const rollModifierDefault = game.settings.get(
+            "dcc",
+            "showRollModifierByDefault"
+        );
+        const showModifierDialog = rollModifierDefault ^ (event.ctrlKey || event.metaKey);
+
         let flavorText = `Critical Hit (Table ${
             message.system.critTableName || "Unknown"
         })`; // Fallback flavor
@@ -56,9 +62,20 @@ export async function handleCritClick(event, message, actor, weapon, qolFlags) {
             }
         }
 
-        const roll = new Roll(
-            message.system.critRollFormula,
-            actor.getRollData()
+        const roll = await game.dcc.DCCRoll.createRoll(
+            [
+                {
+                    type: "Compound",
+                    formula: message.system.critRollFormula,
+                },
+            ],
+            actor.getRollData(),
+            {
+                showModifierDialog,
+                rollLabel: game.i18n.localize("DCC.RollCritical"),
+                title: game.i18n.localize("DCC.Critical"),
+                window: { title: game.i18n.localize("DCC.Critical") },
+            }
         );
         await roll.evaluate();
 
