@@ -9,11 +9,16 @@
     -   Title bar uses: "Damage", "Critical", or "Fumble"
     -   Bottom button uses: "Roll Damage", "Roll Critical", or "Roll Fumble"
 
-## v1.1.3 - 2025-11-01
-
 ### Fixed
 
--   Attack card roll buttons (Damage, Crit, Fumble) now respect the DCC system setting "Show the Modify Roll dialog by default". When enabled, clicking these buttons opens the Modify Roll dialog (unless CTRL/CMD is held), matching core sheet behavior.
+-   Attack card roll buttons (Damage, Crit, Fumble) now respect the DCC system setting
+    "Show the Modify Roll dialog by default". Thanks to DR_Mummson for reporting this on Discord.
+
+## v1.1.3 - 2025-11-01
+
+### Changed
+
+-   Internal refinements in preparation for v1.1.4.
 
 ## v1.1.2 - 2025-10-25
 
