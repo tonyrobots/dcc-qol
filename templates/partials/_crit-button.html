@@ -17,8 +17,16 @@ hitsTarget))}} {{#if canUserModify}} {{#if compact}}
 </div>
 {{/if}} {{/if}} {{/unless}} {{else}} {{#if compact}}
 <span class="compact-auto-result">{{{automatedCritDisplay}}}</span>
+{{#if automatedCritDetails}}
+<div class="compact-auto-result">{{{automatedCritDetails}}}</div>
+{{/if}}
 {{else}}
 <div class="chat-details centered">
     <div class="roll-result status-info">{{{automatedCritDisplay}}}</div>
 </div>
+{{#if automatedCritDetails}}
+<div class="chat-details centered">
+    <div class="roll-result">{{{automatedCritDetails}}}</div>
+</div>
+{{/if}}
 {{/if}} {{/unless}}
