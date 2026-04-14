@@ -6,10 +6,6 @@
 
 - Damage rolls from attack card buttons now enforce a minimum total of 1, matching DCC system auto-roll behavior and preventing zero/negative damage results for formulas like `1d4-2`.
 
-### Changed
-
-- Release prep: bump module version to `1.1.6`.
-
 ## v1.1.5 - 2026-01-23
 
 ### v1.1.5 - January 23, 2026
