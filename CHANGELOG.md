@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.0 - 2026-04-17
+
+### v1.2.0
+
+Feature: Adds compatibility with Foundry v14. (Thanks again, @cyface!)
+
 ## v1.1.6 - 2026-04-14
 
 ### Fixed
@@ -17,15 +23,15 @@ Fix: Fixes display of crits and fumbles to align with recent updates on the DCC 
 ### Improved
 
 - Modify Roll dialog now shows contextual titles and button labels for rolls
-    initiated from our attack card buttons:
-    - Title bar uses: "Damage", "Critical", or "Fumble"
-    - Bottom button uses: "Roll Damage", "Roll Critical", or "Roll Fumble"
-    
+  initiated from our attack card buttons:
+  - Title bar uses: "Damage", "Critical", or "Fumble"
+  - Bottom button uses: "Roll Damage", "Roll Critical", or "Roll Fumble"
+  
 
 ### Fixed
 
 - Attack card roll buttons (Damage, Crit, Fumble) now respect the DCC system setting
-    "Show the Modify Roll dialog by default". Thanks to DR_Mummson for reporting this on Discord.
+  "Show the Modify Roll dialog by default". Thanks to DR_Mummson for reporting this on Discord.
 
 ## v1.1.3 - 2025-11-01
 
