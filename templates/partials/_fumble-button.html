@@ -16,8 +16,16 @@
 </div>
 {{/if}} {{/if}} {{else}} {{#if compact}}
 <div class="compact-auto-result">{{{automatedFumbleDisplay}}}</div>
+{{#if automatedFumbleDetails}}
+<div class="compact-auto-result">{{{automatedFumbleDetails}}}</div>
+{{/if}}
 {{else}}
 <div class="chat-details centered">
     <div class="roll-result status-info">{{{automatedFumbleDisplay}}}</div>
 </div>
+{{#if automatedFumbleDetails}}
+<div class="chat-details centered">
+    <div class="roll-result">{{{automatedFumbleDetails}}}</div>
+</div>
+{{/if}}
 {{/if}} {{/unless}}

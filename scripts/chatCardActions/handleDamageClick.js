@@ -69,6 +69,11 @@ export async function handleDamageClick(
         );
         await roll.evaluate();
 
+        // Enforce minimum 1 damage (matching DCC system auto-roll behavior)
+        if (roll.total < 1) {
+            roll._total = 1;
+        }
+
         let flavorText = `Rolling Damage for ${
             message.system.weaponName || weapon?.name || "weapon"
         }`;
